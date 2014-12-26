@@ -1,0 +1,16 @@
+name: ${project.artifactId}
+main: com.mcmiddleearth.mcme.events.Main
+version: ${project.version}
+authors: [DonoA, aaldim, lizzehface, meggawatts]
+commands:
+    event:
+        description: Get get commands from current event also redirects to current event if only one is enabled
+        usage: /event <sub-command> [args]
+        
+    winter:
+        description: Umbrella for all winter event commands
+        usages: /winter <sub-command> [args]
+        
+    summer:
+        description: Umbrella for all summer event commands
+        usages: /summer <sub-command> [args]

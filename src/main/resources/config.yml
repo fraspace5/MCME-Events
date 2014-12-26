@@ -1,0 +1,9 @@
+worlds:
+- world
+noHunger:
+- world
+WinterEvent:
+    Enabled: true
+SummerEvent:
+    Enabled: true
+
