@@ -21,9 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package co.mcme.lizzehface.winterevent.stats;
+package com.mcmiddleearth.mcme.events.winterevent.SnowballFight.stats;
 
-import co.mcme.lizzehface.winterevent.WinterEvent;
+import com.mcmiddleearth.mcme.events.Main;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
@@ -126,11 +126,11 @@ public class PlayerStats {
      * Write this statistics to disk.
      */
     public void save() throws IOException {
-        WinterEvent.getObjectMapper().writeValue(getFileLocation(), this);
+        Main.getObjectMapper().writeValue(getFileLocation(), this);
     }
 
     @JsonIgnore
     public File getFileLocation() {
-        return new File(WinterEvent.getPlayerDirectory(), playerUUID + ".snowball");
+        return new File(Main.getPlayerDirectory(), playerUUID + ".snowball");
     }
 }

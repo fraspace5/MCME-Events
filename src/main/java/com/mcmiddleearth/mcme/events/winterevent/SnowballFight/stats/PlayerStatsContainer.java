@@ -21,15 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package co.mcme.lizzehface.winterevent.stats;
+package com.mcmiddleearth.mcme.events.winterevent.SnowballFight.stats;
 
-        import co.mcme.lizzehface.winterevent.WinterEvent;
-        import org.bukkit.entity.Player;
+import com.mcmiddleearth.mcme.events.Main;
+import org.bukkit.entity.Player;
 
-        import java.io.File;
-        import java.io.IOException;
-        import java.util.HashMap;
-        import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PlayerStatsContainer {
 
@@ -39,18 +39,18 @@ public class PlayerStatsContainer {
         if (stats.containsKey(player.getName())) {
             return stats.get(player.getName());
         } else {
-            File location = new File(WinterEvent.getPlayerDirectory(), player.getUniqueId().toString() + ".snowball");
+            File location = new File(Main.getPlayerDirectory(), player.getUniqueId().toString() + ".snowball");
             if (location.exists()) {
-                WinterEvent.getServerInstance().getLogger().info("Loading stats for " + player.getName() + " from disk at " + location.getName());
+                Main.getServerInstance().getLogger().info("Loading stats for " + player.getName() + " from disk at " + location.getName());
                 try {
-                    PlayerStats playerStats = WinterEvent.getObjectMapper().readValue(location, PlayerStats.class);
+                    PlayerStats playerStats = Main.getObjectMapper().readValue(location, PlayerStats.class);
                     stats.put(player.getName(), playerStats);
                     return playerStats;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else {
-                WinterEvent.getServerInstance().getLogger().info("Stats for " + player.getName() + " do not exist yet, creating new.");
+                Main.getServerInstance().getLogger().info("Stats for " + player.getName() + " do not exist yet, creating new.");
                 PlayerStats playerStats = new PlayerStats(player);
                 try {
                     playerStats.save();
@@ -96,11 +96,11 @@ public class PlayerStatsContainer {
     public static void loadAll() {
         saveAll();
         HashMap<String, PlayerStats> temp = new HashMap<String, PlayerStats>();
-        for (File file : WinterEvent.getPlayerDirectory().listFiles()) {
+        for (File file : Main.getPlayerDirectory().listFiles()) {
             if (!file.isDirectory()) {
                 try {
-                    PlayerStats playerStats = WinterEvent.getObjectMapper().readValue(file, PlayerStats.class);
-                    WinterEvent.getServerInstance().getLogger().info("loading " + playerStats.getPlayerUUID());
+                    PlayerStats playerStats = Main.getObjectMapper().readValue(file, PlayerStats.class);
+                    Main.getServerInstance().getLogger().info("loading " + playerStats.getPlayerUUID());
                     temp.put(playerStats.getPlayerName(), playerStats);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -112,8 +112,8 @@ public class PlayerStatsContainer {
     }
 
     public static int wipeAll() {
-        int files = WinterEvent.getPlayerDirectory().listFiles() .length;
-        for(File file : WinterEvent.getPlayerDirectory().listFiles()) {
+        int files = Main.getPlayerDirectory().listFiles() .length;
+        for(File file : Main.getPlayerDirectory().listFiles()) {
             if (!file.isDirectory()) {
                 file.delete();
             }

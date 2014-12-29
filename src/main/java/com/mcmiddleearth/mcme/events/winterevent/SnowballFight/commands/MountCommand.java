@@ -1,7 +1,7 @@
 /**
  * * This file is part of winterEvent, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2014 Henry Slawniak <http://mcme.co/> and Created by SugarKoala. sort of.
+ * This part was mostly created by SugarKoala. o:
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,31 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package co.mcme.lizzehface.winterevent.commands;
 
-import co.mcme.lizzehface.winterevent.stats.PlayerStatsContainer;
-import org.bukkit.ChatColor;
+package com.mcmiddleearth.mcme.events.winterevent.SnowballFight.commands;
+
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
-public class ClearCommand implements CommandExecutor {
-
+public class MountCommand implements CommandExecutor{
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("You must be a player to run this command.");
-            return true;
-        }
         Player player = (Player) sender;
-        if (player.hasPermission("winterevent.clear")) {
-            int filesDeleted = PlayerStatsContainer.wipeAll();
-            player.sendMessage(ChatColor.DARK_AQUA + "Deleting " + filesDeleted + " files");
-            return true;
-        } else {
-            player.sendMessage(ChatColor.RED + "You don't have permission to do that.");
-            return true;
+        if (player.hasPermission("winterevent.mount")) {
+            if (player.isInsideVehicle()) {
+                player.sendMessage("You are already on a horse!");
+                return true;
+            } else {
+                Horse h = player.getWorld().spawn(player.getLocation(), Horse.class);
+                h.setTamed(true);
+                h.getInventory().setSaddle(new ItemStack(Material.SADDLE));
+                h.setPassenger(player);
+            }
+                return true;
+            }
         }
+        return false;
     }
 }

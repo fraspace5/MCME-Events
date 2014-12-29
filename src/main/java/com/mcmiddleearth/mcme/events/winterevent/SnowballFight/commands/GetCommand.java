@@ -1,7 +1,7 @@
 /**
  * * This file is part of winterEvent, licensed under the MIT License (MIT).
  *
- * This part was mostly created by SugarKoala. o:
+ * Copyright (c) 2014 Henry Slawniak <http://mcme.co/> and Created by SugarKoala. woo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,35 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-package co.mcme.lizzehface.winterevent.commands;
+package com.mcmiddleearth.mcme.events.winterevent.SnowballFight.commands;
 
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class MountCommand implements CommandExecutor{
+
+public class GetCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player)) {
-        Player player = (Player) sender;
-        if (player.hasPermission("winterevent.mount")) {
-            if (player.isInsideVehicle()) {
-                player.sendMessage("You are already on a horse!");
-                return true;
-            } else {
-                Horse h = player.getWorld().spawn(player.getLocation(), Horse.class);
-                h.setTamed(true);
-                h.getInventory().setSaddle(new ItemStack(Material.SADDLE));
-                h.setPassenger(player);
-            }
-                return true;
-            }
+            sender.sendMessage("You must be a player to run this command.");
+            return true;
         }
-        return false;
+        Player player = (Player) sender;
+        player.getInventory().addItem(new ItemStack(Material.SNOW_BALL, -1));
+        player.updateInventory();
+        return true;
     }
 }

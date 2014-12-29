@@ -21,9 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package co.mcme.lizzehface.winterevent.stats;
+package com.mcmiddleearth.mcme.events.winterevent.SnowballFight.stats;
 
-import co.mcme.lizzehface.winterevent.WinterEvent;
+import com.mcmiddleearth.mcme.events.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -106,10 +106,10 @@ public class LeaderBoardUtil {
     private static HashMap<String, PlayerStats> getPlayerStats() {
         PlayerStatsContainer.saveAll();
         HashMap<String, PlayerStats> stats = new HashMap<>();
-        for (File file : WinterEvent.getPlayerDirectory().listFiles()) {
+        for (File file : Main.getPlayerDirectory().listFiles()) {
             if (!file.isDirectory()) {
                 try {
-                    PlayerStats playerStats = WinterEvent.getObjectMapper().readValue(file, PlayerStats.class);
+                    PlayerStats playerStats = Main.getObjectMapper().readValue(file, PlayerStats.class);
 
                     stats.put(playerStats.getPlayerName(), playerStats);
                 } catch (IOException e) {
@@ -118,7 +118,7 @@ public class LeaderBoardUtil {
 
             }
         }
-        WinterEvent.getServerInstance().getLogger().info("loaded " + stats.size() + " stat files for leaderboard");
+        Main.getServerInstance().getLogger().info("loaded " + stats.size() + " stat files for leaderboard");
         return stats;
     }
 }

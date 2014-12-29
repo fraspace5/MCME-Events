@@ -1,7 +1,7 @@
 /**
- * This file is part of winterEvent, licensed under the MIT License (MIT).
+ * * This file is part of winterEvent, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2014 Henry Slawniak <http://mcme.co/>
+ * Copyright (c) 2014 Henry Slawniak <http://mcme.co/> and Created by SugarKoala. sort of.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,15 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package co.mcme.lizzehface.winterevent.commands;
+package com.mcmiddleearth.mcme.events.winterevent.SnowballFight.commands;
 
-import co.mcme.lizzehface.winterevent.stats.LeaderBoardUtil;
+import com.mcmiddleearth.mcme.events.winterevent.SnowballFight.stats.PlayerStatsContainer;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class SnowCommand implements CommandExecutor {
+public class ClearCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -38,13 +39,13 @@ public class SnowCommand implements CommandExecutor {
             return true;
         }
         Player player = (Player) sender;
-        if (args.length < 1) {
-            LeaderBoardUtil.showLeaderboard(player);
+        if (player.hasPermission("winterevent.clear")) {
+            int filesDeleted = PlayerStatsContainer.wipeAll();
+            player.sendMessage(ChatColor.DARK_AQUA + "Deleting " + filesDeleted + " files");
             return true;
-        } else if (args.length == 1) {
-            LeaderBoardUtil.showLeaderboard(player, args[0]);
+        } else {
+            player.sendMessage(ChatColor.RED + "You don't have permission to do that.");
             return true;
         }
-        return false;
     }
 }

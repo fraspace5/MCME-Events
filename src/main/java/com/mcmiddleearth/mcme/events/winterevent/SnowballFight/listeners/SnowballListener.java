@@ -21,10 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package co.mcme.lizzehface.winterevent.listeners;
+package com.mcmiddleearth.mcme.events.winterevent.SnowballFight.listeners;
 
-import co.mcme.lizzehface.winterevent.stats.PlayerStats;
-import co.mcme.lizzehface.winterevent.stats.PlayerStatsContainer;
+import com.mcmiddleearth.mcme.events.winterevent.SnowballFight.stats.PlayerStats;
+import com.mcmiddleearth.mcme.events.winterevent.SnowballFight.stats.PlayerStatsContainer;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;

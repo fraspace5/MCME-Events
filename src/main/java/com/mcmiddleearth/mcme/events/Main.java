@@ -18,11 +18,18 @@
  */
 package com.mcmiddleearth.mcme.events;
 
+import com.mcmiddleearth.mcme.events.summerevent.Commands.SummerCommands;
+import com.mcmiddleearth.mcme.events.winterevent.SnowballFight.commands.WinterCommands;
+import com.mcmiddleearth.mcme.events.winterevent.SnowballFight.listeners.SnowballListener;
+import java.io.File;
 import java.util.ArrayList;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.WorldCreator;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  *
@@ -39,6 +46,18 @@ public class Main extends JavaPlugin{
     @Getter
     private ArrayList<String> noHunger = new ArrayList<String>();
     
+    @Getter
+    private static ObjectMapper objectMapper = new ObjectMapper();
+    
+    @Getter
+    private static Server serverInstance;
+    
+    @Getter
+    private static File pluginDirectory;
+    
+    @Getter
+    private static File playerDirectory;
+    
     @Override
     public void onEnable(){
         plugin = this;
@@ -51,6 +70,34 @@ public class Main extends JavaPlugin{
         }
         if(this.getConfig().contains("noHunger")){
             noHunger.addAll(this.getConfig().getStringList("noHunger"));
+        }
+        this.serverInstance = getServer();
+        this.pluginDirectory = getDataFolder();
+        if (!pluginDirectory.exists()) {
+            pluginDirectory.mkdir();
+        }
+        this.playerDirectory = new File(pluginDirectory + System.getProperty("file.separator") + "players");
+        if (!playerDirectory.exists()) {
+            playerDirectory.mkdir();
+        }
+        this.getCommand("WorldJump").setExecutor(new CommandCore());
+        
+        PluginManager pm = this.getServer().getPluginManager();
+        
+        boolean Winter = this.getConfig().getBoolean("WinterEvent.Enabled");
+        boolean Summer = this.getConfig().getBoolean("SummerEvent.Enabled");
+        if(Winter && Summer){
+            this.getCommand("winter").setExecutor(new WinterCommands());
+            this.getCommand("summer").setExecutor(new SummerCommands());
+        }else{
+            if(Winter){
+                this.getCommand("winter").setExecutor(new WinterCommands());
+                this.getCommand("event").setExecutor(new WinterCommands());
+                pm.registerEvents(new SnowballListener(), this);
+            }else if(Summer){
+                this.getCommand("summer").setExecutor(new SummerCommands());
+                this.getCommand("event").setExecutor(new SummerCommands());
+            }
         }
     }
     

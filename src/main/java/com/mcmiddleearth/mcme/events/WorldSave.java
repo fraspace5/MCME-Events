@@ -18,10 +18,137 @@
  */
 package com.mcmiddleearth.mcme.events;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+
 /**
  *
  * @author Donovan
  */
 public class WorldSave {
     
+    private static InputStream in;
+    private static OutputStream out;
+    
+    public static void saveWorld(final World w, final String name, final Player sender){
+        w.save();
+        World notw = Bukkit.getWorld(Main.getPlugin().getSpawnWorld());
+        if(notw == null){
+            for(Player p : Bukkit.getOnlinePlayers()){
+                p.kickPlayer("reseting world");
+            }
+        }else{
+            for(Player p : Bukkit.getOnlinePlayers()){
+                if(p.getWorld().equals(w)){
+                    p.teleport(notw.getSpawnLocation());
+                }
+            }
+        }
+        final File old = w.getWorldFolder();
+        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable() {
+                    @Override
+                    public void run() {   
+                        copyWorld(old, new File(Main.getPlugin().getDataFolder()+ System.getProperty("file.separator") + name));
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable() {
+                            @Override
+                            public void run() {   
+                                sender.teleport(w.getSpawnLocation());
+                            }
+                        }, 20L);
+                    }
+            }, 20L);
+    }
+    
+    public static boolean loadWorld(World w, final String name){
+        if(!new File(Main.getPlugin().getDataFolder() + System.getProperty("file.separator") + name).exists()){
+            return false;
+        }
+        final String wname = w.getName();
+        World notw = Bukkit.getWorld(Main.getPlugin().getSpawnWorld());
+        if(notw == null){
+            for(Player p : Bukkit.getOnlinePlayers()){
+                p.kickPlayer("reseting world");
+            }
+        }else{
+            for(Player p : Bukkit.getOnlinePlayers()){
+                if(p.getWorld().equals(w)){
+                    p.teleport(notw.getSpawnLocation());
+                        Inventory i = p.getInventory();
+                        i.clear();
+                        p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR), new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
+                        p.getInventory().setContents(i.getContents());
+                }
+            }
+        }
+        Bukkit.getServer().unloadWorld(w, true);
+        final File path = w.getWorldFolder();
+        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable() {
+                @Override
+                public void run() {   
+                    copyWorld(new File(Main.getPlugin().getDataFolder() + System.getProperty("file.separator") + name), path);
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable() {
+                        @Override
+                        public void run() {   
+                            Bukkit.getServer().getWorlds().add(Bukkit.getServer().createWorld(new WorldCreator(wname)));
+                        }
+                    }, 20L);
+                }
+            }, 20L);
+        return false;
+    }
+    
+    private static boolean deleteWorld(File path) {
+      if(path.exists()) {
+//          System.out.println(path.toString());
+          if (path.isDirectory()) {
+            File files[] = path.listFiles();
+            for (String file : path.list()) {
+                deleteWorld(new File(path, file));
+            }
+          } else {
+            path.delete();
+          }
+      }
+      return(path.delete());
+    }
+    private static void copyWorld(File src, File dest){
+        deleteWorld(dest);
+        try {
+            if(src.isDirectory()){
+    		if(!dest.exists()){
+    		   dest.mkdir();
+    		}
+    		String files[] = src.list();
+    		for (String file : files) {
+    		   File srcFile = new File(src, file);
+    		   File destFile = new File(dest, file);
+    		   copyWorld(srcFile,destFile);
+    		}
+ 
+    	}else{
+    		in = new FileInputStream(src);
+                out = new FileOutputStream(dest); 
+    	        byte[] buffer = new byte[1024];
+    	        int length;
+    	        while ((length = in.read(buffer)) > 0){
+    	    	   out.write(buffer, 0, length);
+                } 
+    	        in.close();
+    	        out.close();
+    	}
+        } catch (IOException e) {
+            Bukkit.getLogger().info(e.getMessage());
+        }
+    }
 }

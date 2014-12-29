@@ -1,28 +1,27 @@
 /*
- * This file is part of WinterEvent.
+ * This file is part of MCME-Events.
  * 
- * WinterEvent is free software: you can redistribute it and/or modify
+ * MCME-Events is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * WinterEvent is distributed in the hope that it will be useful,
+ * MCME-Events is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with WinterEvent.  If not, see <http://www.gnu.org/licenses/>.
+ * along with MCME-Events.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * 
  */
-
-package com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion.EventHandles;
+package com.mcmiddleearth.mcme.events.summerevent.CTF;
 
 /**
  *
  * @author Donovan
  */
-public class SnowballHandle {
+public class DBmanager {
     
 }

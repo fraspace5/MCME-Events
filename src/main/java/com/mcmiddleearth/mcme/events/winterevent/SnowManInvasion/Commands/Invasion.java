@@ -17,7 +17,7 @@
  * 
  */
 
-package co.mcme.lizzehface.winterevent.SnowManInvasion.Commands;
+package com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion.Commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
