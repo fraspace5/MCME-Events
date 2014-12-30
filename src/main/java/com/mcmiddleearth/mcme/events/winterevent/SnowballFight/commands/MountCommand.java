@@ -1,7 +1,7 @@
 /**
  * * This file is part of winterEvent, licensed under the MIT License (MIT).
  *
- * This part was mostly created by SugarKoala. o:
+ * This part was mostly created by SugarKoala. o:  ##bullshit
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

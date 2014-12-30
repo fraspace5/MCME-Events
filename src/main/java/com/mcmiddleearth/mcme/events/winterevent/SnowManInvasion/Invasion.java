@@ -16,24 +16,29 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion.Snowman;
+package com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion;
 
-import lombok.Getter;
+import com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion.Snowman.InvasionSnowman;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.Location;
-import org.bukkit.entity.Snowman;
 
 /**
  *
  * @author Donovan
  */
-public class InvasionSnowman{
+public class Invasion {
     
-    @Getter
-    private Snowman master;
+    ArrayList<InvasionSnowman> army = new ArrayList<>();
     
-    public InvasionSnowman(Location spawn){
-        master = spawn.getWorld().spawn(spawn, Snowman.class);
+    Runnable tick = new Runnable() {
+            @Override
+            public void run() {
+                
+            }
+        };
+    
+    public Invasion(List<Location> spawnPoints){
+        
     }
-    
-    
 }

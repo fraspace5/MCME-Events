@@ -16,24 +16,21 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion.Snowman;
+package com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion;
 
-import lombok.Getter;
-import org.bukkit.Location;
-import org.bukkit.entity.Snowman;
+import java.util.HashMap;
+import org.bukkit.World;
 
 /**
  *
  * @author Donovan
  */
-public class InvasionSnowman{
+public class InvasionCore {
     
-    @Getter
-    private Snowman master;
+    HashMap<String, Invasion> invasions = new HashMap<>();
+    HashMap<String, ArrayList<String>> 
     
-    public InvasionSnowman(Location spawn){
-        master = spawn.getWorld().spawn(spawn, Snowman.class);
+    public static boolean Start(World w){
+        return true;
     }
-    
-    
 }

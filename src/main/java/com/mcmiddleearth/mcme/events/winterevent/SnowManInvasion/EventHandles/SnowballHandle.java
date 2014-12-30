@@ -19,10 +19,25 @@
 
 package com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion.EventHandles;
 
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
+
 /**
  *
  * @author Donovan
  */
-public class SnowballHandle {
+public class SnowballHandle implements Listener{
+    
+    @EventHandler
+    public void onHit(EntityDamageByEntityEvent e){
+        
+    }
+
+    @EventHandler
+    public void onThrow(ProjectileLaunchEvent e){
+        e.getEntity().getLocation().getWorld()
+    }
     
 }

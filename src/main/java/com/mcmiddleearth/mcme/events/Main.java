@@ -19,7 +19,7 @@
 package com.mcmiddleearth.mcme.events;
 
 import com.mcmiddleearth.mcme.events.summerevent.Commands.SummerCommands;
-import com.mcmiddleearth.mcme.events.winterevent.SnowballFight.commands.WinterCommands;
+import com.mcmiddleearth.mcme.events.winterevent.WinterCommands;
 import com.mcmiddleearth.mcme.events.winterevent.SnowballFight.listeners.SnowballListener;
 import java.io.File;
 import java.util.ArrayList;

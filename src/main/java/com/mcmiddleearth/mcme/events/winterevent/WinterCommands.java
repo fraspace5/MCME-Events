@@ -16,8 +16,13 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.winterevent.SnowballFight.commands;
+package com.mcmiddleearth.mcme.events.winterevent;
 
+import com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion.Commands.InvasionCommands;
+import com.mcmiddleearth.mcme.events.winterevent.SnowballFight.commands.ClearCommand;
+import com.mcmiddleearth.mcme.events.winterevent.SnowballFight.commands.GetCommand;
+import com.mcmiddleearth.mcme.events.winterevent.SnowballFight.commands.MountCommand;
+import com.mcmiddleearth.mcme.events.winterevent.SnowballFight.commands.SnowCommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -33,7 +38,7 @@ public class WinterCommands implements CommandExecutor{
         if(args.length == 0){
             return false;
         }else{
-            if(args[0].equalsIgnoreCase("snow")){
+            if(args[0].equalsIgnoreCase("snow")){//work because no args in lizzy code :P
                 return new SnowCommand().onCommand(cs, cmnd, label, args);
             }else if(args[0].equalsIgnoreCase("getsnow")){
                 return new GetCommand().onCommand(cs, cmnd, label, args);
@@ -41,6 +46,8 @@ public class WinterCommands implements CommandExecutor{
                 return new MountCommand().onCommand(cs, cmnd, label, args);
             }else if(args[0].equalsIgnoreCase("clear")){
                 return new ClearCommand().onCommand(cs, cmnd, label, args);
+            }else if(args[0].equalsIgnoreCase("invade")){
+                return new InvasionCommands().onCommand(cs, cmnd, label, args);
             }else{
                 return false;
             }

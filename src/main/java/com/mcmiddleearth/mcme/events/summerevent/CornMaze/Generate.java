@@ -16,24 +16,12 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion.Snowman;
-
-import lombok.Getter;
-import org.bukkit.Location;
-import org.bukkit.entity.Snowman;
+package com.mcmiddleearth.mcme.events.summerevent.CornMaze;
 
 /**
  *
  * @author Donovan
  */
-public class InvasionSnowman{
-    
-    @Getter
-    private Snowman master;
-    
-    public InvasionSnowman(Location spawn){
-        master = spawn.getWorld().spawn(spawn, Snowman.class);
-    }
-    
+public class Generate {
     
 }
