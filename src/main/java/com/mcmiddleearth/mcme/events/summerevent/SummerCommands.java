@@ -16,33 +16,24 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion;
+package com.mcmiddleearth.mcme.events.summerevent;
 
-import com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion.Snowman.InvasionSnowman;
-import java.util.ArrayList;
-import java.util.List;
-import org.bukkit.Location;
+import com.mcmiddleearth.mcme.events.summerevent.CornMaze.MazeCommands;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 
 /**
  *
  * @author Donovan
  */
-public class Invasion {
-    
-    public static ArrayList<InvasionSnowman> army = new ArrayList<>();
-    
-    
-    
-    Runnable tick = new Runnable() {
-            @Override
-            public void run() {
-                
-            }
-        };
-    
-    public Invasion(List<SpawnPoint> spawnPoints){
-        for(SpawnPoint sp : spawnPoints){
-            army.addAll(sp.spawn());
+public class SummerCommands implements CommandExecutor{
+
+    @Override
+    public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] args) {
+        if(args[0].equalsIgnoreCase("maze")){
+            return new MazeCommands().onCommand(cs, cmnd, string, args);
         }
+        return false;
     }
 }

@@ -19,30 +19,40 @@
 package com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion;
 
 import com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion.Snowman.InvasionSnowman;
+import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Random;
+import lombok.Getter;
+import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 /**
  *
  * @author Donovan
  */
-public class Invasion {
+public class SpawnPoint {
+    @Getter @Setter
+    Location center;
+    @Getter @Setter
+    int Radius;
     
-    public static ArrayList<InvasionSnowman> army = new ArrayList<>();
+    public SpawnPoint(Location l, int r){
+        center = l;
+        Radius = r;
+    }
     
-    
-    
-    Runnable tick = new Runnable() {
-            @Override
-            public void run() {
-                
-            }
-        };
-    
-    public Invasion(List<SpawnPoint> spawnPoints){
-        for(SpawnPoint sp : spawnPoints){
-            army.addAll(sp.spawn());
+    public ArrayList<InvasionSnowman> spawn(){
+        Random r = new Random();
+        double number = r.nextInt(5) + 1;
+        ArrayList<InvasionSnowman> rtn = new ArrayList<>();
+        for(int i = 0; i < number; i++){
+            double angle = Math.random()*Math.PI*2;
+            double x = Math.cos(angle)*r.nextInt(Radius);
+            double z = Math.sin(angle)*r.nextInt(Radius);
+            InvasionSnowman is = new InvasionSnowman(new Location(center.getWorld(), center.getX() + x, center.getY() + 1,center.getZ() + z));
+            rtn.add(is);
         }
+        return rtn;
     }
 }

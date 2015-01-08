@@ -18,7 +18,9 @@
  */
 package com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import org.bukkit.Location;
 import org.bukkit.World;
 
 /**
@@ -27,10 +29,11 @@ import org.bukkit.World;
  */
 public class InvasionCore {
     
-    HashMap<String, Invasion> invasions = new HashMap<>();
-    HashMap<String, ArrayList<String>> 
+    public static HashMap<String, Invasion> invasions = new HashMap<>();
+    public static HashMap<String, ArrayList<SpawnPoint>> SP = new HashMap<>();
     
     public static boolean Start(World w){
+        invasions.put(w.getName(), new Invasion(SP.get(w.getName())));
         return true;
     }
 }

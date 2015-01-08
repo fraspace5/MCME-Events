@@ -20,17 +20,16 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
-            <plugin>
+	<plugins>
+		<plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                            <source>1.7</source>
+                            <target>1.7</target>
+                    </configuration>
+		</plugin>
+                <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>1.4</version>
@@ -45,47 +44,46 @@
                             <relocations>
                                 <relocation>
                                     <pattern>org.codehaus</pattern>
-                                    <shadedPattern>co.mcme.thegaffer.libs.org.codehaus</shadedPattern>
+                                    <shadedPattern>ccom.mcmiddleearth.mcme.events.libs.org.codehaus</shadedPattern>
                                 </relocation>
                             </relocations>
                             <artifactSet>
                                 <excludes>
                                     <exclude>org.projectlombok:lombok</exclude>
-                                    <exclude>org.spigotmc:spigot-api</exclude>
+                                    <exclude>org.bukkit:bukkit</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-        </plugins>
+	</plugins>
     </build>
-
     <repositories>
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
-        </repository>
-    </repositories>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.9.13</version>
-        </dependency>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.8-R0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.12.2</version>
-        </dependency>
-    </dependencies>
-
-    
+       <repository>
+           <id>bukkit-repo</id>
+           <url>http://repo.bukkit.org/content/groups/public/</url>
+       </repository>
+   </repositories>
+   <dependencies>
+    <dependency>
+         <groupId>org.bukkit</groupId>
+         <artifactId>bukkit</artifactId>
+         <version>1.7.2-R0.1</version>
+         <scope>compile</scope>
+     </dependency>
+      <dependency>
+         <groupId>org.projectlombok</groupId>
+         <artifactId>lombok</artifactId>
+         <version>1.12.2</version>
+         <type>jar</type>
+      </dependency>
+      <dependency>
+         <groupId>org.codehaus.jackson</groupId>
+         <artifactId>jackson-mapper-asl</artifactId>
+         <version>1.9.13</version>
+         <type>jar</type>
+      </dependency>
+   </dependencies>
+   
 </project>

@@ -21,7 +21,7 @@ package com.mcmiddleearth.mcme.events.winterevent;
 import com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion.Commands.InvasionCommands;
 import com.mcmiddleearth.mcme.events.winterevent.SnowballFight.commands.ClearCommand;
 import com.mcmiddleearth.mcme.events.winterevent.SnowballFight.commands.GetCommand;
-import com.mcmiddleearth.mcme.events.winterevent.SnowballFight.commands.MountCommand;
+import com.mcmiddleearth.mcme.events.winterevent.HorseRace.MountCommand;
 import com.mcmiddleearth.mcme.events.winterevent.SnowballFight.commands.SnowCommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

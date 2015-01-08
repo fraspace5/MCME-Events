@@ -18,7 +18,9 @@
  */
 package com.mcmiddleearth.mcme.events;
 
-import com.mcmiddleearth.mcme.events.summerevent.Commands.SummerCommands;
+import com.mcmiddleearth.mcme.events.summerevent.SummerCommands;
+import com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion.EventHandles.SignListener;
+import com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion.EventHandles.SnowballHandle;
 import com.mcmiddleearth.mcme.events.winterevent.WinterCommands;
 import com.mcmiddleearth.mcme.events.winterevent.SnowballFight.listeners.SnowballListener;
 import java.io.File;
@@ -89,14 +91,17 @@ public class Main extends JavaPlugin{
         if(Winter && Summer){
             this.getCommand("winter").setExecutor(new WinterCommands());
             this.getCommand("summer").setExecutor(new SummerCommands());
+            registerHandles(true, pm);
+            registerHandles(false, pm);
         }else{
             if(Winter){
                 this.getCommand("winter").setExecutor(new WinterCommands());
                 this.getCommand("event").setExecutor(new WinterCommands());
-                pm.registerEvents(new SnowballListener(), this);
+                registerHandles(false, pm);
             }else if(Summer){
                 this.getCommand("summer").setExecutor(new SummerCommands());
                 this.getCommand("event").setExecutor(new SummerCommands());
+                registerHandles(true, pm);
             }
         }
     }
@@ -104,5 +109,15 @@ public class Main extends JavaPlugin{
     @Override
     public void onDisable(){
         
+    }
+    
+    private void registerHandles(boolean summer, PluginManager pm){
+        if(summer){
+            
+        }else{
+            pm.registerEvents(new SnowballListener(), this);
+            pm.registerEvents(new SignListener(), this);
+            pm.registerEvents(new SnowballHandle(), this);
+        }
     }
 }

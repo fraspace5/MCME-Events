@@ -19,6 +19,12 @@
 
 package com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion.EventHandles;
 
+import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Snowball;
+import org.bukkit.entity.Snowman;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -32,12 +38,32 @@ public class SnowballHandle implements Listener{
     
     @EventHandler
     public void onHit(EntityDamageByEntityEvent e){
-        
+        final Entity damager = e.getDamager();
+        final Entity target = e.getEntity();
+        if(damager instanceof Projectile){
+            Projectile pt = (Projectile) damager;
+            if(pt instanceof Snowball){
+                try{
+                    if(target instanceof Player){
+                        ((Player) target).damage(2);
+                    }else if(target instanceof Snowman){
+                        ((Snowman) target).damage(2);
+                        if(pt.getShooter() instanceof Player){
+                            Player p = ((Player) pt.getShooter());
+                            p.playSound(target.getLocation(), Sound.ORB_PICKUP, 100, 0);
+                            ((Snowman) target).setTarget(p);
+                        }
+                    }
+                }catch (Exception ex){}
+            }
+        }
     }
 
     @EventHandler
     public void onThrow(ProjectileLaunchEvent e){
-        e.getEntity().getLocation().getWorld()
+        if(e.getEntity().getShooter() instanceof Player){
+            
+        }
     }
     
 }

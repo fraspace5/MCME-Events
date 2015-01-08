@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.mcmiddleearth.mcme.events.winterevent.SnowballFight.commands;
+package com.mcmiddleearth.mcme.events.winterevent.HorseRace;
 
 import org.bukkit.Material;
 import org.bukkit.command.Command;

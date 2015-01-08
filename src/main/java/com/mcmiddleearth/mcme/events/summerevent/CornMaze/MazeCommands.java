@@ -16,20 +16,27 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.summerevent.Commands;
+package com.mcmiddleearth.mcme.events.summerevent.CornMaze;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 /**
  *
  * @author Donovan
  */
-public class SummerCommands implements CommandExecutor{
+public class MazeCommands implements CommandExecutor{
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
-        return false;
+        if(cs instanceof Player){
+            Player p = (Player) cs;
+            p.sendMessage("Generating!");
+            Generate.Generate(p.getLocation(), Integer.parseInt(strings[1]), 1);
+        }
+        return true;
     }
+    
 }

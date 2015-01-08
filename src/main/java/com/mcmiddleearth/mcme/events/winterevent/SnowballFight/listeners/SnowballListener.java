@@ -42,10 +42,18 @@ public class SnowballListener implements Listener{
         if (!(event.getDamager() instanceof Snowball)) {
             return;
         }
-        PlayerStats damaged = PlayerStatsContainer.getForPlayer((Player) event.getEntity());
-        PlayerStats damager = PlayerStatsContainer.getForPlayer((Player) (((Snowball) event.getDamager()).getShooter()));
-        damaged.incrementHitSelf();
-        damager.incrementHitOthers();
+        if(!((((Snowball) event.getDamager()).getShooter()) instanceof Player)){
+            return;
+        }
+        try{
+            PlayerStats damaged = PlayerStatsContainer.getForPlayer((Player) event.getEntity());
+            PlayerStats damager = PlayerStatsContainer.getForPlayer((Player) (((Snowball) event.getDamager()).getShooter()));
+            damaged.incrementHitSelf();
+            damager.incrementHitOthers();
+        }catch (Exception ex){
+            
+        }
+        
     }
 
     @EventHandler
