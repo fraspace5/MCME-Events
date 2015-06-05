@@ -92,6 +92,8 @@ public class CommandCore implements TabExecutor{
                     }
                     return true;
                 }
+            }else if(cmd.getName().equalsIgnoreCase("plugup")){
+                
             }
         }else{
             sender.sendMessage("No console");

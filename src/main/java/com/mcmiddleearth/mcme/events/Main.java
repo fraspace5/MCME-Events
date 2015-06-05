@@ -83,7 +83,8 @@ public class Main extends JavaPlugin{
             playerDirectory.mkdir();
         }
         this.getCommand("WorldJump").setExecutor(new CommandCore());
-        
+        this.getCommand("World").setExecutor(new CommandCore());
+        this.getCommand("PlugUp").setExecutor(new CommandCore());
         PluginManager pm = this.getServer().getPluginManager();
         
         boolean Winter = this.getConfig().getBoolean("WinterEvent.Enabled");
@@ -113,7 +114,7 @@ public class Main extends JavaPlugin{
     
     private void registerHandles(boolean summer, PluginManager pm){
         if(summer){
-            
+            pm.registerEvents(new SnowballListener(), this);
         }else{
             pm.registerEvents(new SnowballListener(), this);
             pm.registerEvents(new SignListener(), this);

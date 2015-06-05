@@ -16,12 +16,12 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.summerevent.CTF;
+package com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode;
 
 /**
  *
- * @author Donovan
+ * @author Donovan <dallen@dallen.xyz>
  */
-public class Team {
+public class Team1Conquest {
     
 }

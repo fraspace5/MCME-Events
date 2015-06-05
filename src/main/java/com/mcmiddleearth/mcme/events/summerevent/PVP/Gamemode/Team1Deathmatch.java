@@ -16,12 +16,12 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.summerevent.CTF;
+package com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode;
 
 /**
  *
- * @author Donovan
+ * @author Donovan <dallen@dallen.xyz>
  */
-public class DBmanager {
+public class Team1Deathmatch {
     
 }

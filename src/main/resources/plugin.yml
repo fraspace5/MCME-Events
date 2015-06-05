@@ -2,18 +2,23 @@ name: ${project.artifactId}
 main: com.mcmiddleearth.mcme.events.Main
 version: ${project.version}
 authors: [DonoA, aaldim, lizzehface, meggawatts]
+author: DonoA
 commands:
     WorldJump:
         description: jump worlds
-        usage: /event <sub-command> [args]
+        usage: /WorldJump <world>
+    World:
+        description: world commands
+        usage: /world <save|load|list> <args>
+    PlugUp:
+        description: Self updates
+        usage: /PlugUp <step>
     event:
         description: Get get commands from current event also redirects to current event if only one is enabled
         usage: /event <sub-command> [args]
-        
     winter:
         description: Umbrella for all winter event commands
         usages: /winter <sub-command> [args]
-        
     summer:
         description: Umbrella for all summer event commands
         usages: /summer <sub-command> [args]

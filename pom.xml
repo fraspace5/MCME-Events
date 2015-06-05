@@ -44,7 +44,7 @@
                             <relocations>
                                 <relocation>
                                     <pattern>org.codehaus</pattern>
-                                    <shadedPattern>ccom.mcmiddleearth.mcme.events.libs.org.codehaus</shadedPattern>
+                                    <shadedPattern>com.mcmiddleearth.mcme.events.libs.org.codehaus</shadedPattern>
                                 </relocation>
                             </relocations>
                             <artifactSet>
@@ -69,7 +69,7 @@
     <dependency>
          <groupId>org.bukkit</groupId>
          <artifactId>bukkit</artifactId>
-         <version>1.7.2-R0.1</version>
+         <version>1.7.9-R0.2</version>
          <scope>compile</scope>
      </dependency>
       <dependency>

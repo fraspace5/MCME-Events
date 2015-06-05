@@ -16,12 +16,22 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.summerevent.CTF;
+package com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode;
+
+import com.mcmiddleearth.mcme.events.summerevent.PVP.Map;
+import org.bukkit.Material;
 
 /**
  *
- * @author Donovan
+ * @author Donovan <dallen@dallen.xyz>
  */
-public class Point {
+public class Free1For1All extends Gamemode{
     
+    public Free1For1All(){
+        super();
+    }
+    
+    public void Start(Map m){
+        m.getImportantPoints().get("RestoneTrigger").toBukkitLoc().getBlock().setType(Material.REDSTONE_BLOCK);
+    }
 }
