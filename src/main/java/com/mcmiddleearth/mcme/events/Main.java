@@ -19,6 +19,7 @@
 package com.mcmiddleearth.mcme.events;
 
 import com.mcmiddleearth.mcme.events.summerevent.SummerCommands;
+import com.mcmiddleearth.mcme.events.summerevent.SummerCore;
 import com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion.EventHandles.SignListener;
 import com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion.EventHandles.SnowballHandle;
 import com.mcmiddleearth.mcme.events.winterevent.WinterCommands;
@@ -38,6 +39,9 @@ import org.codehaus.jackson.map.ObjectMapper;
  * @author Donovan
  */
 public class Main extends JavaPlugin{
+    
+    @Getter
+    private static SummerCore summerCore = new SummerCore();
     
     @Getter
     private static Main plugin;
@@ -89,6 +93,9 @@ public class Main extends JavaPlugin{
         
         boolean Winter = this.getConfig().getBoolean("WinterEvent.Enabled");
         boolean Summer = this.getConfig().getBoolean("SummerEvent.Enabled");
+        if(Summer){
+            summerCore.onEnable();
+        }
         if(Winter && Summer){
             this.getCommand("winter").setExecutor(new WinterCommands());
             this.getCommand("summer").setExecutor(new SummerCommands());
@@ -109,7 +116,10 @@ public class Main extends JavaPlugin{
     
     @Override
     public void onDisable(){
-        
+        boolean Summer = this.getConfig().getBoolean("SummerEvent.Enabled");
+        if(Summer){
+            summerCore.onDisable();
+        }
     }
     
     private void registerHandles(boolean summer, PluginManager pm){
