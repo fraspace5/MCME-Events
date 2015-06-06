@@ -16,29 +16,30 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode;
+package com.mcmiddleearth.mcme.events.summerevent.PVP;
 
-import com.mcmiddleearth.mcme.events.summerevent.PVP.Map;
-import java.util.ArrayList;
-import lombok.Getter;
-import org.bukkit.entity.Player;
+import com.mcmiddleearth.mcme.events.Main;
+import com.mcmiddleearth.mcme.events.Util.DBmanager;
+import com.mcmiddleearth.mcme.events.summerevent.SummerCore;
+import java.io.File;
+import java.util.HashMap;
 
 /**
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public class Team1Conquest implements Gamemode{
+public class PVPCore {
     
-    @Getter
-    ArrayList<Player> players = new ArrayList<>();
-
-    @Override
-    public void Start(Map m) {
-        throw new UnsupportedOperationException("TODO: ADD STUFF");
+    public void onEnable(){
+        File loc = new File(SummerCore.getSaveLoc() + Main.getFileSep() + "Maps");
+        HashMap<String, Object> maps = new HashMap<>();
+        maps.putAll(DBmanager.loadAllObj(Map.class, loc));
+        for(String k : maps.keySet()){
+            Map.maps.put(k, (Map) maps.get(k));
+        }
     }
     
-    @Override
-    public void addPlayer(Player p) {
-        players.add(p);
+    public void onDisable(){
+        
     }
 }

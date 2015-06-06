@@ -28,14 +28,9 @@ import org.bukkit.entity.Player;
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public class Gamemode {
+public interface Gamemode {
     
-    @Getter @Setter
-    private ArrayList<Player> players = new ArrayList<Player>();
+    void Start(Map m);
     
-    public Gamemode(){}
-    
-    public void Start(Map m){
-        
-    }
+    void addPlayer(Player p);
 }

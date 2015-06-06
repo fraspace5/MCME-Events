@@ -19,19 +19,27 @@
 package com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode;
 
 import com.mcmiddleearth.mcme.events.summerevent.PVP.Map;
+import java.util.ArrayList;
+import lombok.Getter;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
 /**
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public class Free1For1All extends Gamemode{
+public class Free1For1All implements Gamemode{
     
-    public Free1For1All(){
-        super();
+    @Getter
+    ArrayList<Player> players = new ArrayList<>();
+    
+    @Override
+    public void Start(Map m){
+        m.getImportantPoints().get("RedBlock").toBukkitLoc().getBlock().setType(Material.REDSTONE_BLOCK);
     }
     
-    public void Start(Map m){
-        m.getImportantPoints().get("RestoneTrigger").toBukkitLoc().getBlock().setType(Material.REDSTONE_BLOCK);
+    @Override
+    public void addPlayer(Player p) {
+        players.add(p);
     }
 }

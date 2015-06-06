@@ -18,10 +18,28 @@
  */
 package com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode;
 
+import com.mcmiddleearth.mcme.events.summerevent.PVP.Map;
+import java.util.ArrayList;
+import lombok.Getter;
+import org.bukkit.entity.Player;
+
 /**
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public class RingBearer extends Gamemode{
+public class RingBearer implements Gamemode{
+    
+    @Getter
+    ArrayList<Player> players = new ArrayList<>();
+
+    @Override
+    public void Start(Map m) {
+        throw new UnsupportedOperationException("TODO: ADD STUFF");
+    }
+    
+    @Override
+    public void addPlayer(Player p) {
+        players.add(p);
+    }
     
 }

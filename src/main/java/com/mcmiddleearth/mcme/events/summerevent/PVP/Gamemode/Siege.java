@@ -27,7 +27,7 @@ import org.bukkit.entity.Player;
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public class Team1Conquest implements Gamemode{
+public class Siege implements Gamemode{
     
     @Getter
     ArrayList<Player> players = new ArrayList<>();
@@ -41,4 +41,5 @@ public class Team1Conquest implements Gamemode{
     public void addPlayer(Player p) {
         players.add(p);
     }
+    
 }

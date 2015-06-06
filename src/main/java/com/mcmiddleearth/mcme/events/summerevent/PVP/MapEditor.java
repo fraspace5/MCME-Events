@@ -18,9 +18,20 @@
  */
 package com.mcmiddleearth.mcme.events.summerevent.PVP;
 
+import com.mcmiddleearth.mcme.events.Util.EventLocation;
+import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.Free1For1All;
+import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.Infected;
+import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.King1of1the1Hill;
+import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.RingBearer;
+import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.Siege;
+import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.Team1Conquest;
+import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.Team1Deathmatch;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 /**
@@ -28,10 +39,71 @@ import org.bukkit.event.Listener;
  * @author Donovan <dallen@dallen.xyz>
  */
 public class MapEditor implements CommandExecutor, Listener{
+    
+    private static HashMap<String, String> poiHelp = new HashMap<String, String>() {{
+        put("RedBlock", "Redstone Block location for commandblock gamemodes");
+        put("SpawnPoint", "Sets a Spawnpoint");
+    }};
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+    public boolean onCommand(CommandSender cs, Command cmnd, String label, String[] args) {
+        if(cs instanceof Player){
+            Player p = (Player) cs;
+            if(args[0].equalsIgnoreCase("pvp") && args.length > 1){
+                if(args[1].equalsIgnoreCase("lobby")){
+                    p.sendMessage("Sending Signs");
+                    //give signs
+                }else if(args[1].equalsIgnoreCase("map") && args.length > 3){
+                    if(Map.maps.containsKey(args[2])){
+                        Map m = Map.maps.get(args[2]);
+                        if(args[3].equalsIgnoreCase("spawn")){
+                            m.setSpawn(new EventLocation(p.getLocation()));
+                            p.sendMessage("Map spawn set");
+                        }else if(args[3].equalsIgnoreCase("poi") && args.length > 4){
+                            if(args[4].equalsIgnoreCase("help")){
+                                for(Entry<String, String> e: poiHelp.entrySet()){
+                                    p.sendMessage(e.getKey() + " - " + e.getValue());
+                                }
+                            }else if(args[4].equalsIgnoreCase("SpawnPoint")){
+                                m.getSpawnPoints().add(new EventLocation(p.getLocation()));
+                            }else{
+                                m.getImportantPoints().put(args[4], new EventLocation(p.getLocation()));
+                            }
+                        }else if(args[3].equalsIgnoreCase("setMax") && args.length > 4){
+                            m.setMax(Integer.parseInt(args[4]));
+                        }else if(args[3].equalsIgnoreCase("setName") && args.length > 4){
+                            m.setName(args[4]);
+                        }else if(args[3].equalsIgnoreCase("setGamemode") && args.length > 4){
+                            if(args[4].equalsIgnoreCase("Freeforall")){
+                                m.setGm(new Free1For1All());
+                                if(!m.getImportantPoints().containsKey("RedBlock")){
+                                    p.sendMessage("WARNING: there is not yet a redblock location for this map!");
+                                }
+                            }else if(args[4].equalsIgnoreCase("Infected")){
+                                m.setGm(new Infected());
+                                if(!m.getImportantPoints().containsKey("RedBlock")){
+                                    p.sendMessage("WARNING: there is not yet a redblock location for this map!");
+                                }
+                            }else if(args[4].equalsIgnoreCase("Ringbearer")){
+                                m.setGm(new RingBearer());
+                            }else if(args[4].equalsIgnoreCase("Teamconquest")){
+                                m.setGm(new Team1Conquest());
+                            }else if(args[4].equalsIgnoreCase("Team1Deathmatch")){
+                                m.setGm(new Team1Deathmatch());
+                                if(!m.getImportantPoints().containsKey("RedBlock")){
+                                    p.sendMessage("WARNING: there is not yet a redblock location for this map!");
+                                }
+                            }else if(args[4].equalsIgnoreCase("Siege")){
+                                m.setGm(new Siege());
+                            }
+                        }
+                    }else{
+                        p.sendMessage("No such map!");
+                    }
+                }
+            }
+        }
+        return true;
     }
     
 }

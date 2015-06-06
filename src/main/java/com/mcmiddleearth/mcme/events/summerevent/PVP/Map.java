@@ -20,6 +20,7 @@ package com.mcmiddleearth.mcme.events.summerevent.PVP;
 
 import com.mcmiddleearth.mcme.events.Util.EventLocation;
 import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.Gamemode;
+import java.util.ArrayList;
 import java.util.HashMap;
 import lombok.Getter;
 import lombok.Setter;
@@ -54,6 +55,11 @@ public class Map {
     @Getter @Setter
     private HashMap<String, EventLocation> ImportantPoints = new HashMap<>();
     
+    @Getter @Setter
+    private ArrayList<EventLocation> spawnPoints = new ArrayList<>();
+
+    public static HashMap<String, Map> maps = new HashMap<>();
+    
     public Map(){}
     
     public Map(Location spawn){
@@ -73,7 +79,7 @@ public class Map {
             return false;
         }
         p.teleport(Spawn.toBukkitLoc());
-        gm.getPlayers().add(p);
+        
         Curr++;
         Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
         s.setLine(2, Curr+"/"+Max);
