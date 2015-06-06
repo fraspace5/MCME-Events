@@ -50,6 +50,9 @@ public class Main extends JavaPlugin{
     private String spawnWorld;
     
     @Getter
+    private static String FileSep = System.getProperty("file.seporator");
+    
+    @Getter
     private ArrayList<String> noHunger = new ArrayList<String>();
     
     @Getter

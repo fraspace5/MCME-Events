@@ -18,7 +18,10 @@
  */
 package com.mcmiddleearth.mcme.events.summerevent.PVP;
 
+import com.mcmiddleearth.mcme.events.Main;
+import com.mcmiddleearth.mcme.events.Util.DBmanager;
 import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.Gamemode;
+import com.mcmiddleearth.mcme.events.summerevent.SummerCore;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,7 +65,8 @@ public class PlayerStat {
     }
     
     public static void loadStat(String p){
-        File save;//load stats
+        File loc = new File(SummerCore.getSaveLoc() + Main.getFileSep() + p);
+        playerStats.put(p, (PlayerStat) DBmanager.loadObj(PlayerStat.class, loc));
     }
     
     public static class Achivement{

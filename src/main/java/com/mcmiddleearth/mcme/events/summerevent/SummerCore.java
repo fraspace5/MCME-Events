@@ -18,9 +18,12 @@
  */
 package com.mcmiddleearth.mcme.events.summerevent;
 
+import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.summerevent.PVP.Servlet.PVPServer;
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lombok.Getter;
 
 /**
  *
@@ -28,6 +31,10 @@ import java.util.logging.Logger;
  */
 public class SummerCore {
     PVPServer server;
+    
+    @Getter
+    private static File saveLoc = new File(Main.getPluginDirectory() + Main.getFileSep() + "Summer");
+    
     public void onEnable(){
         try {
             server = new PVPServer(8080);
