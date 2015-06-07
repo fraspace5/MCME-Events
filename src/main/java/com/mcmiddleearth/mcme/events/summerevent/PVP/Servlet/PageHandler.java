@@ -18,6 +18,8 @@
  */
 package com.mcmiddleearth.mcme.events.summerevent.PVP.Servlet;
 
+import com.mcmiddleearth.mcme.events.Util.DBmanager;
+import com.mcmiddleearth.mcme.events.summerevent.PVP.PlayerStat;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -33,9 +35,21 @@ public class PageHandler extends AbstractHandler{
 
     @Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        response.setStatus(HttpServletResponse.SC_OK);
-        baseRequest.setHandled(true);
-        response.getWriter().println("SummerEvent Servlet enabled and running!");
+        
+        String[] targets = target.split("/");
+        if(targets.length == 0){
+            response.setStatus(HttpServletResponse.SC_OK);
+            baseRequest.setHandled(true);
+            response.getWriter().println("SummerEvent Servlet enabled and running!");
+        }else{
+           if(PlayerStat.getPlayerStats().containsKey(targets[0])){
+               response.getWriter().println(DBmanager.getJSonParser().writeValueAsString(PlayerStat.getPlayerStats().get(targets[0])));
+           }else{
+               response.getWriter().println("Player " + targets[0] + " not found");
+           }
+           response.setStatus(HttpServletResponse.SC_OK);
+           baseRequest.setHandled(true);
+        }
     }
     
 }

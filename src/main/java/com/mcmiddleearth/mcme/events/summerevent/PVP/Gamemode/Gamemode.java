@@ -19,9 +19,6 @@
 package com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode;
 
 import com.mcmiddleearth.mcme.events.summerevent.PVP.Map;
-import java.util.ArrayList;
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.entity.Player;
 
 /**

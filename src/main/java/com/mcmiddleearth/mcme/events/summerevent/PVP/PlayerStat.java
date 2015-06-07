@@ -27,12 +27,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
  * @author Donovan <dallen@dallen.xyz>
  */
 public class PlayerStat {
+    
     @Getter @Setter
     private ArrayList<String> Kills = new ArrayList<String>();
     
@@ -60,13 +65,21 @@ public class PlayerStat {
     @Getter @Setter
     private static HashMap<String, PlayerStat> playerStats = new HashMap<>();
     
+    @Getter @Setter @JsonIgnore
+    private String name;
+    
     public PlayerStat(){
         
     }
     
     public static void loadStat(String p){
-        File loc = new File(SummerCore.getSaveLoc() + Main.getFileSep() + p);
+        File loc = new File(SummerCore.getSaveLoc() + Main.getFileSep() + "stats" + Main.getFileSep() + p);
         playerStats.put(p, (PlayerStat) DBmanager.loadObj(PlayerStat.class, loc));
+    }
+    
+    public void saveStat(){
+        File loc = new File(SummerCore.getSaveLoc() + Main.getFileSep() + "stats" + Main.getFileSep() + name);
+        DBmanager.saveObj(PlayerStat.class, loc);
     }
     
     public static class Achivement{
@@ -75,5 +88,16 @@ public class PlayerStat {
         
         @Getter @Setter
         private int Points;
+    }
+    
+    public static class StatLitener implements Listener{
+        
+        @EventHandler
+        public void onPlayerDeath(PlayerDeathEvent e){
+            if(PVPCore.getPlaying().contains(e.getEntity().getName())){
+                PlayerStat ps = PlayerStat.getPlayerStats().get(e.getEntity().getName());
+                ps.setDeaths(ps.getDeaths());
+            }
+        }
     }
 }

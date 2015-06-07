@@ -26,13 +26,17 @@ import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.RingBearer;
 import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.Siege;
 import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.Team1Conquest;
 import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.Team1Deathmatch;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  *
@@ -52,7 +56,16 @@ public class MapEditor implements CommandExecutor, Listener{
             if(args[0].equalsIgnoreCase("pvp") && args.length > 1){
                 if(args[1].equalsIgnoreCase("lobby")){
                     p.sendMessage("Sending Signs");
-                    //give signs
+                    for(Map m : Map.maps.values()){
+                        ItemStack sign = new ItemStack(Material.SIGN);
+                        ItemMeta im = sign.getItemMeta();
+                        im.setDisplayName(m.getName());
+                        im.setLore(Arrays.asList(new String[] {m.getName(), 
+                            m.getGm().getClass().getName().replace("1", " "),
+                            String.valueOf(m.getMax())}));
+                        sign.setItemMeta(im);
+                        p.getInventory().addItem(sign);
+                    }
                 }else if(args[1].equalsIgnoreCase("map") && args.length > 3){
                     if(Map.maps.containsKey(args[2])){
                         Map m = Map.maps.get(args[2]);

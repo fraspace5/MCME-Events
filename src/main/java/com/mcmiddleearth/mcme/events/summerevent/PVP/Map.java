@@ -18,6 +18,7 @@
  */
 package com.mcmiddleearth.mcme.events.summerevent.PVP;
 
+import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.Util.EventLocation;
 import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.Gamemode;
 import java.util.ArrayList;
@@ -79,10 +80,12 @@ public class Map {
             return false;
         }
         p.teleport(Spawn.toBukkitLoc());
-        
+        gm.addPlayer(p);
         Curr++;
+        PVPCore.getPlaying().add(p.getName());
         Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
         s.setLine(2, Curr+"/"+Max);
+        LobbySign.toBukkitLoc().getBlock().getState().update();
         if(Max == Curr){
             gm.Start(this);
         }

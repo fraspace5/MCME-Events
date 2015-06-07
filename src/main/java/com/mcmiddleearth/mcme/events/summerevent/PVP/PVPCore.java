@@ -22,13 +22,19 @@ import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.Util.DBmanager;
 import com.mcmiddleearth.mcme.events.summerevent.SummerCore;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import lombok.Getter;
+import org.bukkit.plugin.PluginManager;
 
 /**
  *
  * @author Donovan <dallen@dallen.xyz>
  */
 public class PVPCore {
+    
+    @Getter
+    private static ArrayList<String> Playing = new ArrayList<>();
     
     public void onEnable(){
         File loc = new File(SummerCore.getSaveLoc() + Main.getFileSep() + "Maps");
@@ -37,6 +43,11 @@ public class PVPCore {
         for(String k : maps.keySet()){
             Map.maps.put(k, (Map) maps.get(k));
         }
+        PluginManager pm = Main.getServerInstance().getPluginManager();
+        pm.registerEvents(new MapEditor(), Main.getPlugin());
+        pm.registerEvents(new PlayerStat.StatLitener(), Main.getPlugin());
+        pm.registerEvents(new Lobby.SignClickListener(), Main.getPlugin());
+        
     }
     
     public void onDisable(){
