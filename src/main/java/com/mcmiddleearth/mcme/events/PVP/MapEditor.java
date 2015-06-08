@@ -16,16 +16,16 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.summerevent.PVP;
+package com.mcmiddleearth.mcme.events.PVP;
 
 import com.mcmiddleearth.mcme.events.Util.EventLocation;
-import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.Free1For1All;
-import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.Infected;
-import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.King1of1the1Hill;
-import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.RingBearer;
-import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.Siege;
-import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.Team1Conquest;
-import com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode.Team1Deathmatch;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.Free1For1All;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.Infected;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.King1of1the1Hill;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.RingBearer;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.Siege;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.Team1Conquest;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.Team1Deathmatch;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;

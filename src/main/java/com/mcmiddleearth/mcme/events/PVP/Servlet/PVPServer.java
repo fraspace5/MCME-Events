@@ -16,18 +16,26 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode;
+package com.mcmiddleearth.mcme.events.PVP.Servlet;
 
-import com.mcmiddleearth.mcme.events.summerevent.PVP.Map;
-import org.bukkit.entity.Player;
+import lombok.Getter;
 
 /**
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public interface Gamemode {
+public class PVPServer{
     
-    void Start(Map m);
+    @Getter
+    private org.eclipse.jetty.server.Server serv;
     
-    void addPlayer(Player p);
+    @Getter
+    private int port;
+    
+    public PVPServer(int port){
+        this.port = port;
+        serv = new org.eclipse.jetty.server.Server(port);
+        serv.setHandler(new PageHandler());
+    }
+    
 }

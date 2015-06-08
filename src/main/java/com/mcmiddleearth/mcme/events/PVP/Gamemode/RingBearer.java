@@ -16,9 +16,9 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode;
+package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
-import com.mcmiddleearth.mcme.events.summerevent.PVP.Map;
+import com.mcmiddleearth.mcme.events.PVP.Map;
 import java.util.ArrayList;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -27,16 +27,16 @@ import org.bukkit.entity.Player;
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public class King1of1the1Hill implements Gamemode{
+public class RingBearer implements Gamemode{
     
     @Getter
     ArrayList<Player> players = new ArrayList<>();
-    
+
     @Override
     public void Start(Map m) {
         throw new UnsupportedOperationException("TODO: ADD STUFF");
     }
-
+    
     @Override
     public void addPlayer(Player p) {
         players.add(p);

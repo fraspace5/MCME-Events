@@ -16,30 +16,30 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode;
+package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
-import com.mcmiddleearth.mcme.events.summerevent.PVP.Map;
+import com.mcmiddleearth.mcme.events.PVP.Map;
 import java.util.ArrayList;
 import lombok.Getter;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 /**
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public class Free1For1All implements Gamemode{
+public class Siege implements Gamemode{
     
     @Getter
     ArrayList<Player> players = new ArrayList<>();
-    
+
     @Override
-    public void Start(Map m){
-        m.getImportantPoints().get("RedBlock").toBukkitLoc().getBlock().setType(Material.REDSTONE_BLOCK);
+    public void Start(Map m) {
+        throw new UnsupportedOperationException("TODO: ADD STUFF");
     }
     
     @Override
     public void addPlayer(Player p) {
         players.add(p);
     }
+    
 }

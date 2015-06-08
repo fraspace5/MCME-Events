@@ -16,7 +16,7 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.summerevent.PVP;
+package com.mcmiddleearth.mcme.events.PVP;
 
 import java.util.ArrayList;
 import java.util.HashMap;

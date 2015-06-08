@@ -18,6 +18,7 @@
  */
 package com.mcmiddleearth.mcme.events;
 
+import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.summerevent.SummerCommands;
 import com.mcmiddleearth.mcme.events.summerevent.SummerCore;
 import com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion.EventHandles.SignListener;
@@ -42,6 +43,9 @@ public class Main extends JavaPlugin{
     
     @Getter
     private static SummerCore summerCore = new SummerCore();
+    
+    @Getter
+    private static PVPCore PVPCore = new PVPCore();
     
     @Getter
     private static Main plugin;
@@ -93,7 +97,7 @@ public class Main extends JavaPlugin{
         this.getCommand("World").setExecutor(new CommandCore());
         this.getCommand("PlugUp").setExecutor(new CommandCore());
         PluginManager pm = this.getServer().getPluginManager();
-        
+        PVPCore.onEnable();
         boolean Winter = this.getConfig().getBoolean("WinterEvent.Enabled");
         boolean Summer = this.getConfig().getBoolean("SummerEvent.Enabled");
         if(Summer){

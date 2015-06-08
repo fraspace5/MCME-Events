@@ -16,10 +16,10 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.summerevent.PVP.Servlet;
+package com.mcmiddleearth.mcme.events.PVP.Servlet;
 
 import com.mcmiddleearth.mcme.events.Util.DBmanager;
-import com.mcmiddleearth.mcme.events.summerevent.PVP.PlayerStat;
+import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

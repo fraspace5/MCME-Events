@@ -16,30 +16,18 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode;
+package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
-import com.mcmiddleearth.mcme.events.summerevent.PVP.Map;
-import java.util.ArrayList;
-import lombok.Getter;
+import com.mcmiddleearth.mcme.events.PVP.Map;
 import org.bukkit.entity.Player;
 
 /**
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public class Siege implements Gamemode{
+public interface Gamemode {
     
-    @Getter
-    ArrayList<Player> players = new ArrayList<>();
-
-    @Override
-    public void Start(Map m) {
-        throw new UnsupportedOperationException("TODO: ADD STUFF");
-    }
+    void Start(Map m);
     
-    @Override
-    public void addPlayer(Player p) {
-        players.add(p);
-    }
-    
+    void addPlayer(Player p);
 }

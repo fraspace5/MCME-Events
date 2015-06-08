@@ -16,7 +16,7 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.summerevent.PVP;
+package com.mcmiddleearth.mcme.events.PVP;
 
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.Util.DBmanager;

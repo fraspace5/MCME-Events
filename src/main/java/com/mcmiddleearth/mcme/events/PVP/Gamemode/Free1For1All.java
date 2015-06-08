@@ -16,26 +16,30 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.summerevent.PVP.Servlet;
+package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
+import com.mcmiddleearth.mcme.events.PVP.Map;
+import java.util.ArrayList;
 import lombok.Getter;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
 /**
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public class PVPServer{
+public class Free1For1All implements Gamemode{
     
     @Getter
-    private org.eclipse.jetty.server.Server serv;
+    ArrayList<Player> players = new ArrayList<>();
     
-    @Getter
-    private int port;
-    
-    public PVPServer(int port){
-        this.port = port;
-        serv = new org.eclipse.jetty.server.Server(port);
-        serv.setHandler(new PageHandler());
+    @Override
+    public void Start(Map m){
+        m.getImportantPoints().get("RedBlock").toBukkitLoc().getBlock().setType(Material.REDSTONE_BLOCK);
     }
     
+    @Override
+    public void addPlayer(Player p) {
+        players.add(p);
+    }
 }

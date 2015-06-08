@@ -16,9 +16,9 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.summerevent.PVP.Gamemode;
+package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
-import com.mcmiddleearth.mcme.events.summerevent.PVP.Map;
+import com.mcmiddleearth.mcme.events.PVP.Map;
 import java.util.ArrayList;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -27,7 +27,7 @@ import org.bukkit.entity.Player;
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public class RingBearer implements Gamemode{
+public class Infected implements Gamemode{
     
     @Getter
     ArrayList<Player> players = new ArrayList<>();
