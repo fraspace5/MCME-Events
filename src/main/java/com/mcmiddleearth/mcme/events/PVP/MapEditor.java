@@ -66,52 +66,57 @@ public class MapEditor implements CommandExecutor, Listener{
                         sign.setItemMeta(im);
                         p.getInventory().addItem(sign);
                     }
-                }else if(args[1].equalsIgnoreCase("map") && args.length > 3){
-                    if(Map.maps.containsKey(args[2])){
-                        Map m = Map.maps.get(args[2]);
-                        if(args[3].equalsIgnoreCase("spawn")){
-                            m.setSpawn(new EventLocation(p.getLocation()));
-                            p.sendMessage("Map spawn set");
-                        }else if(args[3].equalsIgnoreCase("poi") && args.length > 4){
-                            if(args[4].equalsIgnoreCase("help")){
-                                for(Entry<String, String> e: poiHelp.entrySet()){
-                                    p.sendMessage(e.getKey() + " - " + e.getValue());
+                }else if(args[1].equalsIgnoreCase("map")){
+                    if(args.length > 3){
+                        if(Map.maps.containsKey(args[2])){
+                            Map m = Map.maps.get(args[2]);
+                            if(args[3].equalsIgnoreCase("spawn")){
+                                m.setSpawn(new EventLocation(p.getLocation()));
+                                p.sendMessage("Map spawn set");
+                            }else if(args[3].equalsIgnoreCase("poi") && args.length > 4){
+                                if(args[4].equalsIgnoreCase("help")){
+                                    for(Entry<String, String> e: poiHelp.entrySet()){
+                                        p.sendMessage(e.getKey() + " - " + e.getValue());
+                                    }
+                                }else if(args[4].equalsIgnoreCase("SpawnPoint")){
+                                    m.getSpawnPoints().add(new EventLocation(p.getLocation()));
+                                }else{
+                                    m.getImportantPoints().put(args[4], new EventLocation(p.getLocation()));
                                 }
-                            }else if(args[4].equalsIgnoreCase("SpawnPoint")){
-                                m.getSpawnPoints().add(new EventLocation(p.getLocation()));
-                            }else{
-                                m.getImportantPoints().put(args[4], new EventLocation(p.getLocation()));
+                            }else if(args[3].equalsIgnoreCase("setMax") && args.length > 4){
+                                m.setMax(Integer.parseInt(args[4]));
+                            }else if(args[3].equalsIgnoreCase("setName") && args.length > 4){
+                                m.setName(args[4]);
+                            }else if(args[3].equalsIgnoreCase("setGamemode") && args.length > 4){
+                                if(args[4].equalsIgnoreCase("Freeforall")){
+                                    m.setGm(new Free1For1All());
+                                    if(!m.getImportantPoints().containsKey("RedBlock")){
+                                        p.sendMessage("WARNING: there is not yet a redblock location for this map!");
+                                    }
+                                }else if(args[4].equalsIgnoreCase("Infected")){
+                                    m.setGm(new Infected());
+                                    if(!m.getImportantPoints().containsKey("RedBlock")){
+                                        p.sendMessage("WARNING: there is not yet a redblock location for this map!");
+                                    }
+                                }else if(args[4].equalsIgnoreCase("Ringbearer")){
+                                    m.setGm(new RingBearer());
+                                }else if(args[4].equalsIgnoreCase("Team1Deathmatch")){
+                                    m.setGm(new Team1Deathmatch());
+                                    if(!m.getImportantPoints().containsKey("RedBlock")){
+                                        p.sendMessage("WARNING: there is not yet a redblock location for this map!");
+                                    }
+                                }else if(args[4].equalsIgnoreCase("Siege")){
+                                    m.setGm(new Siege());
+                                }
                             }
-                        }else if(args[3].equalsIgnoreCase("setMax") && args.length > 4){
-                            m.setMax(Integer.parseInt(args[4]));
-                        }else if(args[3].equalsIgnoreCase("setName") && args.length > 4){
-                            m.setName(args[4]);
-                        }else if(args[3].equalsIgnoreCase("setGamemode") && args.length > 4){
-                            if(args[4].equalsIgnoreCase("Freeforall")){
-                                m.setGm(new Free1For1All());
-                                if(!m.getImportantPoints().containsKey("RedBlock")){
-                                    p.sendMessage("WARNING: there is not yet a redblock location for this map!");
-                                }
-                            }else if(args[4].equalsIgnoreCase("Infected")){
-                                m.setGm(new Infected());
-                                if(!m.getImportantPoints().containsKey("RedBlock")){
-                                    p.sendMessage("WARNING: there is not yet a redblock location for this map!");
-                                }
-                            }else if(args[4].equalsIgnoreCase("Ringbearer")){
-                                m.setGm(new RingBearer());
-                            }else if(args[4].equalsIgnoreCase("Teamconquest")){
-                                m.setGm(new Team1Conquest());
-                            }else if(args[4].equalsIgnoreCase("Team1Deathmatch")){
-                                m.setGm(new Team1Deathmatch());
-                                if(!m.getImportantPoints().containsKey("RedBlock")){
-                                    p.sendMessage("WARNING: there is not yet a redblock location for this map!");
-                                }
-                            }else if(args[4].equalsIgnoreCase("Siege")){
-                                m.setGm(new Siege());
+                        }else{
+                            if(args[3].equalsIgnoreCase("spawn")){
+                                p.sendMessage("Creating new map");
+                                Map.maps.put(args[2], new Map(p.getLocation()));
+                            }else{
+                                p.sendMessage("No such map!");
                             }
                         }
-                    }else{
-                        p.sendMessage("No such map!");
                     }
                 }
             }

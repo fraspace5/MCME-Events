@@ -18,6 +18,7 @@
  */
 package com.mcmiddleearth.mcme.events.PVP;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.Util.EventLocation;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Gamemode;
@@ -28,7 +29,6 @@ import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *

@@ -18,6 +18,7 @@
  */
 package com.mcmiddleearth.mcme.events.PVP;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.Util.DBmanager;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Gamemode;
@@ -30,7 +31,6 @@ import lombok.Setter;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -65,7 +65,7 @@ public class PlayerStat {
     @Getter @Setter
     private static HashMap<String, PlayerStat> playerStats = new HashMap<>();
     
-    @Getter @Setter @JsonIgnore
+    @Getter @Setter @JsonIgnore    
     private String name;
     
     public PlayerStat(){

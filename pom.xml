@@ -43,7 +43,7 @@
                             <minimizeJar>true</minimizeJar>
                             <relocations>
                                 <relocation>
-                                    <pattern>org.codehaus</pattern>
+                                    <pattern>com.fasterxml</pattern>
                                     <shadedPattern>com.mcmiddleearth.mcme.events.libs.org.codehaus</shadedPattern>
                                 </relocation>
                                 <relocation>
@@ -65,17 +65,23 @@
     </build>
     <repositories>
        <repository>
-           <id>bukkit-repo</id>
-           <url>http://repo.bukkit.org/content/groups/public/</url>
-       </repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+        </repository>
    </repositories>
    <dependencies>
+    <!--Spigot-API-->
     <dependency>
-         <groupId>org.bukkit</groupId>
-         <artifactId>bukkit</artifactId>
-         <version>1.7.9-R0.2</version>
-         <scope>compile</scope>
-     </dependency>
+              <groupId>org.spigotmc</groupId>
+              <artifactId>spigot-api</artifactId>
+              <version>1.8.3-R0.1-SNAPSHOT</version>
+    </dependency>
+    <!--Bukkit API-->
+    <dependency>
+                <groupId>org.bukkit</groupId>
+                <artifactId>bukkit</artifactId>
+                <version>1.8.3-R0.1-SNAPSHOT</version>
+    </dependency>
       <dependency>
          <groupId>org.projectlombok</groupId>
          <artifactId>lombok</artifactId>
@@ -83,9 +89,9 @@
          <type>jar</type>
       </dependency>
       <dependency>
-         <groupId>org.codehaus.jackson</groupId>
-         <artifactId>jackson-mapper-asl</artifactId>
-         <version>1.9.13</version>
+         <groupId>com.fasterxml.jackson.core</groupId>
+         <artifactId>jackson-databind</artifactId>
+         <version>2.6.0-rc1</version>
          <type>jar</type>
       </dependency>
       <dependency>

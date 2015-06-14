@@ -18,6 +18,7 @@
  */
 package com.mcmiddleearth.mcme.events;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.summerevent.SummerCommands;
 import com.mcmiddleearth.mcme.events.summerevent.SummerCore;
@@ -33,7 +34,6 @@ import org.bukkit.Server;
 import org.bukkit.WorldCreator;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  *

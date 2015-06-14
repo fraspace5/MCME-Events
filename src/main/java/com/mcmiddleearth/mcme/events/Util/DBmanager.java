@@ -18,11 +18,11 @@
  */
 package com.mcmiddleearth.mcme.events.Util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import lombok.Getter;
-import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  *
@@ -34,6 +34,9 @@ public class DBmanager {
     private static ObjectMapper JSonParser;
     
     public static boolean saveObj(Object obj, File loc){
+        if(!loc.exists()){
+            loc.mkdirs();
+        }
         boolean success = true;
         File locStart = new File(loc+".new");
         try {
@@ -52,6 +55,10 @@ public class DBmanager {
     }
     
     public static Object loadObj(Class type, File loc){
+        if(!loc.exists()){
+            loc.mkdirs();
+            return new Object();
+        }
         Object obj;
         try {
             obj = JSonParser.readValue(loc, type);
@@ -62,6 +69,10 @@ public class DBmanager {
     }
     
     public static HashMap<String, Object> loadAllObj(Class Type, File loc){
+        if(!loc.exists()){
+            loc.mkdirs();
+            return new HashMap<String, Object>();
+        }
         HashMap<String, Object> rtn = new HashMap<String, Object>();
         for(File f : loc.listFiles()){
             rtn.put(f.getName(), loadObj(Type, f));

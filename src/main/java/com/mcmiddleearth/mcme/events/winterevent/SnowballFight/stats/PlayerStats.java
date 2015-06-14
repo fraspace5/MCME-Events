@@ -23,11 +23,11 @@
  */
 package com.mcmiddleearth.mcme.events.winterevent.SnowballFight.stats;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcmiddleearth.mcme.events.Main;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 import java.io.File;
 import java.io.IOException;
