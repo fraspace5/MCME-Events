@@ -16,30 +16,28 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.PVP.Gamemode;
+package com.mcmiddleearth.mcme.events.PVP.Handlers;
 
-import com.mcmiddleearth.mcme.events.PVP.Map;
-import java.util.ArrayList;
+import java.util.HashMap;
 import lombok.Getter;
-import org.bukkit.entity.Player;
+import org.bukkit.ChatColor;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 /**
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public class King1of1the1Hill implements Gamemode{
+public class ChatHandler implements Listener{
     
     @Getter
-    ArrayList<Player> players = new ArrayList<>();
+    private static HashMap<String, String> playerPrefixes = new HashMap<String, String>();
     
-    @Override
-    public void Start(Map m) {
-        throw new UnsupportedOperationException("TODO: ADD STUFF");
+    @EventHandler
+    public void onChat(AsyncPlayerChatEvent e){
+        if(playerPrefixes.containsKey(e.getPlayer().getName())){
+            e.setMessage(playerPrefixes.get(e.getPlayer().getName()) + e.getPlayer().getName() + ": " + ChatColor.RESET + e.getMessage());
+        }
     }
-
-    @Override
-    public void addPlayer(Player p) {
-        players.add(p);
-    }
-    
 }

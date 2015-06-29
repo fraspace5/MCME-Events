@@ -20,6 +20,7 @@ package com.mcmiddleearth.mcme.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
+import com.mcmiddleearth.mcme.events.Util.CLog;
 import com.mcmiddleearth.mcme.events.summerevent.SummerCommands;
 import com.mcmiddleearth.mcme.events.summerevent.SummerCore;
 import com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion.EventHandles.SignListener;
@@ -42,10 +43,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Main extends JavaPlugin{
     
     @Getter
+    private static boolean debug = true;
+    
+    @Getter
     private static SummerCore summerCore = new SummerCore();
     
     @Getter
-    private static PVPCore PVPCore = new PVPCore();
+    private static PVPCore PVPCore;
     
     @Getter
     private static Main plugin;
@@ -54,7 +58,7 @@ public class Main extends JavaPlugin{
     private String spawnWorld;
     
     @Getter
-    private static String FileSep = System.getProperty("file.seporator");
+    private static String FileSep = System.getProperty("file.separator");
     
     @Getter
     private ArrayList<String> noHunger = new ArrayList<String>();
@@ -86,18 +90,23 @@ public class Main extends JavaPlugin{
         }
         this.serverInstance = getServer();
         this.pluginDirectory = getDataFolder();
-        if (!pluginDirectory.exists()) {
+        CLog.println(pluginDirectory.getPath());
+        if (!pluginDirectory.exists()){
             pluginDirectory.mkdir();
         }
         this.playerDirectory = new File(pluginDirectory + System.getProperty("file.separator") + "players");
-        if (!playerDirectory.exists()) {
+        if (!playerDirectory.exists()){
             playerDirectory.mkdir();
         }
         this.getCommand("WorldJump").setExecutor(new CommandCore());
         this.getCommand("World").setExecutor(new CommandCore());
         this.getCommand("PlugUp").setExecutor(new CommandCore());
         PluginManager pm = this.getServer().getPluginManager();
-        PVPCore.onEnable();
+        boolean PVP = this.getConfig().getBoolean("PVP.Enabled");
+        if(PVP){
+            PVPCore = new PVPCore();
+            PVPCore.onEnable();
+        }
         boolean Winter = this.getConfig().getBoolean("WinterEvent.Enabled");
         boolean Summer = this.getConfig().getBoolean("SummerEvent.Enabled");
         if(Summer){
@@ -127,6 +136,7 @@ public class Main extends JavaPlugin{
         if(Summer){
             summerCore.onDisable();
         }
+        PVPCore.onDisable();
     }
     
     private void registerHandles(boolean summer, PluginManager pm){

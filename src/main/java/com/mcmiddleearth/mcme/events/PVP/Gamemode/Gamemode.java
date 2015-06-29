@@ -19,6 +19,7 @@
 package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
 import com.mcmiddleearth.mcme.events.PVP.Map;
+import java.util.ArrayList;
 import org.bukkit.entity.Player;
 
 /**
@@ -29,5 +30,8 @@ public interface Gamemode {
     
     void Start(Map m);
     
-    void addPlayer(Player p);
+    ArrayList<Player> getPlayers();
+    
+    void End(Map m);
+    
 }

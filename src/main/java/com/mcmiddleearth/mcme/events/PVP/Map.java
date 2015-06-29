@@ -22,13 +22,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.Util.EventLocation;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Gamemode;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.SignChangeEvent;
 
 /**
  *
@@ -44,8 +49,11 @@ public class Map {
     @Getter @Setter
     private EventLocation LobbySign;
     
-    @Getter @Setter
+    @Getter @Setter @JsonIgnore
     private Gamemode gm;
+    
+    @Getter @Setter
+    private String gmType;
     
     @Getter @Setter
     private EventLocation Spawn;
@@ -67,24 +75,29 @@ public class Map {
         this.Spawn = new EventLocation(spawn);
     }
     
-    public void bindSign(Location sign){
-        this.LobbySign = new EventLocation(sign);
-        Sign s = (Sign) sign.getBlock().getState();
-        s.setLine(0, name);
-        s.setLine(1, gm.getClass().getName().replace("1", " "));
-        s.setLine(2, Curr+"/"+Max);
+    public Map(Location spawn, String name){
+        this.Spawn = new EventLocation(spawn);
+        this.name = name;
+    }
+    
+    public void bindSign(SignChangeEvent sign){
+        this.LobbySign = new EventLocation(sign.getBlock().getLocation());
+        sign.setLine(0, name);
+        sign.setLine(1, gmType);
+        sign.setLine(2, Curr+"/"+Max);
     }
     
     public boolean playerJoin(Player p){
-        if(Max >= Curr){
+        if(Max <= Curr){
             return false;
         }
         p.teleport(Spawn.toBukkitLoc());
-        gm.addPlayer(p);
+        gm.getPlayers().add(p);
         Curr++;
-        PVPCore.getPlaying().add(p.getName());
+        PVPCore.getPlaying().put(p.getName(), name);
         Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
         s.setLine(2, Curr+"/"+Max);
+        s.update(true, true);
         LobbySign.toBukkitLoc().getBlock().getState().update();
         if(Max == Curr){
             gm.Start(this);
@@ -92,4 +105,30 @@ public class Map {
         return true;
     }
     
+    public void playerLeave(Player p){
+        for(Player pl : gm.getPlayers()){
+            pl.sendMessage(p.getName() + " left");
+        }
+        gm.getPlayers().remove(p);
+        Curr--;
+        PVPCore.getPlaying().remove(p.getName());
+        Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
+        s.setLine(2, Curr+"/"+Max);
+        s.update(true, true);
+        LobbySign.toBukkitLoc().getBlock().getState().update();
+    }
+    
+    public void bindGamemode(){
+        try {
+            Class<?> clazz = Class.forName("com.mcmiddleearth.mcme.events.PVP.Gamemode." + gmType.replace(" ", ""));
+            Constructor<?> ctor = clazz.getConstructor();
+            gm = (Gamemode) ctor.newInstance();
+        } catch (ClassNotFoundException | NoSuchMethodException | 
+                SecurityException | InstantiationException | 
+                IllegalAccessException | IllegalArgumentException | 
+                InvocationTargetException ex) {
+            Logger.getLogger(Map.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
 }

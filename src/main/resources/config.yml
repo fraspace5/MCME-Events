@@ -3,7 +3,9 @@ worlds:
 noHunger:
 - world
 WinterEvent:
-    Enabled: true
+    Enabled: false
 SummerEvent:
+    Enabled: false
+PVP:
     Enabled: true
 

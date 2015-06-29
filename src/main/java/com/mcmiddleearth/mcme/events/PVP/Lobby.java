@@ -18,24 +18,27 @@
  */
 package com.mcmiddleearth.mcme.events.PVP;
 
-import java.util.ArrayList;
+import com.mcmiddleearth.mcme.events.Main;
+import com.mcmiddleearth.mcme.events.Util.CLog;
 import java.util.HashMap;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Material;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  *
  * @author Donovan <dallen@dallen.xyz>
  */
 public class Lobby {
-    @Getter @Setter
-    private static HashMap<String, Map> Maps = new HashMap<String, Map>();
-    
     @Getter @Setter
     private static String world;
     
@@ -48,11 +51,13 @@ public class Lobby {
     public static class SignClickListener implements Listener{
         @EventHandler
         public void onPlayerInteract(PlayerInteractEvent e){
-            if(e.getPlayer().getLocation().getWorld().getName().equalsIgnoreCase(world)){
+            if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
+                CLog.println("Enter1");
                 if(e.getClickedBlock().getState() instanceof Sign){
                     Sign s = (Sign) e.getClickedBlock().getState();
-                    if(Maps.containsKey(s.getLine(0))){
-                        if(Maps.get(s.getLine(0)).playerJoin(e.getPlayer())){
+                    if(Map.maps.containsKey(s.getLine(0))){
+                        CLog.println("Enter2");
+                        if(Map.maps.get(s.getLine(0)).playerJoin(e.getPlayer())){
                             e.getPlayer().sendMessage("Joining Map...");
                         }else{
                             e.getPlayer().sendMessage("Failed to Join Map");
@@ -61,5 +66,20 @@ public class Lobby {
                 }
             }
         }
+        
+        @EventHandler
+        public void onSignChange(SignChangeEvent e){
+            if(e.getPlayer().getItemInHand().hasItemMeta()){
+                ItemMeta im = e.getPlayer().getItemInHand().getItemMeta();
+                if(im.hasLore()){
+                    if(Map.maps.containsKey(im.getLore().get(0))){
+                        final Map m = Map.maps.get(im.getLore().get(0));
+                        m.bindSign(e);
+                        world = e.getBlock().getLocation().getWorld().getName();
+                    }
+                }
+            }
+        }
     }
+    
 }

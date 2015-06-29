@@ -16,30 +16,29 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.PVP.Gamemode;
+package com.mcmiddleearth.mcme.events.Util;
 
-import com.mcmiddleearth.mcme.events.PVP.Map;
-import java.util.ArrayList;
-import lombok.Getter;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mcmiddleearth.mcme.events.Main;
+import com.mcmiddleearth.mcme.events.PVP.MapEditor;
+import java.util.logging.Level;
 
 /**
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public class Free1For1All implements Gamemode{
-    
-    @Getter
-    ArrayList<Player> players = new ArrayList<>();
-    
-    @Override
-    public void Start(Map m){
-        m.getImportantPoints().get("RedBlock").toBukkitLoc().getBlock().setType(Material.REDSTONE_BLOCK);
-    }
-    
-    @Override
-    public void addPlayer(Player p) {
-        players.add(p);
+public class CLog {
+    public static void println(Object obj){
+        if(Main.isDebug()){
+            if(obj instanceof String){
+                System.out.println(obj);
+            }else{
+                try {
+                    System.out.println(DBmanager.getJSonParser().writeValueAsString(obj));
+                } catch (JsonProcessingException ex) {
+                    java.util.logging.Logger.getLogger(MapEditor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
     }
 }

@@ -16,27 +16,31 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.summerevent;
+package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
-import com.mcmiddleearth.mcme.events.Main;
-import com.mcmiddleearth.mcme.events.PVP.Servlet.PVPServer;
-import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mcmiddleearth.mcme.events.PVP.Map;
+import java.util.ArrayList;
 import lombok.Getter;
+import lombok.Setter;
+import org.bukkit.entity.Player;
 
 /**
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public class SummerCore {
+public class KingOfTheHill implements Gamemode{
     
+    @Getter @JsonIgnore
+    ArrayList<Player> players = new ArrayList<>();
     
-    public void onEnable(){
-        
+    @Override
+    public void Start(Map m) {
+        throw new UnsupportedOperationException("TODO: ADD STUFF");
     }
     
-    public void onDisable(){
+    @Override
+    public void End(Map m){
         
     }
 }

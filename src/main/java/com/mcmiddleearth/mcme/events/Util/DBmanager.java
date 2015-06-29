@@ -18,7 +18,10 @@
  */
 package com.mcmiddleearth.mcme.events.Util;
 
+import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationConfig;
+import com.mcmiddleearth.mcme.events.Main;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -31,24 +34,25 @@ import lombok.Getter;
 public class DBmanager {
     
     @Getter
-    private static ObjectMapper JSonParser;
+    private static ObjectMapper JSonParser = new ObjectMapper();
     
-    public static boolean saveObj(Object obj, File loc){
+    public static boolean saveObj(Object obj, File loc, String name){
         if(!loc.exists()){
             loc.mkdirs();
         }
         boolean success = true;
-        File locStart = new File(loc+".new");
+        File locStart = new File(loc + Main.getFileSep() + name + ".new");
+        File locEnd = new File(loc + Main.getFileSep() + name);
         try {
            JSonParser.writeValue(locStart, obj);
         } catch (IOException ex) {
             success = false;
         } finally {
             if (success) {
-                if (loc.exists()) {
-                    loc.delete();
+                if (locEnd.exists()) {
+                    locEnd.delete();
                 }
-                locStart.renameTo(loc);
+                locStart.renameTo(locEnd);
             }
         }
         return success;
@@ -63,15 +67,16 @@ public class DBmanager {
         try {
             obj = JSonParser.readValue(loc, type);
         } catch (IOException ex) {
+            ex.printStackTrace();
             return false;
         }
-        return true;
+        return obj;
     }
     
     public static HashMap<String, Object> loadAllObj(Class Type, File loc){
         if(!loc.exists()){
             loc.mkdirs();
-            return new HashMap<String, Object>();
+            return null;
         }
         HashMap<String, Object> rtn = new HashMap<String, Object>();
         for(File f : loc.listFiles()){

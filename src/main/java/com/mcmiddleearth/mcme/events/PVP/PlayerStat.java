@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.Util.DBmanager;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Gamemode;
-import com.mcmiddleearth.mcme.events.summerevent.SummerCore;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,13 +72,13 @@ public class PlayerStat {
     }
     
     public static void loadStat(String p){
-        File loc = new File(SummerCore.getSaveLoc() + Main.getFileSep() + "stats" + Main.getFileSep() + p);
+        File loc = new File(PVPCore.getSaveLoc() + Main.getFileSep() + "stats" + Main.getFileSep() + p);
         playerStats.put(p, (PlayerStat) DBmanager.loadObj(PlayerStat.class, loc));
     }
     
     public void saveStat(){
-        File loc = new File(SummerCore.getSaveLoc() + Main.getFileSep() + "stats" + Main.getFileSep() + name);
-        DBmanager.saveObj(PlayerStat.class, loc);
+        File loc = new File(PVPCore.getSaveLoc() + Main.getFileSep() + "stats");
+        DBmanager.saveObj(PlayerStat.class, loc, name);
     }
     
     public static class Achivement{
@@ -94,7 +93,7 @@ public class PlayerStat {
         
         @EventHandler
         public void onPlayerDeath(PlayerDeathEvent e){
-            if(PVPCore.getPlaying().contains(e.getEntity().getName())){
+            if(PVPCore.getPlaying().containsKey(e.getEntity().getName())){
                 PlayerStat ps = PlayerStat.getPlayerStats().get(e.getEntity().getName());
                 ps.setDeaths(ps.getDeaths());
             }

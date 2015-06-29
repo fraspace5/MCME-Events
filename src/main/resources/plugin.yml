@@ -22,3 +22,6 @@ commands:
     summer:
         description: Umbrella for all summer event commands
         usages: /summer <sub-command> [args]
+    pvp:
+        description: PVP commands
+        usage: /pvp <some shit>

@@ -18,28 +18,30 @@
  */
 package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcmiddleearth.mcme.events.PVP.Map;
 import java.util.ArrayList;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.entity.Player;
 
 /**
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public class Siege implements Gamemode{
+public class Siege implements Gamemode{//Handled by plugin
     
-    @Getter
+    @Getter @JsonIgnore
     ArrayList<Player> players = new ArrayList<>();
-
+    
     @Override
     public void Start(Map m) {
         throw new UnsupportedOperationException("TODO: ADD STUFF");
     }
-    
+
     @Override
-    public void addPlayer(Player p) {
-        players.add(p);
+    public void End(Map m){
+        
     }
     
 }
