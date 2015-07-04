@@ -4,7 +4,7 @@ MCME-Events
 Winter and Summer events for MCME
 
 TODO (in order):
- * auto updating from github (Half done)
+ * auto updating from github (done)
  * add lobby tools (done)
  * load and save maps (done)
  * track player stats (almost done)
@@ -18,3 +18,8 @@ TODO (in order):
  * team conquest (started)
  * other stuff
  * get sleep
+
+Needed commands for wrapper:
+Shell: mv plugins\update\MCME-Events-0.1.jar plugins\MCME-Events-0.1.jar
+MSDOS: MOVE /y plugins\update\MCME-Events-0.1.jar plugins\MCME-Events-0.1.jar
+
