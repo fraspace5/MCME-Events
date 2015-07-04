@@ -20,7 +20,6 @@ package com.mcmiddleearth.mcme.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
-import com.mcmiddleearth.mcme.events.Util.AutoUpdate;
 import com.mcmiddleearth.mcme.events.Util.CLog;
 import com.mcmiddleearth.mcme.events.summerevent.SummerCommands;
 import com.mcmiddleearth.mcme.events.summerevent.SummerCore;

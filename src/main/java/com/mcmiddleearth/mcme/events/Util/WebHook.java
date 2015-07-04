@@ -29,7 +29,7 @@ public class WebHook {
     
     private final AtomicBoolean lock = new AtomicBoolean(false);
     
-    private final String updateURL = "https://raw.githubusercontent.com/DonoA/MCME-Events/master/Compiled/PlaceHolder.jar";
+    private final String updateURL = "https://github.com/DonoA/MCME-Events/raw/master/Compiled/MCME-Events-0.1.jar";
     
     public void update(CommandSender sender)
     {
