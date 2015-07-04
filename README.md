@@ -19,7 +19,9 @@ TODO (in order):
  * other stuff
  * get sleep
 
-Needed commands for wrapper:
+Needed commands for wrapper: 
+
 Shell: mv plugins\update\MCME-Events-0.1.jar plugins\MCME-Events-0.1.jar
+
 MSDOS: MOVE /y plugins\update\MCME-Events-0.1.jar plugins\MCME-Events-0.1.jar
 
