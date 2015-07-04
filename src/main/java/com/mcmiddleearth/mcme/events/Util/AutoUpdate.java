@@ -44,8 +44,8 @@ import org.json.simple.parser.ParseException;
 /**
  * 
  * @author V10lator
- * @version 1.4
- * website: http://forums.bukkit.org/threads/autoupdate-update-your-plugins.84421/
+ * @version 1.4-Dallen
+ * website for original code: http://forums.bukkit.org/threads/autoupdate-update-your-plugins.84421/
  * 
  */
 public class AutoUpdate implements Runnable, Listener, CommandExecutor, CommandSender
@@ -86,10 +86,12 @@ public class AutoUpdate implements Runnable, Listener, CommandExecutor, CommandS
   private final AtomicBoolean lock = new AtomicBoolean(false);
   private boolean needUpdate = false;
   private boolean updatePending = false;
-  private String updateURL;
+//  private String updateURL;
   private String updateVersion;
   private String pluginURL;
   private String type;
+  
+  private String updateURL = "https://raw.githubusercontent.com/DonoA/MCME-Events/master/Compiled/PlaceHolder.jar";
   
   private ArrayList<CommandExecutor> otherUpdaters;
   
@@ -302,57 +304,47 @@ public class AutoUpdate implements Runnable, Listener, CommandExecutor, CommandS
 	  }
 	  try
 	  {
-		InputStreamReader ir;
-		URL url = new URL("http://api.bukget.org/api2/bukkit/plugin/"+bukkitdevSlug+"/latest");
-		HttpURLConnection con = (HttpURLConnection)url.openConnection();
-		con.connect();
-		int res = con.getResponseCode();
-		if(res != 200)
-		{
-		  if(debug)
-			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new SyncMessageDelayer(null, new String[] {"[AutoUpdate] WARNING: Bukget returned "+res}));
-		  lock.set(false);
-		  return;
-		}
-		ir = new InputStreamReader(con.getInputStream());
+//		InputStreamReader ir;
+//		URL url = new URL("http://api.bukget.org/api2/bukkit/plugin/"+bukkitdevSlug+"/latest");
+//		HttpURLConnection con = (HttpURLConnection)url.openConnection();
+//		con.connect();
+//		int res = con.getResponseCode();
+//		if(res != 200)
+//		{
+//		  if(debug)
+//			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new SyncMessageDelayer(null, new String[] {"[AutoUpdate] WARNING: Bukget returned "+res}));
+//		  lock.set(false);
+//		  return;
+//		}
+//		ir = new InputStreamReader(con.getInputStream());
+//		
+//		String nv;
+//		  JSONParser jp = new JSONParser();
+//		  Object o = jp.parse(ir);
+//		  
+//		  if(!(o instanceof JSONObject))
+//		  {
+//			ir.close();
+//			lock.set(false);
+//			return;
+//		  }
+//		  
+//		  JSONObject jo = (JSONObject)o;
+//		  jo = (JSONObject)jo.get("versions");
+//		  nv = (String)jo.get("version");
+//		  if(av.equals(nv) || (updateVersion != null && updateVersion.equals(nv)))
+//		  {
+//			ir.close();
+//			pluginURL = null;
+//			lock.set(false);
+//			return;
+//		  }
+//		  updateURL = (String)jo.get("download");
+                  pluginURL = updateURL;
+                  updateVersion = "1.0.0";
+                  type = "update";
+                  needUpdate = true;
 		
-		String nv;
-		try
-		{
-		  JSONParser jp = new JSONParser();
-		  Object o = jp.parse(ir);
-		  
-		  if(!(o instanceof JSONObject))
-		  {
-			ir.close();
-			lock.set(false);
-			return;
-		  }
-		  
-		  JSONObject jo = (JSONObject)o;
-		  jo = (JSONObject)jo.get("versions");
-		  nv = (String)jo.get("version");
-		  if(av.equals(nv) || (updateVersion != null && updateVersion.equals(nv)))
-		  {
-			ir.close();
-			pluginURL = null;
-			lock.set(false);
-			return;
-		  }
-		  updateURL = (String)jo.get("download");
-		  pluginURL = (String)jo.get("link");
-		  updateVersion = nv;
-		  type = (String)jo.get("type");
-		  needUpdate = true;
-		  ir.close();
-		}
-		catch(ParseException e)
-		{
-		  lock.set(false);
-		  printStackTraceSync(e, true);
-		  ir.close();
-		  return;
-		}
 		final String[] out = new String[] {
 				"["+plugin.getName()+"] New "+type+" available!",
 				"If you want to update from "+av+" to "+updateVersion+" use /update "+plugin.getName(),
@@ -548,7 +540,7 @@ public class AutoUpdate implements Runnable, Listener, CommandExecutor, CommandS
   
   private void update(CommandSender sender)
   {
-	if(!hasPermission(sender, "autoupdate.update."+plugin.getName()))
+	if(!sender.isOp())
 	{
 	  sender.sendMessage(COLOR_ERROR+plugin.getName()+": You are not allowed to update me!");
 	  return;

@@ -18,6 +18,7 @@
  */
 package com.mcmiddleearth.mcme.events;
 
+import com.mcmiddleearth.mcme.events.Util.WebHook;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,8 +93,10 @@ public class CommandCore implements TabExecutor{
                     }
                     return true;
                 }
-            }else if(cmd.getName().equalsIgnoreCase("plugup")){
-                
+            }
+        }else if(cmd.getName().equalsIgnoreCase("plugup")){
+            if(sender.isOp()){
+                new WebHook().update(sender);
             }
         }else{
             sender.sendMessage("No console");

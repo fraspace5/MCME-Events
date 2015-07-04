@@ -20,6 +20,7 @@ package com.mcmiddleearth.mcme.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
+import com.mcmiddleearth.mcme.events.Util.AutoUpdate;
 import com.mcmiddleearth.mcme.events.Util.CLog;
 import com.mcmiddleearth.mcme.events.summerevent.SummerCommands;
 import com.mcmiddleearth.mcme.events.summerevent.SummerCore;
@@ -29,6 +30,8 @@ import com.mcmiddleearth.mcme.events.winterevent.WinterCommands;
 import com.mcmiddleearth.mcme.events.winterevent.SnowballFight.listeners.SnowballListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -87,6 +90,10 @@ public class Main extends JavaPlugin{
         }
         if(this.getConfig().contains("noHunger")){
             noHunger.addAll(this.getConfig().getStringList("noHunger"));
+        }
+        try {
+        } catch (Exception ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
         this.serverInstance = getServer();
         this.pluginDirectory = getDataFolder();

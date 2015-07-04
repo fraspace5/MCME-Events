@@ -1,36 +1,14 @@
-/*
- * This file is part of MCME-Events.
- * 
- * MCME-Events is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * MCME-Events is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with MCME-Events.  If not, see <http://www.gnu.org/licenses/>.
- * 
- * 
- */
 package com.mcmiddleearth.mcme.events.Util;
 
 import com.mcmiddleearth.mcme.events.Main;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -38,21 +16,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 
 /**
- *
- * @author Donovan <dallen@dallen.xyz>
+ * 
+ * @author V10lator 
+ * Cannibalized by Dallen
+ * 
  */
 public class WebHook {
     
-    ChatColor COLOR_ERROR = ChatColor.RED;
-    
-    ChatColor COLOR_OK = ChatColor.GREEN;
+    private final ChatColor COLOR_INFO = ChatColor.BLUE;
+    private final ChatColor COLOR_OK = ChatColor.GREEN;
+    private final ChatColor COLOR_ERROR = ChatColor.RED;
     
     private final AtomicBoolean lock = new AtomicBoolean(false);
     
-    private final String updateURL = "";
+    private final String updateURL = "https://raw.githubusercontent.com/DonoA/MCME-Events/master/Compiled/PlaceHolder.jar";
     
-    private void update(CommandSender sender)
-  {
+    public void update(CommandSender sender)
+    {
 	final BukkitScheduler bs = Main.getPlugin().getServer().getScheduler();
 	final String pn = sender instanceof Player ? ((Player)sender).getName() : null;
 	bs.scheduleAsyncDelayedTask(Main.getPlugin(), new Runnable()
@@ -144,31 +124,6 @@ public class WebHook {
 	{
 	  e.printStackTrace();
 	}
-//	if(!expected)
-//	{
-//	  bs.cancelTask(pid);
-//	  bs.scheduleAsyncDelayedTask(Main.getPlugin(), new Runnable()
-//	  {
-//		public void run()
-//		{
-//		  while(!lock.compareAndSet(false, true))
-//		  {
-//			try
-//			{
-//			  Thread.sleep(1L);
-//			}
-//			  catch(InterruptedException e)
-//			{
-//			}
-//		  }
-//		  pid = -1;
-//		  config = null;
-//		  needUpdate = updatePending = enabled = false;
-//		  updateURL = updateVersion = pluginURL = type = null;
-//		  lock.set(false);
-//		}
-//	  });
-//	}
   }
     
     private class SyncMessageDelayer implements Runnable
