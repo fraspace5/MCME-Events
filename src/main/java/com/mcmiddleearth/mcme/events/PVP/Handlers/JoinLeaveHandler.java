@@ -20,6 +20,7 @@ package com.mcmiddleearth.mcme.events.PVP.Handlers;
 
 import com.mcmiddleearth.mcme.events.Main;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,12 +34,16 @@ public class JoinLeaveHandler implements Listener{
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
         final Player p = e.getPlayer();
-        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
-            @Override
-            public void run(){
-                p.teleport(p.getWorld().getSpawnLocation());
-            }
-        }, 20);
         
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
+                @Override
+                public void run(){
+                    if(!p.hasPlayedBefore()){
+                        p.teleport(p.getWorld().getSpawnLocation());
+                    }else{
+                        p.teleport(new Location(p.getWorld(), 346, 40, 513));
+                    }
+                }
+            }, 20);
     }
 }
