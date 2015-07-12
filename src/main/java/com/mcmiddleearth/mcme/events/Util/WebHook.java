@@ -10,6 +10,7 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -54,6 +55,7 @@ public class WebHook {
 		  String out;
 		  try
 		  {
+                        Bukkit.getPlayer(pn).sendMessage("Updating plugin");
 			File to = new File(Main.getPlugin().getServer().getUpdateFolderFile(), updateURL.substring(updateURL.lastIndexOf('/')+1, updateURL.length()));
 			File tmp = new File(to.getPath()+".au");
 			if(!tmp.exists())

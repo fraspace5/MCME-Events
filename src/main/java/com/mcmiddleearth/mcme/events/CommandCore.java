@@ -93,10 +93,20 @@ public class CommandCore implements TabExecutor{
                     }
                     return true;
                 }
+            }else if(cmd.getName().equalsIgnoreCase("plugup")){
+                if(sender.isOp()){
+                    new WebHook().update(sender);
+                    return true;
+                }else{
+                    return false;
+                }
             }
         }else if(cmd.getName().equalsIgnoreCase("plugup")){
             if(sender.isOp()){
                 new WebHook().update(sender);
+                return true;
+            }else{
+                return false;
             }
         }else{
             sender.sendMessage("No console");
