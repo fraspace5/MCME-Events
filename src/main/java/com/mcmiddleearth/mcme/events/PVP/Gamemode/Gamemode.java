@@ -34,4 +34,6 @@ public interface Gamemode {
     
     void End(Map m);
     
+    boolean isRunning();
+    
 }

@@ -43,8 +43,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
  *
  * @author Donovan <dallen@dallen.xyz>
  */
+
 public class TeamConquest implements Gamemode {//Handled by plugin, should be done needs testing
-    
     
     
     @Getter @JsonIgnore
@@ -81,14 +81,15 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
     
     int count = 10;
     
-    boolean running = false;
+    @Getter
+    private boolean Running = false;
     
     GameEvents events;
     
     Runnable tick = new Runnable(){
             @Override
             public void run() {
-                if(running){
+                if(Running){
                     RedTeam.score += RedTeam.getPoints().size();
                     BlueTeam.score += BlueTeam.getPoints().size();
                     if(RedTeam.getScore() >= 300){
@@ -160,7 +161,7 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                             p.teleport(map.getImportantPoints().get("BlueTeam").toBukkitLoc());
                             p.setGameMode(BlueTeam.getGamemode());
                         }
-                        running = true;
+                        Running = true;
                     }else{
                         for(Player p : players){
                             p.sendMessage(ChatColor.GREEN + "Game begins in " + count);
@@ -176,7 +177,10 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
     
     @Override
     public void End(Map m){
-        running = false;
+        Running = false;
+        for(Player p : players){
+            m.playerLeave(p);
+        }
     }
     
     private class Team{
@@ -228,7 +232,7 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
         
         @EventHandler
         public void onPlayerInteract(PlayerInteractEvent e){
-            if(running && players.contains(e.getPlayer()) && 
+            if(Running && players.contains(e.getPlayer()) && 
                     e.getClickedBlock().getType().equals(Material.BEACON) &&
                     e.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
                 e.setUseInteractedBlock(Event.Result.DENY);

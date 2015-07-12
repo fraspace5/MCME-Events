@@ -36,19 +36,29 @@ public class Infected implements Gamemode{//Handled by redstone
     @Getter @JsonIgnore
     ArrayList<Player> players = new ArrayList<>();
     
+    @Getter @JsonIgnore
+    boolean Running = false;
+    
     @Override
     public void Start(Map m) {
+        Running = true;
         if(m.getImportantPoints().containsKey("RedBlock")){
             m.getImportantPoints().get("RedBlock").toBukkitLoc().getBlock().setType(Material.REDSTONE_BLOCK);
         }else{
             for(Player p : players){
                 p.sendMessage("Game not ready to start, no RedBlock location set");
+                
             }
+            End(m);
         }
+        
     }
     
     @Override
     public void End(Map m){
-        
+        for(Player p : players){
+            m.playerLeave(p);
+        }
+        Running = false;
     }
 }

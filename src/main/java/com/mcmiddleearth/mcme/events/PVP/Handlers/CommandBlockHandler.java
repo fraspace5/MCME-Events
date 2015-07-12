@@ -18,6 +18,7 @@
  */
 package com.mcmiddleearth.mcme.events.PVP.Handlers;
 
+import com.mcmiddleearth.mcme.events.PVP.Map;
 import java.util.Arrays;
 import org.bukkit.ChatColor;
 import org.bukkit.command.BlockCommandSender;
@@ -44,8 +45,12 @@ public class CommandBlockHandler implements CommandExecutor{
                     }else{
                         ChatHandler.getPlayerPrefixes().put(args[2], args[3]);
                     }
-                }else if(args[1].equalsIgnoreCase("endGame")){
-                    
+                }else if(args[1].equalsIgnoreCase("endGame") && args.length == 3){
+                    if(Map.maps.containsKey(args[2]) && Map.maps.get(args[2]).getGm().isRunning()){
+                        Map.maps.get(args[2]).getGm().End(Map.maps.get(args[2]));
+                    }else{
+                        cs.sendMessage("game cannot be ended");
+                    }
                 }
             }
         }

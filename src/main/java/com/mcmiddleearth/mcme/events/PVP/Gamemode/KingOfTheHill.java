@@ -34,6 +34,9 @@ public class KingOfTheHill implements Gamemode{
     @Getter @JsonIgnore
     ArrayList<Player> players = new ArrayList<>();
     
+    @Getter @JsonIgnore
+    boolean Running = false;
+    
     @Override
     public void Start(Map m) {
         throw new UnsupportedOperationException("TODO: ADD STUFF");

@@ -86,8 +86,10 @@ public class PVPCore implements Event{
     
     @Override
     public void onDisable(){
-        for(String m : Map.maps.keySet()){
-            DBmanager.saveObj(Map.maps.get(m), new File(saveLoc + Main.getFileSep() + "Maps"), m);
+        for(String mn : Map.maps.keySet()){
+            Map m = Map.maps.get(mn);
+            m.setCurr(0);
+            DBmanager.saveObj(m, new File(saveLoc + Main.getFileSep() + "Maps"), mn);
         }
         try {
             server.getServ().stop();

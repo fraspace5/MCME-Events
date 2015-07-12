@@ -33,13 +33,20 @@ public class PVPCommandCore implements CommandExecutor{
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String label, String[] args) {
         if(cs instanceof Player){
-            if(args.length > 1){
+            if(args.length >= 1){
                 Player p = (Player) cs;
                 if(args[0].equalsIgnoreCase("leave") && 
                         PVPCore.getPlaying().keySet().contains((p).getName())){
                     Map m = Map.maps.get(PVPCore.getPlaying().get(p.getName()));
                     m.playerLeave(p);
                     return true;
+                }else if(args[0].equalsIgnoreCase("game") && args.length >= 2){
+                    if(args[1].equalsIgnoreCase("start") && 
+                            PVPCore.getPlaying().keySet().contains((p).getName())){
+                        Map m = Map.maps.get(PVPCore.getPlaying().get(p.getName()));
+                        m.getGm().Start(m);
+                        return true;
+                    }
                 }
             }
             return new MapEditor().onCommand(cs, cmnd, label, args);

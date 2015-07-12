@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -84,10 +85,15 @@ public class MapEditor implements CommandExecutor, Listener{
                                         p.sendMessage(e.getKey() + " - " + e.getValue());
                                     }
                                 }else if(args[3].equalsIgnoreCase("SpawnPoint")){
-                                    m.getSpawnPoints().add(new EventLocation(p.getLocation()));
+                                    m.getSpawnPoints().add(new EventLocation(p.getLocation().add(0, -1, 0)));
                                 }else{
-                                    m.getImportantPoints().put(args[3], new EventLocation(p.getLocation()));
+                                    m.getImportantPoints().put(args[3], new EventLocation(p.getLocation().add(0, -1, 0)));
                                 }
+                                EventLocation el = new EventLocation(p.getLocation().add(0, -1, 0));
+                                p.sendMessage(ChatColor.YELLOW + args[3] + " set to (" + 
+                                        el.getX() + ", " + 
+                                        el.getY() + ", " +
+                                        el.getZ() + ")");
                             }else if(args[2].equalsIgnoreCase("setMax") && args.length > 3){
                                 m.setMax(Integer.parseInt(args[3]));
                                 p.sendMessage("Max players set to " + args[3]);
