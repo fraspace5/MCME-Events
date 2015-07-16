@@ -54,8 +54,6 @@ public class TeamDeathmatch implements Gamemode{//Handled by redstone
     @Override
     public void End(Map m){
         Running = false;
-        for(Player p : players){
-            m.playerLeave(p);
-        }
+        m.playerLeaveAll();
     }
 }

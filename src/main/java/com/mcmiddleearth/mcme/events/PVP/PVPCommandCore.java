@@ -46,7 +46,12 @@ public class PVPCommandCore implements CommandExecutor{
                         Map m = Map.maps.get(PVPCore.getPlaying().get(p.getName()));
                         m.getGm().Start(m);
                         return true;
+                    }else if(args[1].equalsIgnoreCase("quickstart") ){
+                        p.sendMessage("not implemented yet!");
+                        //<map> <goal>
                     }
+                }else if(args[0].equalsIgnoreCase("join")){
+                    
                 }
             }
             return new MapEditor().onCommand(cs, cmnd, label, args);

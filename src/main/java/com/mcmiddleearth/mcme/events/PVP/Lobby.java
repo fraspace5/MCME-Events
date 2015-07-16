@@ -52,13 +52,13 @@ public class Lobby {
         @EventHandler
         public void onPlayerInteract(PlayerInteractEvent e){
             if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
-                CLog.println("Enter1");
                 if(e.getClickedBlock().getState() instanceof Sign){
                     Sign s = (Sign) e.getClickedBlock().getState();
                     if(Map.maps.containsKey(s.getLine(0))){
-                        CLog.println("Enter2");
                         if(Map.maps.get(s.getLine(0)).playerJoin(e.getPlayer())){
                             e.getPlayer().sendMessage("Joining Map...");
+                            Bukkit.broadcastMessage(e.getPlayer().getName() + " Joined");
+                            
                         }else{
                             e.getPlayer().sendMessage("Failed to Join Map");
                         }

@@ -1,6 +1,8 @@
 MCME-Events
 ===========
 
+[![Build Status](https://travis-ci.org/DonoA/MCME-Events.svg)](https://travis-ci.org/DonoA/MCME-Events)
+
 Winter and Summer events for MCME
 
 TODO (in order):

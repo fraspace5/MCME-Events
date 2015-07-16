@@ -56,9 +56,7 @@ public class FreeForAll implements Gamemode{//Handled by redstone
     public void End(Map m){
         Running = false;
         try{
-            for(Player p : players){
-                m.playerLeave(p);
-            }
+            m.playerLeaveAll();
         }catch (Exception ex){}
     }
 }

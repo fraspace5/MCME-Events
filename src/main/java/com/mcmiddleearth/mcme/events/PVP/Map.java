@@ -30,6 +30,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -82,25 +85,34 @@ public class Map {
     
     public void bindSign(SignChangeEvent sign){
         this.LobbySign = new EventLocation(sign.getBlock().getLocation());
-        sign.setLine(0, name);
-        sign.setLine(1, gmType);
-        sign.setLine(2, Curr+"/"+Max);
+        sign.setLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + name);
+        sign.setLine(1, ChatColor.BLUE + "" + ChatColor.BOLD + gmType);
+        sign.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + "" + Curr+"/"+Max);
     }
     
     public boolean playerJoin(Player p){
         if(Max <= Curr){
             return false;
         }
-        p.teleport(Spawn.toBukkitLoc());
-        gm.getPlayers().add(p);
-        Curr++;
+        Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").addPlayer(p);
+//        p.teleport(Spawn.toBukkitLoc());
         PVPCore.getPlaying().put(p.getName(), name);
-        Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
-        s.setLine(2, Curr+"/"+Max);
-        s.update(true, true);
-        LobbySign.toBukkitLoc().getBlock().getState().update();
-        if(Max == Curr){
-            gm.Start(this);
+        gm.getPlayers().add(p);
+        if(!gm.isRunning()){
+            Curr++;
+            Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
+            if(Max == Curr){
+                gm.Start(this);
+                s.setLine(2, ChatColor.RED + "" + ChatColor.BOLD + "" + Curr+"/"+Max);
+            }else{
+                s.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + "" + Curr+"/"+Max);
+            }
+            s.update(true, true);
+            LobbySign.toBukkitLoc().getBlock().getState().update();
+        }else{
+            p.teleport(Spawn.toBukkitLoc());
+            p.setGameMode(GameMode.SPECTATOR);
+            p.sendMessage(ChatColor.YELLOW + "Joined as Spectator");
         }
         return true;
     }
@@ -113,9 +125,24 @@ public class Map {
         Curr--;
         PVPCore.getPlaying().remove(p.getName());
         Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
-        s.setLine(2, Curr+"/"+Max);
+        s.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + "" + Curr+"/"+Max);
         s.update(true, true);
         LobbySign.toBukkitLoc().getBlock().getState().update();
+    }
+    
+    public void playerLeaveAll(){
+        for(Player p : gm.getPlayers()){
+            for(Player pl : gm.getPlayers()){
+                pl.sendMessage(p.getName() + " left");
+            }
+            Curr--;
+            PVPCore.getPlaying().remove(p.getName());
+            Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
+            s.setLine(2, Curr+"/"+Max);
+            s.update(true, true);
+            LobbySign.toBukkitLoc().getBlock().getState().update();
+        }
+        gm.getPlayers().clear();
     }
     
     public void bindGamemode(){

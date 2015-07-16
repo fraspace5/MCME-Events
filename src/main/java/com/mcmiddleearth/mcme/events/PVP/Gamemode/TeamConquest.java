@@ -178,9 +178,7 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
     @Override
     public void End(Map m){
         Running = false;
-        for(Player p : players){
-            m.playerLeave(p);
-        }
+        m.playerLeaveAll();
     }
     
     private class Team{
