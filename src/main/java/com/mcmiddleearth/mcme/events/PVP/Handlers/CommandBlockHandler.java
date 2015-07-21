@@ -34,11 +34,11 @@ public class CommandBlockHandler implements CommandExecutor{
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String label, String[] args) {
         if(cs instanceof BlockCommandSender && args.length > 1){
-            if(args[0].equalsIgnoreCase("cmdBlock")){
-                if(args[1].equalsIgnoreCase("prefix") && args.length >= 4){
+            if(args[0].equalsIgnoreCase("cmdBlock")){                      //cmd     0      1       2           3           4
+                if(args[1].equalsIgnoreCase("prefix") && args.length >= 4){//pvp cmdblock prefix <player> <prefix word> <prefix color>
                     if(args.length == 5){
                         if(ChatColor.valueOf(args[4]) != null){
-                            ChatHandler.getPlayerPrefixes().put(args[3], ChatColor.valueOf(args[4]) + args[2]);
+                            ChatHandler.getPlayerPrefixes().put(args[2], ChatColor.valueOf(args[4]) + args[3]);
                         }else{
                             cs.sendMessage("not a valid bukkit chat color, " + Arrays.toString(ChatColor.values()));
                         }
