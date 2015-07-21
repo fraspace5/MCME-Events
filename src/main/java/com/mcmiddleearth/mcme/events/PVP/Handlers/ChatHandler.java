@@ -37,7 +37,7 @@ public class ChatHandler implements Listener{
     @EventHandler
     public void onChat(AsyncPlayerChatEvent e){
         if(playerPrefixes.containsKey(e.getPlayer().getName())){
-            e.setFormat(playerPrefixes.get(e.getPlayer().getName()) + " " + e.getPlayer().getName() + ": " + ChatColor.RESET);
+            e.setFormat(playerPrefixes.get(e.getPlayer().getName()) + " " + e.getPlayer().getName() + ChatColor.RESET + ": " + "%2$s");
         }
     }
 }
