@@ -36,14 +36,18 @@ public class CommandBlockHandler implements CommandExecutor{
         if(cs instanceof BlockCommandSender && args.length > 1){
             if(args[0].equalsIgnoreCase("cmdBlock")){                      //cmd     0      1       2           3           4
                 if(args[1].equalsIgnoreCase("prefix") && args.length >= 4){//pvp cmdblock prefix <player> <prefix word> <prefix color>
-                    if(args.length == 5){
-                        if(ChatColor.valueOf(args[4]) != null){
-                            ChatHandler.getPlayerPrefixes().put(args[2], ChatColor.valueOf(args[4]) + args[3]);
+                    if(args[3].equalsIgnoreCase("clear")){
+                        ChatHandler.getPlayerPrefixes().remove(args[2]);
+                    } else {
+                        if(args.length == 5){
+                            if(ChatColor.valueOf(args[4]) != null){
+                                ChatHandler.getPlayerPrefixes().put(args[2], ChatColor.valueOf(args[4]) + args[3]);
+                            }else{
+                                cs.sendMessage("not a valid bukkit chat color, " + Arrays.toString(ChatColor.values()));
+                            }
                         }else{
-                            cs.sendMessage("not a valid bukkit chat color, " + Arrays.toString(ChatColor.values()));
+                            ChatHandler.getPlayerPrefixes().put(args[2], args[3]);
                         }
-                    }else{
-                        ChatHandler.getPlayerPrefixes().put(args[2], args[3]);
                     }
                 }else if(args[1].equalsIgnoreCase("endGame") && args.length == 3){
                     if(Map.maps.containsKey(args[2]) && Map.maps.get(args[2]).getGm().isRunning()){
