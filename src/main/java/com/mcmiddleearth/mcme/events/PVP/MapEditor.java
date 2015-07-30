@@ -23,6 +23,7 @@ import com.mcmiddleearth.mcme.events.PVP.Gamemode.FreeForAll;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Infected;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.RingBearer;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Siege;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamConquest;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamDeathmatch;
 import com.mcmiddleearth.mcme.events.Util.CLog;
 import java.util.Arrays;
@@ -116,6 +117,9 @@ public class MapEditor implements CommandExecutor, Listener{
                                 }else if(args[3].equalsIgnoreCase("Ringbearer")){
                                     m.setGm(new RingBearer());
                                     m.setGmType("RignBearer");
+                                }else if(args[3].equalsIgnoreCase("TeamConquest")){
+                                    m.setGm(new TeamConquest());
+                                    m.setGmType("TeamConquest");
                                 }else if(args[3].equalsIgnoreCase("TeamDeathmatch")){
                                     m.setGm(new TeamDeathmatch());
                                     m.setGmType("Team Deathmatch");

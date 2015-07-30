@@ -130,19 +130,19 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
         for(Player p : players){
             p.sendMessage("selecting teams");
             if(BlueTeam.getPlayers().size() < 16 && RedTeam.getPlayers().size() < 16){
-                if(BlueTeam.getPlayers().size() > RedTeam.getPlayers().size()){
+                if(BlueTeam.getPlayers().size() >= RedTeam.getPlayers().size()){
                     RedTeam.addToTeam(p);
                     p.sendMessage(ChatColor.RED + "You are on the Red Team!");
-                    p.teleport(m.getImportantPoints().get("RedSpawn").toBukkitLoc());
+                    p.teleport(m.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
                 }else if(BlueTeam.getPlayers().size() < RedTeam.getPlayers().size()){
                     BlueTeam.addToTeam(p);
                     p.sendMessage(ChatColor.BLUE + "You are on the Blue Team!");
-                    p.teleport(m.getImportantPoints().get("BlueSpawn").toBukkitLoc());
+                    p.teleport(m.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
                 }
             }else{
                 SpectatingTeam.addToTeam(p);
                 p.sendMessage(ChatColor.GRAY + "You are Spectating!");
-                p.teleport(m.getImportantPoints().get("SpectatorSpawn").toBukkitLoc());
+                p.teleport(m.getImportantPoints().get("SpectatorSpawn").toBukkitLoc().add(0, 2, 0));
                 p.setGameMode(SpectatingTeam.getGamemode());
             }
         }
@@ -151,14 +151,17 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                 @Override
                 public void run() {
                     if(count == 0){
+                        if(Running){
+                            return;
+                        }
                         for(Player p : RedTeam.getPlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game Start!");
-                            p.teleport(map.getImportantPoints().get("RedTeam").toBukkitLoc());
+                            p.teleport(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
                             p.setGameMode(RedTeam.getGamemode());
                         }
                         for(Player p : BlueTeam.getPlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game Start!");
-                            p.teleport(map.getImportantPoints().get("BlueTeam").toBukkitLoc());
+                            p.teleport(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
                             p.setGameMode(BlueTeam.getGamemode());
                         }
                         Running = true;
@@ -221,7 +224,7 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
         
         public GameEvents(){
             for(Entry<String, EventLocation> e : map.getImportantPoints().entrySet()){
-                if(e.getKey().contains("point")){
+                if(e.getKey().contains("Point")){
                     points.add(e.getValue().toBukkitLoc());
                     capAmount.put(e.getValue().toBukkitLoc(), 0);
                 }

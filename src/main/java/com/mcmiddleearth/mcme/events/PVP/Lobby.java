@@ -24,6 +24,7 @@ import java.util.HashMap;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
@@ -54,8 +55,9 @@ public class Lobby {
             if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
                 if(e.getClickedBlock().getState() instanceof Sign){
                     Sign s = (Sign) e.getClickedBlock().getState();
-                    if(Map.maps.containsKey(s.getLine(0))){
-                        if(Map.maps.get(s.getLine(0)).playerJoin(e.getPlayer())){
+                    String name = s.getLine(0).replace(ChatColor.YELLOW + "" + ChatColor.BOLD, "");
+                    if(Map.maps.containsKey(name)){
+                        if(Map.maps.get(name).playerJoin(e.getPlayer())){
                             e.getPlayer().sendMessage("Joining Map...");
                             Bukkit.broadcastMessage(e.getPlayer().getName() + " Joined");
                             

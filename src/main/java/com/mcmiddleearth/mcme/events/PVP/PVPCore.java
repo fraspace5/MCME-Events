@@ -63,7 +63,9 @@ public class PVPCore implements Event{
         }
         for(Entry<String, Object> e : maps.entrySet()){
             Map m = (Map) e.getValue();
-            m.bindGamemode();
+            if(m.getGmType() != null){
+                m.bindGamemode();
+            }
             Map.maps.put(e.getKey(), m);
         }
         CLog.println(maps);
