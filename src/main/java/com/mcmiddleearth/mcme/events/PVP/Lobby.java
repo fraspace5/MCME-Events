@@ -60,7 +60,6 @@ public class Lobby {
                         if(Map.maps.get(name).playerJoin(e.getPlayer())){
                             e.getPlayer().sendMessage("Joining Map...");
                             Bukkit.broadcastMessage(e.getPlayer().getName() + " Joined");
-                            
                         }else{
                             e.getPlayer().sendMessage("Failed to Join Map");
                         }

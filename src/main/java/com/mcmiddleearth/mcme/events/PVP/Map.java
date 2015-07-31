@@ -90,11 +90,19 @@ public class Map {
         sign.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + "" + Curr+"/"+Max);
     }
     
+    public void rebindSign(Location signLoc){
+        this.LobbySign = new EventLocation(signLoc.getBlock().getLocation());
+        Sign sign = (Sign) signLoc.getBlock().getState();
+        sign.setLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + name);
+        sign.setLine(1, ChatColor.BLUE + "" + ChatColor.BOLD + gmType);
+        sign.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + "" + Curr+"/"+Max);
+    }
+    
     public boolean playerJoin(Player p){
         if(Max <= Curr){
             return false;
         }
-//        Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").addPlayer(p);
+        Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").addPlayer(p);
 //        p.teleport(Spawn.toBukkitLoc());
         PVPCore.getPlaying().put(p.getName(), name);
         gm.getPlayers().add(p);
@@ -138,7 +146,7 @@ public class Map {
             Curr--;
             PVPCore.getPlaying().remove(p.getName());
             Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
-            s.setLine(2, Curr+"/"+Max);
+            s.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + Curr+"/"+Max);
             s.update(true, true);
             LobbySign.toBukkitLoc().getBlock().getState().update();
         }

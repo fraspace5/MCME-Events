@@ -25,6 +25,7 @@ import com.mcmiddleearth.mcme.events.PVP.Gamemode.RingBearer;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Siege;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamConquest;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamDeathmatch;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamSlayer;
 import com.mcmiddleearth.mcme.events.Util.CLog;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -102,35 +103,53 @@ public class MapEditor implements CommandExecutor, Listener{
                                 m.setName(args[3]);
                                 p.sendMessage("map name set to " + args[3]);
                             }else if(args[2].equalsIgnoreCase("setGamemode") && args.length > 3){
+                                boolean real = false;
                                 if(args[3].equalsIgnoreCase("Freeforall")){
                                     m.setGm(new FreeForAll());
                                     m.setGmType("Free For All");
                                     if(!m.getImportantPoints().containsKey("RedBlock")){
                                         p.sendMessage("WARNING: there is not yet a redblock location for this map!");
                                     }
+                                    real = true;
                                 }else if(args[3].equalsIgnoreCase("Infected")){
                                     m.setGm(new Infected());
                                     m.setGmType("Infected");
                                     if(!m.getImportantPoints().containsKey("RedBlock")){
                                         p.sendMessage("WARNING: there is not yet a redblock location for this map!");
                                     }
+                                    real = true;
                                 }else if(args[3].equalsIgnoreCase("Ringbearer")){
                                     m.setGm(new RingBearer());
                                     m.setGmType("RignBearer");
+                                    real = true;
                                 }else if(args[3].equalsIgnoreCase("TeamConquest")){
                                     m.setGm(new TeamConquest());
                                     m.setGmType("TeamConquest");
+                                    real = true;
                                 }else if(args[3].equalsIgnoreCase("TeamDeathmatch")){
                                     m.setGm(new TeamDeathmatch());
                                     m.setGmType("Team Deathmatch");
                                     if(!m.getImportantPoints().containsKey("RedBlock")){
                                         p.sendMessage("WARNING: there is not yet a redblock location for this map!");
                                     }
+                                    real = true;
+                                }else if(args[3].equalsIgnoreCase("TeamSlayer")){
+                                    m.setGm(new TeamSlayer());
+                                    m.setGmType("Team Slayer");
+                                    if(!m.getImportantPoints().containsKey("RedBlock")){
+                                        p.sendMessage("WARNING: there is not yet a redblock location for this map!");
+                                    }
+                                    real = true;
                                 }else if(args[3].equalsIgnoreCase("Siege")){
                                     m.setGm(new Siege());
                                     m.setGmType("Siege");
+                                    real = true;
                                 }
-                                p.sendMessage("Gamemode set to " + args[3]);
+                                if(real){
+                                    p.sendMessage("Gamemode set to " + args[3]);
+                                }else{
+                                    p.sendMessage("No such gamemode " + args[3]);
+                                }
                             }
                         }else{
                             if(args[2].equalsIgnoreCase("spawn")){
