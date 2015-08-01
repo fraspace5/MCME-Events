@@ -19,12 +19,14 @@
 package com.mcmiddleearth.mcme.events.PVP.Handlers;
 
 import com.mcmiddleearth.mcme.events.Main;
+import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  *
@@ -45,5 +47,13 @@ public class JoinLeaveHandler implements Listener{
                     }
                 }
             }, 20);
+    }
+    
+    public void onPlayerLeave(PlayerQuitEvent e){
+        if(PVPCore.getPlaying().containsKey(e.getPlayer().getName())){
+            if(Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").hasPlayer(e.getPlayer())){
+                Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").removePlayer(e.getPlayer());
+            }
+        }
     }
 }

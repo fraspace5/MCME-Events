@@ -18,7 +18,9 @@
  */
 package com.mcmiddleearth.mcme.events.PVP;
 
+import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.CommandBlockHandler;
+import org.bukkit.Bukkit;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -51,7 +53,11 @@ public class PVPCommandCore implements CommandExecutor{
                         //<map> <goal>
                     }
                 }else if(args[0].equalsIgnoreCase("join")){
-                    
+                    p.sendMessage("not implemented yet!");
+                    //<map> <goal>
+                }else if(args[0].equalsIgnoreCase("cleargames")){
+                    p.sendMessage("not implemented yet!");
+                    //<map> <goal>
                 }
             }
             return new MapEditor().onCommand(cs, cmnd, label, args);
