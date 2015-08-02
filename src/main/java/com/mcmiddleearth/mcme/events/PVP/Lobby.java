@@ -57,18 +57,18 @@ public class Lobby {
                     Sign s = (Sign) e.getClickedBlock().getState();
                     String name = s.getLine(0).replace(ChatColor.YELLOW + "" + ChatColor.BOLD, "");
                     if(Map.maps.containsKey(name)){
-                        if(Map.maps.get(name).playerJoin(e.getPlayer())){
-                            if(!Map.maps.get(name).getGm().getPlayers().contains(e.getPlayer())){
+                        if(!Map.maps.get(name).getGm().getPlayers().contains(e.getPlayer())){
+                            if(Map.maps.get(name).playerJoin(e.getPlayer())){
                                 e.getPlayer().sendMessage("Joining Map...");
                                 Bukkit.broadcastMessage(e.getPlayer().getName() + " Joined");
                             }else{
-                                e.getPlayer().sendMessage("You are already part of this game");
-                                if(e.getPlayer().getName().equalsIgnoreCase("Despot666")){
-                                    e.getPlayer().kickPlayer("<3 -Dallen");
-                                }
+                                e.getPlayer().sendMessage("Failed to Join Map");
                             }
                         }else{
-                            e.getPlayer().sendMessage("Failed to Join Map");
+                            e.getPlayer().sendMessage("You are already part of this game");
+                            if(e.getPlayer().getName().equalsIgnoreCase("Despot666")){
+                                e.getPlayer().kickPlayer("<3 -Dallen");
+                            }
                         }
                     }
                 }
