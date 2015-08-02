@@ -64,7 +64,7 @@ public class Map {
     @Getter @Setter
     private String name;
     
-    @Getter @Setter @JsonIgnore
+    @Getter @Setter
     private String title;
     
     @Getter @Setter
