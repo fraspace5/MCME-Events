@@ -68,7 +68,7 @@ public class MapEditor implements CommandExecutor, Listener{
                         if(m.getGm() != null){
                             gamemode = m.getGmType();
                         }
-                        im.setLore(Arrays.asList(new String[] {m.getName(), 
+                        im.setLore(Arrays.asList(new String[] {m.getTitle(), 
                             gamemode,
                             String.valueOf(m.getMax())}));
                         sign.setItemMeta(im);
@@ -99,9 +99,9 @@ public class MapEditor implements CommandExecutor, Listener{
                             }else if(args[2].equalsIgnoreCase("setMax") && args.length > 3){
                                 m.setMax(Integer.parseInt(args[3]));
                                 p.sendMessage("Max players set to " + args[3]);
-                            }else if(args[2].equalsIgnoreCase("setName") && args.length > 3){
-                                m.setName(args[3]);
-                                p.sendMessage("map name set to " + args[3]);
+                            }else if(args[2].equalsIgnoreCase("setTitle") && args.length > 3){
+                                m.setTitle(args[3]);
+                                p.sendMessage("map Title set to " + args[3]);
                             }else if(args[2].equalsIgnoreCase("setGamemode") && args.length > 3){
                                 boolean real = false;
                                 if(args[3].equalsIgnoreCase("Freeforall")){
@@ -163,11 +163,11 @@ public class MapEditor implements CommandExecutor, Listener{
                     }else{
                         if(args.length > 1){
                             if(args[1].equalsIgnoreCase("list")){
-                                try {
-                                    p.sendMessage(Arrays.toString(Map.maps.values().toArray()));
-                                } catch (Exception ex) {
-                                    Logger.getLogger(MapEditor.class.getName()).log(Level.SEVERE, null, ex);
+                                p.sendMessage("Maps: [");
+                                for(Map m : Map.maps.values()){
+                                    p.sendMessage(m.getName() + " - " + m.getTitle() + ", " + m.getGmType());
                                 }
+                                p.sendMessage("]");
                             }
                         }
                     }

@@ -45,7 +45,7 @@ public class CommandBlockHandler implements CommandExecutor{
                             if(ChatColor.valueOf(args[4]) != null){
                                 ChatHandler.getPlayerPrefixes().put(args[2], ChatColor.valueOf(args[4]) + args[3]);
                             }else{
-                                cs.sendMessage("not a valid bukkit chat color, " + Arrays.toString(ChatColor.values()));
+                                cs.sendMessage("not a valid bukkit chat color");
                             }
                         }else{
                             ChatHandler.getPlayerPrefixes().put(args[2], args[3]);
@@ -55,11 +55,10 @@ public class CommandBlockHandler implements CommandExecutor{
                     if(Map.maps.containsKey(args[2]) && Map.maps.get(args[2]).getGm().isRunning()){
                         Map.maps.get(args[2]).getGm().End(Map.maps.get(args[2]));
                         if(args.length == 4){
-                            if(args[3].equalsIgnoreCase("next")){
+                            if(args[3].equalsIgnoreCase("next")){//wip
                                 Location sign = Map.maps.get(args[2]).getLobbySign().toBukkitLoc();
                                 Map.maps.get(args[2]).setLobbySign(null);
                                 Map.maps.get((String) Map.maps.keySet().toArray()[new Random().nextInt(Map.maps.keySet().size()-1)]).rebindSign(sign);
-                                
                             }
                         }
                     }else{

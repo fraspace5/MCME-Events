@@ -64,6 +64,9 @@ public class Map {
     @Getter @Setter
     private String name;
     
+    @Getter @Setter @JsonIgnore
+    private String title;
+    
     @Getter @Setter
     private HashMap<String, EventLocation> ImportantPoints = new HashMap<>();
     
@@ -81,11 +84,12 @@ public class Map {
     public Map(Location spawn, String name){
         this.Spawn = new EventLocation(spawn);
         this.name = name;
+        this.title = name;
     }
     
     public void bindSign(SignChangeEvent sign){
         this.LobbySign = new EventLocation(sign.getBlock().getLocation());
-        sign.setLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + name);
+        sign.setLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + title);
         sign.setLine(1, ChatColor.BLUE + "" + ChatColor.BOLD + gmType);
         sign.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + "" + Curr+"/"+Max);
     }
@@ -93,7 +97,7 @@ public class Map {
     public void rebindSign(Location signLoc){
         this.LobbySign = new EventLocation(signLoc.getBlock().getLocation());
         Sign sign = (Sign) signLoc.getBlock().getState();
-        sign.setLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + name);
+        sign.setLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + title);
         sign.setLine(1, ChatColor.BLUE + "" + ChatColor.BOLD + gmType);
         sign.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + "" + Curr+"/"+Max);
     }
@@ -168,5 +172,14 @@ public class Map {
             Logger.getLogger(Map.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+    }
+    
+    public static Map findMap(String title, String gamemode){
+        for(Map m : maps.values()){
+            if(m.getGmType().equalsIgnoreCase(gamemode) && m.getTitle().equalsIgnoreCase(title)){
+                return m;
+            }
+        }
+        return null;
     }
 }

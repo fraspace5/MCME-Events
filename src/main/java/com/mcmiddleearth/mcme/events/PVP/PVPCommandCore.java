@@ -20,6 +20,7 @@ package com.mcmiddleearth.mcme.events.PVP;
 
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.CommandBlockHandler;
+import java.io.File;
 import org.bukkit.Bukkit;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
@@ -56,7 +57,11 @@ public class PVPCommandCore implements CommandExecutor{
                     p.sendMessage("not implemented yet!");
                     //<map> <goal>
                 }else if(args[0].equalsIgnoreCase("cleargames")){
-                    p.sendMessage("not implemented yet!");
+                    for(File f : new File(PVPCore.getSaveLoc() + Main.getFileSep() + "Maps").listFiles()){
+                        f.delete();
+                    }
+                    Map.maps.clear();
+                    p.sendMessage("not done yet!");
                     //<map> <goal>
                 }
             }

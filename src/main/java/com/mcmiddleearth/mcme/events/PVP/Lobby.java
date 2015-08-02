@@ -18,19 +18,14 @@
  */
 package com.mcmiddleearth.mcme.events.PVP;
 
-import com.mcmiddleearth.mcme.events.Main;
-import com.mcmiddleearth.mcme.events.Util.CLog;
-import java.util.HashMap;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -55,20 +50,20 @@ public class Lobby {
             if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
                 if(e.getClickedBlock().getState() instanceof Sign){
                     Sign s = (Sign) e.getClickedBlock().getState();
-                    String name = s.getLine(0).replace(ChatColor.YELLOW + "" + ChatColor.BOLD, "");
-                    if(Map.maps.containsKey(name)){
-                        if(!Map.maps.get(name).getGm().getPlayers().contains(e.getPlayer())){
-                            if(Map.maps.get(name).playerJoin(e.getPlayer())){
-                                e.getPlayer().sendMessage("Joining Map...");
-                                Bukkit.broadcastMessage(e.getPlayer().getName() + " Joined");
-                            }else{
-                                e.getPlayer().sendMessage("Failed to Join Map");
-                            }
+                    String title = s.getLine(0).replace(ChatColor.YELLOW + "" + ChatColor.BOLD, "");
+                    String gamemode = s.getLine(1).replace(ChatColor.BLUE + "" + ChatColor.BOLD, "");
+                    Map m = Map.findMap(title, gamemode);
+                    if(!m.getGm().getPlayers().contains(e.getPlayer()) && !PVPCore.getPlaying().containsKey(e.getPlayer().getName())){
+                        if(m.playerJoin(e.getPlayer())){
+                            e.getPlayer().sendMessage("Joining Map...");
+                            Bukkit.broadcastMessage(e.getPlayer().getName() + " Joined");
                         }else{
-                            e.getPlayer().sendMessage("You are already part of this game");
-                            if(e.getPlayer().getName().equalsIgnoreCase("Despot666")){
-                                e.getPlayer().kickPlayer("<3 -Dallen");
-                            }
+                            e.getPlayer().sendMessage("Failed to Join Map");
+                        }
+                    }else{
+                        e.getPlayer().sendMessage("You are already part of this game");
+                        if(e.getPlayer().getName().equalsIgnoreCase("Despot666")){
+                            e.getPlayer().kickPlayer("<3 -Dallen");
                         }
                     }
                 }
