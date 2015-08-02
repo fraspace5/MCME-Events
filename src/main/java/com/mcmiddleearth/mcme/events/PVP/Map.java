@@ -136,6 +136,9 @@ public class Map {
         s.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + "" + Curr+"/"+Max);
         s.update(true, true);
         LobbySign.toBukkitLoc().getBlock().getState().update();
+        if(Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").hasPlayer(p)){
+            Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").removePlayer(p);
+        }
     }
     
     public void playerLeaveAll(){

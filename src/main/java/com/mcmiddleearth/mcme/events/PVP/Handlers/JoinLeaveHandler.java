@@ -19,6 +19,7 @@
 package com.mcmiddleearth.mcme.events.PVP.Handlers;
 
 import com.mcmiddleearth.mcme.events.Main;
+import com.mcmiddleearth.mcme.events.PVP.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -51,9 +52,7 @@ public class JoinLeaveHandler implements Listener{
     
     public void onPlayerLeave(PlayerQuitEvent e){
         if(PVPCore.getPlaying().containsKey(e.getPlayer().getName())){
-            if(Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").hasPlayer(e.getPlayer())){
-                Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").removePlayer(e.getPlayer());
-            }
+            Map.maps.get(PVPCore.getPlaying().get(e.getPlayer().getName())).playerLeave(e.getPlayer());
         }
     }
 }
