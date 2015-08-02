@@ -75,8 +75,8 @@ public class Lobby {
             if(e.getPlayer().getItemInHand().hasItemMeta()){
                 ItemMeta im = e.getPlayer().getItemInHand().getItemMeta();
                 if(im.hasLore()){
-                    if(Map.maps.containsKey(im.getLore().get(0))){
-                        final Map m = Map.maps.get(im.getLore().get(0));
+                    if(Map.findMap(im.getLore().get(0), im.getLore().get(1)) != null){
+                        final Map m = Map.findMap(im.getLore().get(0), im.getLore().get(1));
                         m.bindSign(e);
                         world = e.getBlock().getLocation().getWorld().getName();
                     }
