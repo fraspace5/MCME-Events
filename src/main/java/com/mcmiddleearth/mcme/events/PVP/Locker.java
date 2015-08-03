@@ -25,6 +25,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.server.ServerListPingEvent;
@@ -35,7 +36,7 @@ import org.bukkit.event.server.ServerListPingEvent;
  */
 public class Locker implements CommandExecutor, Listener{
     
-    private boolean locked = false;
+    private static volatile boolean locked = false;
     
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] args) {
@@ -46,10 +47,13 @@ public class Locker implements CommandExecutor, Listener{
                         p.kickPlayer("admin kicked all players");
                     }
                 }
+                cs.sendMessage("Kicked all!");
             }else if(args[0].equalsIgnoreCase("lock")){
                 if(locked){
+                    cs.sendMessage("Server Unlocked!");
                     locked=false;
                 }else{
+                    cs.sendMessage("Server Locked!");
                     locked=true;
                     for(Player p : Bukkit.getOnlinePlayers()){
                         if(!p.isOp()){
@@ -62,9 +66,11 @@ public class Locker implements CommandExecutor, Listener{
         return true;
     }
     
-    @EventHandler
-    public void onPing(ServerListPingEvent e){
+    @EventHandler (priority = EventPriority.HIGHEST)
+    public void onServerListPing(ServerListPingEvent e){
+        System.out.println("Locked Ping!");
         if(locked){
+            System.out.println("Locked Ping!");
             e.setMotd(ChatColor.BLUE + "server locked");
             e.setMaxPlayers(0);
         }
@@ -72,6 +78,7 @@ public class Locker implements CommandExecutor, Listener{
     
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
+        System.out.println("Locked Join!");
         if(locked && !e.getPlayer().isOp()){
             e.getPlayer().kickPlayer("Server is locked");
         }
