@@ -294,6 +294,7 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
         Running = false;
         for(Location l : events.points){
             l.getBlock().setType(Material.AIR);
+            l.getBlock().getRelative(0, 1, 0).setType(Material.AIR);
         }
         m.playerLeaveAll();
     }
