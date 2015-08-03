@@ -206,7 +206,7 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                         Points.getScore(ChatColor.RED + "Red:").setScore(0);
                         Points.setDisplaySlot(DisplaySlot.SIDEBAR);
                         for(Player p : RedTeam.getPlayers()){
-                            p.sendMessage(String.valueOf(((LeatherArmorMeta) p.getItemInHand().getItemMeta()).getColor().asRGB()));
+//                            p.sendMessage(String.valueOf(((LeatherArmorMeta) p.getItemInHand().getItemMeta()).getColor().asRGB()));
                             p.sendMessage(ChatColor.GREEN + "Game Start!");
                             p.teleport(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
                             p.setGameMode(RedTeam.getGamemode());
@@ -249,7 +249,7 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                                 new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS)};
                             for(int i = 0; i <= 3; i++){
                                 LeatherArmorMeta LAM = (LeatherArmorMeta) armor[i].getItemMeta();
-                                LAM.setColor(6724052);
+                                LAM.setColor(Color.fromRGB(6724052));
                                 LAM.addEnchant(Enchantment.DURABILITY, 100, false);
                                 armor[i].setItemMeta(LAM);
                             }

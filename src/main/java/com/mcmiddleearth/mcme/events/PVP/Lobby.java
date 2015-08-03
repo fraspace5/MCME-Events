@@ -52,6 +52,9 @@ public class Lobby {
                     Sign s = (Sign) e.getClickedBlock().getState();
                     String title = s.getLine(0).replace(ChatColor.AQUA + "" + ChatColor.BOLD, "");
                     String gamemode = s.getLine(1).replace(ChatColor.BLUE + "" + ChatColor.BOLD, "");
+                    if(gamemode.equalsIgnoreCase("TDM")){
+                        gamemode = "Team Deathmatch";
+                    }
                     Map m = Map.findMap(title, gamemode);
                     if(!m.getGm().getPlayers().contains(e.getPlayer()) && !PVPCore.getPlaying().containsKey(e.getPlayer().getName())){
                         if(m.playerJoin(e.getPlayer())){
