@@ -52,7 +52,13 @@ public class CommandBlockHandler implements CommandExecutor{
                         }
                     }
                 }else if(args[1].equalsIgnoreCase("endGame") && args.length >= 3){
-                    if(Map.maps.containsKey(args[2]) && Map.maps.get(args[2]).getGm().isRunning()){
+                    if(args[2].equalsIgnoreCase("all")){
+                        for(Map m : Map.maps.values()){
+                            if(m.getGm().isRunning()){
+                                m.getGm().End(m);
+                            }
+                        }
+                    }else if(Map.maps.containsKey(args[2]) && Map.maps.get(args[2]).getGm().isRunning()){
                         Map.maps.get(args[2]).getGm().End(Map.maps.get(args[2]));
                         if(args.length == 4){
                             if(args[3].equalsIgnoreCase("next")){//wip

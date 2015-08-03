@@ -19,9 +19,9 @@
 package com.mcmiddleearth.mcme.events.PVP;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.Util.EventLocation;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Gamemode;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -138,6 +138,8 @@ public class Map {
     }
     
     public void playerLeave(Player p){
+        ChatHandler.getPlayerPrefixes().remove(p.getName());
+        p.setDisplayName(p.getName());
         for(Player pl : gm.getPlayers()){
             pl.sendMessage(p.getName() + " left");
         }
@@ -155,7 +157,10 @@ public class Map {
     
     public void playerLeaveAll(){
         for(Player p : gm.getPlayers()){
+            ChatHandler.getPlayerPrefixes().remove(p.getName());
+            p.setDisplayName(p.getName());
             for(Player pl : gm.getPlayers()){
+                
                 pl.sendMessage(p.getName() + " left");
             }
             Curr--;

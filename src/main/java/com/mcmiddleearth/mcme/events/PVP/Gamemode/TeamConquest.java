@@ -36,6 +36,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -46,6 +47,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -214,10 +216,10 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                             ItemStack[] armor = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
                                 new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS)};
                             for(int i = 0; i <= 3; i++){
-                                LeatherArmorMeta LAM = (LeatherArmorMeta) armor[i].getItemMeta();
-                                LAM.setColor(Color.fromRGB(10040115));
-                                LAM.addEnchant(Enchantment.DURABILITY, 100, false);
-                                armor[i].setItemMeta(LAM);
+//                                LeatherArmorMeta LAM = (LeatherArmorMeta) armor[i].getItemMeta();
+//                                LAM.setColor(Color.fromRGB(10040115));
+//                                LAM.addEnchant(Enchantment.DURABILITY, 100, false);
+//                                armor[i].setItemMeta(LAM);
                             }
                             p.getInventory().clear();
                             p.getInventory().setHelmet(armor[0]);
@@ -248,10 +250,9 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                             ItemStack[] armor = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
                                 new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS)};
                             for(int i = 0; i <= 3; i++){
-                                LeatherArmorMeta LAM = (LeatherArmorMeta) armor[i].getItemMeta();
-                                LAM.setColor(Color.fromRGB(6724052));
-                                LAM.addEnchant(Enchantment.DURABILITY, 100, false);
-                                armor[i].setItemMeta(LAM);
+//                                MaterialData md = armor[i].getData();
+//                                md.setData((byte) 11);
+//                                armor[i].setData(md);
                             }
                             p.getInventory().clear();
                             p.getInventory().setHelmet(armor[0]);
@@ -291,6 +292,9 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
     @Override
     public void End(Map m){
         Running = false;
+        for(Location l : events.points){
+            l.getBlock().setType(Material.AIR);
+        }
         m.playerLeaveAll();
     }
     
@@ -357,6 +361,9 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                             p.sendMessage(ChatColor.RED + "Point Captured!");
                             if(!RedTeam.points.contains(e.getClickedBlock().getLocation())){
                                 RedTeam.points.add(e.getClickedBlock().getLocation());
+                                Block b = e.getClickedBlock().getLocation().add(0, 1, 0).getBlock();
+                                b.setType(Material.STAINED_GLASS);
+                                b.setData((byte) 14);
                             }
                             if(BlueTeam.points.contains(e.getClickedBlock().getLocation())){
                                 BlueTeam.points.remove(e.getClickedBlock().getLocation());
@@ -373,6 +380,9 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                             p.sendMessage(ChatColor.BLUE + "Point Captured!");
                             if(!BlueTeam.points.contains(e.getClickedBlock().getLocation())){
                                 BlueTeam.points.add(e.getClickedBlock().getLocation());
+                                Block b = e.getClickedBlock().getLocation().add(0, 1, 0).getBlock();
+                                b.setType(Material.STAINED_GLASS);
+                                b.setData((byte) 11);
                             }
                             if(RedTeam.points.contains(e.getClickedBlock().getLocation())){
                                 RedTeam.points.remove(e.getClickedBlock().getLocation());
