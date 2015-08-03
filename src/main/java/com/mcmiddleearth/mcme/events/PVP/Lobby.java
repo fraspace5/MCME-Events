@@ -50,7 +50,7 @@ public class Lobby {
             if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
                 if(e.getClickedBlock().getState() instanceof Sign){
                     Sign s = (Sign) e.getClickedBlock().getState();
-                    String title = s.getLine(0).replace(ChatColor.YELLOW + "" + ChatColor.BOLD, "");
+                    String title = s.getLine(0).replace(ChatColor.AQUA + "" + ChatColor.BOLD, "");
                     String gamemode = s.getLine(1).replace(ChatColor.BLUE + "" + ChatColor.BOLD, "");
                     Map m = Map.findMap(title, gamemode);
                     if(!m.getGm().getPlayers().contains(e.getPlayer()) && !PVPCore.getPlaying().containsKey(e.getPlayer().getName())){
@@ -61,7 +61,7 @@ public class Lobby {
                             e.getPlayer().sendMessage("Failed to Join Map");
                         }
                     }else{
-                        e.getPlayer().sendMessage("You are already part of this game");
+                        e.getPlayer().sendMessage("You are already part of a game");
                         if(e.getPlayer().getName().equalsIgnoreCase("Despot666")){
                             e.getPlayer().kickPlayer("<3 -Dallen");
                         }

@@ -20,7 +20,9 @@ package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcmiddleearth.mcme.events.Main;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
 import com.mcmiddleearth.mcme.events.PVP.Map;
+import com.mcmiddleearth.mcme.events.PVP.MapEditor;
 import com.mcmiddleearth.mcme.events.Util.EventLocation;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,15 +31,26 @@ import java.util.Map.Entry;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
 
 /**
  *
@@ -59,9 +72,14 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
     @Getter
     private Team SpectatingTeam = new Team("Spectator", GameMode.SPECTATOR); 
     
-    /*private int Time = 1800;//30 min game (can be changed as needed
-            
-    private Date StartTime;*/ //not used atm
+    @Getter
+    private Objective Points;
+    
+    @Getter
+    private Scoreboard Score;
+    
+    @Getter
+    private int target = 100;
     
     @Getter
     private static final ArrayList<String> reqPoints = new ArrayList<String>(Arrays.asList(new String[] {
@@ -70,16 +88,12 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
         "SpectatorSpawn",
         "Point1",
         "Point2",
-        "Point3",
-        "Point4",
-        "Point5",
-        "Point6",
-        "Point7"
+        "Point3"
     }));
     
     Map map;
     
-    int count = 10;
+    int count;
     
     @Getter
     private boolean Running = false;
@@ -92,13 +106,22 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                 if(Running){
                     RedTeam.score += RedTeam.getPoints().size();
                     BlueTeam.score += BlueTeam.getPoints().size();
-                    if(RedTeam.getScore() >= 300){
+                    if(RedTeam.score > target){
+                        RedTeam.score = target;
+                    }
+                    if(BlueTeam.score > target){
+                        BlueTeam.score = target;
+                    }
+                    Points.getScore(ChatColor.BLUE + "Blue:").setScore(BlueTeam.score);
+                    Points.getScore(ChatColor.RED + "Red:").setScore(RedTeam.score);
+                    System.out.println(RedTeam.score + ", " + BlueTeam.score);
+                    if(RedTeam.getScore() >= target){
                         for(Player p : players){
                             p.sendMessage(ChatColor.RED + "Game over!");
                             p.sendMessage(ChatColor.RED + "Red Team Wins!");
                         }
                         End(map);
-                    }else if(BlueTeam.getScore() >= 300){
+                    }else if(BlueTeam.getScore() >= target){
                         for(Player p : players){
                             p.sendMessage(ChatColor.BLUE + "Game over!");
                             p.sendMessage(ChatColor.BLUE + "Blue Team Wins!");
@@ -115,6 +138,7 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
     
     @Override
     public void Start(Map m) {
+        count = 10;
         this.map = m;
         if(!m.getImportantPoints().keySet().containsAll(reqPoints)){
             for(Player p : players){
@@ -127,16 +151,33 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
         for(Location l : events.points){
             l.getBlock().setType(Material.BEACON);
         }
+        PluginManager pm = Main.getServerInstance().getPluginManager();
+        pm.registerEvents(events, Main.getPlugin());
         for(Player p : players){
             p.sendMessage("selecting teams");
             if(BlueTeam.getPlayers().size() < 16 && RedTeam.getPlayers().size() < 16){
                 if(BlueTeam.getPlayers().size() >= RedTeam.getPlayers().size()){
                     RedTeam.addToTeam(p);
                     p.sendMessage(ChatColor.RED + "You are on the Red Team!");
+                    ChatHandler.getPlayerPrefixes().put(p.getName(), ChatColor.RED + "Red");
+                    if(p.getName().length() < 14){
+                        p.setPlayerListName(ChatColor.RED + p.getName());
+                    }else{
+                        String newName = p.getName().substring(0, 13);
+                        p.setPlayerListName(ChatColor.RED + newName);
+                    }
                     p.teleport(m.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
                 }else if(BlueTeam.getPlayers().size() < RedTeam.getPlayers().size()){
                     BlueTeam.addToTeam(p);
                     p.sendMessage(ChatColor.BLUE + "You are on the Blue Team!");
+                    ChatHandler.getPlayerPrefixes().put(p.getName(), ChatColor.BLUE + "Blue");
+                    if(p.getName().length() < 14){
+                        p.setPlayerListName(ChatColor.BLUE + p.getName());
+                    }else{
+                        String newName = p.getName().substring(0, 13);
+                        p.setPlayerListName(ChatColor.BLUE + newName);
+                    }
+                    p.setDisplayName(ChatColor.BLUE + p.getName());
                     p.teleport(m.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
                 }
             }else{
@@ -154,18 +195,87 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                         if(Running){
                             return;
                         }
+                        ScoreboardManager sbm = Bukkit.getScoreboardManager();
+                        Score = sbm.getNewScoreboard();
+                        if(sbm.getMainScoreboard() == null){
+                            Score = sbm.getNewScoreboard();
+                        }
+                        Points = Score.registerNewObjective("Points", "dummy");
+                        Points.setDisplayName("Points");
+                        Points.getScore(ChatColor.BLUE + "Blue:").setScore(0);
+                        Points.getScore(ChatColor.RED + "Red:").setScore(0);
+                        Points.setDisplaySlot(DisplaySlot.SIDEBAR);
                         for(Player p : RedTeam.getPlayers()){
+                            p.sendMessage(String.valueOf(((LeatherArmorMeta) p.getItemInHand().getItemMeta()).getColor().asRGB()));
                             p.sendMessage(ChatColor.GREEN + "Game Start!");
                             p.teleport(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
                             p.setGameMode(RedTeam.getGamemode());
+                            p.setScoreboard(Score);
+                            ItemStack[] armor = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
+                                new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS)};
+                            for(int i = 0; i <= 3; i++){
+                                LeatherArmorMeta LAM = (LeatherArmorMeta) armor[i].getItemMeta();
+                                LAM.setColor(Color.fromRGB(10040115));
+                                LAM.addEnchant(Enchantment.DURABILITY, 100, false);
+                                armor[i].setItemMeta(LAM);
+                            }
+                            p.getInventory().clear();
+                            p.getInventory().setHelmet(armor[0]);
+                            p.getInventory().setChestplate(armor[1]);
+                            p.getInventory().setLeggings(armor[2]);
+                            p.getInventory().setBoots(armor[3]);
+                            ItemStack sword = new ItemStack(Material.IRON_SWORD);
+                            ItemMeta SwordMeta = sword.getItemMeta();
+                            SwordMeta.addEnchant(Enchantment.DURABILITY, 100, false);
+                            sword.setItemMeta(SwordMeta);
+                            p.getInventory().addItem(sword);
+                            ItemStack bow = new ItemStack(Material.BOW);
+                            ItemMeta BowMeta = bow.getItemMeta();
+                            BowMeta.addEnchant(Enchantment.DURABILITY, 100, false);
+                            bow.setItemMeta(BowMeta);
+                            p.getInventory().addItem(bow);
+                            ItemStack Arrows = new ItemStack(Material.ARROW);
+                            Arrows.setAmount(64);
+                            p.getInventory().addItem(Arrows);
+                            p.getInventory().addItem(Arrows);
+                            
                         }
                         for(Player p : BlueTeam.getPlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game Start!");
                             p.teleport(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
                             p.setGameMode(BlueTeam.getGamemode());
+                            p.setScoreboard(Score);
+                            ItemStack[] armor = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
+                                new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS)};
+                            for(int i = 0; i <= 3; i++){
+                                LeatherArmorMeta LAM = (LeatherArmorMeta) armor[i].getItemMeta();
+                                LAM.setColor(6724052);
+                                LAM.addEnchant(Enchantment.DURABILITY, 100, false);
+                                armor[i].setItemMeta(LAM);
+                            }
+                            p.getInventory().clear();
+                            p.getInventory().setHelmet(armor[0]);
+                            p.getInventory().setChestplate(armor[1]);
+                            p.getInventory().setLeggings(armor[2]);
+                            p.getInventory().setBoots(armor[3]);
+                            ItemStack sword = new ItemStack(Material.IRON_SWORD);
+                            ItemMeta SwordMeta = sword.getItemMeta();
+                            SwordMeta.addEnchant(Enchantment.DURABILITY, 100, false);
+                            sword.setItemMeta(SwordMeta);
+                            p.getInventory().addItem(sword);
+                            ItemStack bow = new ItemStack(Material.BOW);
+                            ItemMeta BowMeta = bow.getItemMeta();
+                            BowMeta.addEnchant(Enchantment.DURABILITY, 100, false);
+                            bow.setItemMeta(BowMeta);
+                            p.getInventory().addItem(bow);
+                            ItemStack Arrows = new ItemStack(Material.ARROW);
+                            Arrows.setAmount(64);
+                            p.getInventory().addItem(Arrows);
+                            p.getInventory().addItem(Arrows);
                         }
                         Running = true;
-                    }else{
+                        count = -1;
+                    }else if(count != -1){
                         for(Player p : players){
                             p.sendMessage(ChatColor.GREEN + "Game begins in " + count);
                         }
@@ -238,23 +348,41 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                     e.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
                 e.setUseInteractedBlock(Event.Result.DENY);
                 int cap = capAmount.get(e.getClickedBlock().getLocation());
-                if(cap >= 50){
-                    Player p = e.getPlayer();
-                    if(RedTeam.getPlayers().contains(p)){
+                Player p = e.getPlayer();
+                if(RedTeam.getPlayers().contains(p)){
+                    if(cap < 50){
                         cap++;
                         p.sendMessage(ChatColor.RED + "Cap at " + (cap * 2) + "%");
                         if(cap >= 50){
                             p.sendMessage(ChatColor.RED + "Point Captured!");
+                            if(!RedTeam.points.contains(e.getClickedBlock().getLocation())){
+                                RedTeam.points.add(e.getClickedBlock().getLocation());
+                            }
+                            if(BlueTeam.points.contains(e.getClickedBlock().getLocation())){
+                                BlueTeam.points.remove(e.getClickedBlock().getLocation());
+                            }
+                        }else{
+                            capAmount.put(e.getClickedBlock().getLocation(), cap);
                         }
-                    }else if(BlueTeam.getPlayers().contains(p)){
+                    }
+                }else if(BlueTeam.getPlayers().contains(p)){
+                    if(cap > -50){
                         cap--;
                         p.sendMessage(ChatColor.BLUE + "Cap at " + (cap * -2) + "%");
                         if(cap <= -50){
                             p.sendMessage(ChatColor.BLUE + "Point Captured!");
+                            if(!BlueTeam.points.contains(e.getClickedBlock().getLocation())){
+                                BlueTeam.points.add(e.getClickedBlock().getLocation());
+                            }
+                            if(RedTeam.points.contains(e.getClickedBlock().getLocation())){
+                                RedTeam.points.remove(e.getClickedBlock().getLocation());
+                            }
+                        }else{
+                            capAmount.put(e.getClickedBlock().getLocation(), cap);
                         }
                     }
-                    capAmount.put(e.getClickedBlock().getLocation(), cap);
                 }
+                
             }
         }
     }

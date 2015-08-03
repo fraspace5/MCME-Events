@@ -89,7 +89,7 @@ public class Map {
     
     public void bindSign(SignChangeEvent sign){
         this.LobbySign = new EventLocation(sign.getBlock().getLocation());
-        sign.setLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + title);
+        sign.setLine(0, ChatColor.AQUA + "" + ChatColor.BOLD + title);
         sign.setLine(1, ChatColor.BLUE + "" + ChatColor.BOLD + gmType);
         sign.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + "" + Curr+"/"+Max);
     }
@@ -97,7 +97,7 @@ public class Map {
     public void rebindSign(Location signLoc){
         this.LobbySign = new EventLocation(signLoc.getBlock().getLocation());
         Sign sign = (Sign) signLoc.getBlock().getState();
-        sign.setLine(0, ChatColor.YELLOW + "" + ChatColor.BOLD + title);
+        sign.setLine(0, ChatColor.AQUA + "" + ChatColor.BOLD + title);
         sign.setLine(1, ChatColor.BLUE + "" + ChatColor.BOLD + gmType);
         sign.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + "" + Curr+"/"+Max);
     }
