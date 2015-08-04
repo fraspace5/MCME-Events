@@ -42,7 +42,7 @@ public class ChatHandler implements Listener{
             if(e.getPlayer().isOp()){
                 e.setFormat(ChatColor.GOLD + "Staff" + " " + e.getPlayer().getName() + ChatColor.RESET + ": " + "%2$s");
             }else{
-                e.setFormat(e.getPlayer().getName() + ChatColor.RESET + ": " + "%2$s");
+                e.setFormat(ChatColor.GRAY + "Lobby" + " " + e.getPlayer().getName() + ChatColor.RESET + ": " + "%2$s");
             }
         }
     }
