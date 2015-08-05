@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
 import com.mcmiddleearth.mcme.events.PVP.Map;
-import com.mcmiddleearth.mcme.events.PVP.MapEditor;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.Util.EventLocation;
 import java.util.ArrayList;
@@ -32,13 +31,10 @@ import java.util.Map.Entry;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -46,10 +42,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -235,7 +229,6 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                             Arrows.setAmount(64);
                             p.getInventory().addItem(Arrows);
                             p.getInventory().addItem(Arrows);
-                            p.setBedSpawnLocation(map.getImportantPoints().get("RedSpawn").toBukkitLoc());
                         }
                         for(Player p : BlueTeam.getPlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game Start!");
@@ -262,7 +255,6 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                             Arrows.setAmount(64);
                             p.getInventory().addItem(Arrows);
                             p.getInventory().addItem(Arrows);
-                            p.setBedSpawnLocation(map.getImportantPoints().get("BlueSpawn").toBukkitLoc());
                         }
                         Running = true;
                         count = -1;
@@ -289,6 +281,7 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
         for(Player p : players){
             p.teleport(PVPCore.getSpawn());
         }
+        Score.clearSlot(DisplaySlot.SIDEBAR);
         m.playerLeaveAll();
     }
     
@@ -358,6 +351,9 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                                 Block b = e.getClickedBlock().getLocation().add(0, 1, 0).getBlock();
                                 b.setType(Material.STAINED_GLASS);
                                 b.setData((byte) 14);
+                                for(Player pl : players){
+                                    pl.sendMessage("Red Captured ");
+                                }
                             }
                             if(BlueTeam.points.contains(e.getClickedBlock().getLocation())){
                                 BlueTeam.points.remove(e.getClickedBlock().getLocation());
@@ -387,6 +383,17 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                     }
                 }
                 
+            }
+        }
+        
+        @EventHandler
+        public void onPlayerRespawn(PlayerRespawnEvent e){
+            if(Running && players.contains(e.getPlayer())){
+                if(RedTeam.getPlayers().contains(e.getPlayer())){
+                    e.setRespawnLocation(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
+                }else if(BlueTeam.getPlayers().contains(e.getPlayer())){
+                    e.setRespawnLocation(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
+                }
             }
         }
     }

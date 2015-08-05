@@ -150,6 +150,7 @@ public class Map {
         s.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + "" + Curr+"/"+Max);
         s.update(true, true);
         LobbySign.toBukkitLoc().getBlock().getState().update();
+        p.getInventory().clear();
         if(Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").hasPlayer(p)){
             Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").removePlayer(p);
         }
@@ -168,6 +169,10 @@ public class Map {
             s.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + Curr+"/"+Max);
             s.update(true, true);
             LobbySign.toBukkitLoc().getBlock().getState().update();
+            p.getInventory().clear();
+            if(Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").hasPlayer(p)){
+                Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").removePlayer(p);
+            }
         }
         gm.getPlayers().clear();
     }
@@ -194,4 +199,5 @@ public class Map {
         }
         return null;
     }
+    
 }

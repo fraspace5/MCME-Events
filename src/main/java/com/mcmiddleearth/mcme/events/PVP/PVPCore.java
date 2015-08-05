@@ -78,7 +78,7 @@ public class PVPCore implements Event{
         Main.getPlugin().getCommand("locker").setExecutor(new Locker());
         PluginManager pm = Main.getServerInstance().getPluginManager();
         pm.registerEvents(new MapEditor(), Main.getPlugin());
-        pm.registerEvents(new PlayerStat.StatLitener(), Main.getPlugin());
+//        pm.registerEvents(new PlayerStat.StatLitener(), Main.getPlugin());
         pm.registerEvents(new Lobby.SignClickListener(), Main.getPlugin());
         pm.registerEvents(new ChatHandler(), Main.getPlugin());
         pm.registerEvents(new Locker(), Main.getPlugin());

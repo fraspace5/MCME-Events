@@ -21,7 +21,9 @@ package com.mcmiddleearth.mcme.events.PVP;
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.CommandBlockHandler;
 import java.io.File;
+import java.util.HashMap;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -33,6 +35,9 @@ import org.bukkit.entity.Player;
  * @author Donovan <dallen@dallen.xyz>
  */
 public class PVPCommandCore implements CommandExecutor{
+    
+    private static HashMap<String, String> StartedGames = new HashMap<>();
+    
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String label, String[] args) {
         if(cs instanceof Player){
@@ -49,20 +54,64 @@ public class PVPCommandCore implements CommandExecutor{
                         Map m = Map.maps.get(PVPCore.getPlaying().get(p.getName()));
                         m.getGm().Start(m);
                         return true;
-                    }else if(args[1].equalsIgnoreCase("quickstart") ){
-                        p.sendMessage("not implemented yet!");
-                        //<map> <goal>
+                    }else if(args[1].equalsIgnoreCase("quickstart")){
+                        if(p.isOp()){
+                            if(args.length >= 4){
+                                Map m = Map.findMap(args[2], args[3]);
+                                if(m != null){
+                                    p.sendMessage("wip");
+                                }else{
+                                    p.sendMessage("No such map!");
+                                }
+                            }else if(args.length >= 3){
+                                if(Map.maps.containsKey(args[2])){
+                                    Map m = Map.maps.get(args[2]);
+                                    p.sendMessage("Starting game " + m.getName());
+                                    p.sendMessage("Map: " + m.getTitle() + ", Gamemode: " + m.getGmType());
+                                    for(Player pl : Bukkit.getOnlinePlayers()){
+                                        if(!PVPCore.getPlaying().containsKey(pl.getName())){
+                                            pl.sendMessage(ChatColor.AQUA + p.getName() + " has started a game, " + "Map: " + m.getTitle() + ", Gamemode: " + m.getGmType());
+                                            pl.sendMessage(ChatColor.AQUA + "Use /pvp join " + p.getName() + " to join their game");
+                                            pl.sendMessage(ChatColor.AQUA + "There are only " + (m.getMax() - 1) + " slots left");
+                                        }
+                                    }
+                                    StartedGames.put(p.getName(), m.getName());
+                                    m.playerJoin(p);
+                                }else{
+                                    p.sendMessage("No such map!");
+                                }
+                            }
+                        }
                     }
                 }else if(args[0].equalsIgnoreCase("join")){
-                    p.sendMessage("not implemented yet!");
-                    //<map> <goal>
-                }else if(args[0].equalsIgnoreCase("cleargames")){
+                    if(args.length >= 2){
+                        if(StartedGames.containsKey(args[1])){
+                            Map m = Map.maps.get(StartedGames.get(args[1]));
+                            if(!m.getGm().getPlayers().contains(p) && !PVPCore.getPlaying().containsKey(p.getName())){
+                                if(m.playerJoin(p)){
+                                    p.sendMessage("Joining Map...");
+                                    Bukkit.broadcastMessage(p.getName() + " Joined");
+                                }else{
+                                    p.sendMessage("Failed to Join Map");
+                                }
+                            }else{
+                                p.sendMessage("You are already part of a game");
+                                if(p.getName().equalsIgnoreCase("Despot666")){
+                                    p.kickPlayer("<3 -Dallen");
+                                }
+                            }
+                        }else{
+                            p.sendMessage("No such game");
+                        }
+                    }else{
+                        p.sendMessage("No game name provided");
+                    }
+                }else if(args[0].equalsIgnoreCase("cleargames") && p.getName().equalsIgnoreCase("Dallen")){
                     for(File f : new File(PVPCore.getSaveLoc() + Main.getFileSep() + "Maps").listFiles()){
                         f.delete();
                     }
                     Map.maps.clear();
                     p.sendMessage("not done yet!");
-                    //<map> <goal>
                 }
             }
             return new MapEditor().onCommand(cs, cmnd, label, args);
