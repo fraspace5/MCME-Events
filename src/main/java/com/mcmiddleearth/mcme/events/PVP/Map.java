@@ -160,7 +160,7 @@ public class Map {
             ChatHandler.getPlayerPrefixes().remove(p.getName());
             p.setDisplayName(p.getName());
             for(Player pl : gm.getPlayers()){
-                pl.sendMessage(p.getName() + " left");
+//                pl.sendMessage(p.getName() + " left");
             }
             Curr--;
             PVPCore.getPlaying().remove(p.getName());

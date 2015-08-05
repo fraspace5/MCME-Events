@@ -235,7 +235,7 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                             Arrows.setAmount(64);
                             p.getInventory().addItem(Arrows);
                             p.getInventory().addItem(Arrows);
-                            
+                            p.setBedSpawnLocation(map.getImportantPoints().get("RedSpawn").toBukkitLoc());
                         }
                         for(Player p : BlueTeam.getPlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game Start!");
@@ -262,6 +262,7 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                             Arrows.setAmount(64);
                             p.getInventory().addItem(Arrows);
                             p.getInventory().addItem(Arrows);
+                            p.setBedSpawnLocation(map.getImportantPoints().get("BlueSpawn").toBukkitLoc());
                         }
                         Running = true;
                         count = -1;
