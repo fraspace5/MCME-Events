@@ -34,6 +34,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.plugin.PluginManager;
 
 /**
@@ -53,6 +55,9 @@ public class PVPCore implements Event{
     
     @Getter
     private static ArrayList<String> Playing = new ArrayList<>();
+    
+    @Getter
+    private static Location Spawn;
     
     @Override
     public void onEnable(){
@@ -84,6 +89,13 @@ public class PVPCore implements Event{
         } catch (Exception ex) {
             Logger.getLogger(SummerCore.class.getName()).log(Level.SEVERE, null, ex);
         }
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
+
+                    @Override
+                    public void run() {
+                        Spawn = new Location(Bukkit.getWorld("world"), 346, 40, 513);
+                    }
+                }, 20);
         
     }
     

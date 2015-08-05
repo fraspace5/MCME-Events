@@ -23,6 +23,7 @@ import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
 import com.mcmiddleearth.mcme.events.PVP.Map;
 import com.mcmiddleearth.mcme.events.PVP.MapEditor;
+import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.Util.EventLocation;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -295,6 +296,9 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
         for(Location l : events.points){
             l.getBlock().setType(Material.AIR);
             l.getBlock().getRelative(0, 1, 0).setType(Material.AIR);
+        }
+        for(Player p : players){
+            p.teleport(PVPCore.getSpawn());
         }
         m.playerLeaveAll();
     }
