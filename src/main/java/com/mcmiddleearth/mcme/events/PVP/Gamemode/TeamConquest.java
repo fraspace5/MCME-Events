@@ -39,6 +39,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -217,10 +218,7 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                             ItemStack[] armor = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
                                 new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS)};
                             for(int i = 0; i <= 3; i++){
-//                                LeatherArmorMeta LAM = (LeatherArmorMeta) armor[i].getItemMeta();
-//                                LAM.setColor(Color.fromRGB(10040115));
-//                                LAM.addEnchant(Enchantment.DURABILITY, 100, false);
-//                                armor[i].setItemMeta(LAM);
+                                armor[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
                             }
                             p.getInventory().clear();
                             p.getInventory().setHelmet(armor[0]);
@@ -228,14 +226,10 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                             p.getInventory().setLeggings(armor[2]);
                             p.getInventory().setBoots(armor[3]);
                             ItemStack sword = new ItemStack(Material.IRON_SWORD);
-                            ItemMeta SwordMeta = sword.getItemMeta();
-                            SwordMeta.addEnchant(Enchantment.DURABILITY, 100, false);
-                            sword.setItemMeta(SwordMeta);
+                            sword.addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
                             p.getInventory().addItem(sword);
                             ItemStack bow = new ItemStack(Material.BOW);
-                            ItemMeta BowMeta = bow.getItemMeta();
-                            BowMeta.addEnchant(Enchantment.DURABILITY, 100, false);
-                            bow.setItemMeta(BowMeta);
+                            bow.addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
                             p.getInventory().addItem(bow);
                             ItemStack Arrows = new ItemStack(Material.ARROW);
                             Arrows.setAmount(64);
@@ -251,9 +245,7 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                             ItemStack[] armor = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
                                 new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS)};
                             for(int i = 0; i <= 3; i++){
-//                                MaterialData md = armor[i].getData();
-//                                md.setData((byte) 11);
-//                                armor[i].setData(md);
+                                armor[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
                             }
                             p.getInventory().clear();
                             p.getInventory().setHelmet(armor[0]);
@@ -261,14 +253,10 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                             p.getInventory().setLeggings(armor[2]);
                             p.getInventory().setBoots(armor[3]);
                             ItemStack sword = new ItemStack(Material.IRON_SWORD);
-                            ItemMeta SwordMeta = sword.getItemMeta();
-                            SwordMeta.addEnchant(Enchantment.DURABILITY, 100, false);
-                            sword.setItemMeta(SwordMeta);
+                            sword.addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
                             p.getInventory().addItem(sword);
                             ItemStack bow = new ItemStack(Material.BOW);
-                            ItemMeta BowMeta = bow.getItemMeta();
-                            BowMeta.addEnchant(Enchantment.DURABILITY, 100, false);
-                            bow.setItemMeta(BowMeta);
+                            bow.addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
                             p.getInventory().addItem(bow);
                             ItemStack Arrows = new ItemStack(Material.ARROW);
                             Arrows.setAmount(64);
