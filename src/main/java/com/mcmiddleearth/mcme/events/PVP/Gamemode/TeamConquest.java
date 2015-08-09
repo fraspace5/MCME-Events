@@ -304,8 +304,10 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
         }
         for(Player p : players){
             p.teleport(PVPCore.getSpawn());
-            p.setDisplayName(p.getName());
+            p.setDisplayName(ChatColor.WHITE + p.getName());
             p.getInventory().clear();
+            p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
+                new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
         }
         Score.clearSlot(DisplaySlot.SIDEBAR);
         m.playerLeaveAll();
