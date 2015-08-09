@@ -34,6 +34,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.entity.Player;
@@ -97,6 +98,8 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
     private boolean Running = false;
     
     GameEvents events;
+    
+    boolean hasTeams = false;
     
     Runnable tick = new Runnable(){
             @Override
@@ -195,16 +198,24 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                         }
                         ScoreboardManager sbm = Bukkit.getScoreboardManager();
                         Score = sbm.getNewScoreboard();
-                        if(sbm.getMainScoreboard() == null){
-                            Score = sbm.getNewScoreboard();
+                        if(sbm.getMainScoreboard() != null){
+                            org.bukkit.scoreboard.Team blu = sbm.getMainScoreboard().getTeam("blue");
+                            org.bukkit.scoreboard.Team rd =  sbm.getMainScoreboard().getTeam("red");
+                            if(blu != null && rd != null){
+                                for(Player p : RedTeam.getPlayers()){
+                                    rd.addPlayer(p);
+                                }
+                                for(Player p : BlueTeam.getPlayers()){
+                                    blu.addPlayer(p);
+                                }
+                            }
                         }
-                        Points = Score.registerNewObjective("Points", "dummy");
-                        Points.setDisplayName("Points");
+                        Points = Score.registerNewObjective("Score", "dummy");
+                        Points.setDisplayName("Score");
                         Points.getScore(ChatColor.BLUE + "Blue:").setScore(0);
                         Points.getScore(ChatColor.RED + "Red:").setScore(0);
                         Points.setDisplaySlot(DisplaySlot.SIDEBAR);
                         for(Player p : RedTeam.getPlayers()){
-//                            p.sendMessage(String.valueOf(((LeatherArmorMeta) p.getItemInHand().getItemMeta()).getColor().asRGB()));
                             p.sendMessage(ChatColor.GREEN + "Game Start!");
                             p.teleport(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
                             p.setGameMode(RedTeam.getGamemode());
@@ -266,7 +277,7 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                     }
                 }
 
-            }, 20, 11);
+            }, 40, 11);
     }
     
     
@@ -283,6 +294,20 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
         }
         Score.clearSlot(DisplaySlot.SIDEBAR);
         m.playerLeaveAll();
+        BlueTeam = new Team("Blue", GameMode.ADVENTURE);
+        RedTeam = new Team("Red", GameMode.ADVENTURE);
+        if(Bukkit.getScoreboardManager().getMainScoreboard() != null){
+            org.bukkit.scoreboard.Team blu = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("blue");
+            org.bukkit.scoreboard.Team rd = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("red");
+            if(blu != null && rd != null){
+                for(OfflinePlayer p : blu.getPlayers()){
+                    blu.removePlayer(p);
+                }
+                for(OfflinePlayer p : rd.getPlayers()){
+                    rd.removePlayer(p);
+                }
+            }
+        }
     }
     
     private class Team{
@@ -335,54 +360,54 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
         @EventHandler
         public void onPlayerInteract(PlayerInteractEvent e){
             if(Running && players.contains(e.getPlayer()) && 
-                    e.getClickedBlock().getType().equals(Material.BEACON) &&
                     e.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
-                e.setUseInteractedBlock(Event.Result.DENY);
-                int cap = capAmount.get(e.getClickedBlock().getLocation());
-                Player p = e.getPlayer();
-                if(RedTeam.getPlayers().contains(p)){
-                    if(cap < 50){
-                        cap++;
-                        p.sendMessage(ChatColor.RED + "Cap at " + (cap * 2) + "%");
-                        if(cap >= 50){
-                            p.sendMessage(ChatColor.RED + "Point Captured!");
-                            if(!RedTeam.points.contains(e.getClickedBlock().getLocation())){
-                                RedTeam.points.add(e.getClickedBlock().getLocation());
-                                Block b = e.getClickedBlock().getLocation().add(0, 1, 0).getBlock();
-                                b.setType(Material.STAINED_GLASS);
-                                b.setData((byte) 14);
-                                for(Player pl : players){
-                                    pl.sendMessage("Red Captured ");
+                if(e.getClickedBlock().getType().equals(Material.BEACON)){
+                    e.setUseInteractedBlock(Event.Result.DENY);
+                    int cap = capAmount.get(e.getClickedBlock().getLocation());
+                    Player p = e.getPlayer();
+                    if(RedTeam.getPlayers().contains(p)){
+                        if(cap < 50){
+                            cap++;
+                            p.sendMessage(ChatColor.RED + "Cap at " + (cap * 2) + "%");
+                            if(cap >= 50){
+                                p.sendMessage(ChatColor.RED + "Point Captured!");
+                                if(!RedTeam.points.contains(e.getClickedBlock().getLocation())){
+                                    RedTeam.points.add(e.getClickedBlock().getLocation());
+                                    Block b = e.getClickedBlock().getLocation().add(0, 1, 0).getBlock();
+                                    b.setType(Material.STAINED_GLASS);
+                                    b.setData((byte) 14);
+                                    for(Player pl : players){
+                                        pl.sendMessage("Red Captured ");
+                                    }
                                 }
+                                if(BlueTeam.points.contains(e.getClickedBlock().getLocation())){
+                                    BlueTeam.points.remove(e.getClickedBlock().getLocation());
+                                }
+                            }else{
+                                capAmount.put(e.getClickedBlock().getLocation(), cap);
                             }
-                            if(BlueTeam.points.contains(e.getClickedBlock().getLocation())){
-                                BlueTeam.points.remove(e.getClickedBlock().getLocation());
-                            }
-                        }else{
-                            capAmount.put(e.getClickedBlock().getLocation(), cap);
                         }
-                    }
-                }else if(BlueTeam.getPlayers().contains(p)){
-                    if(cap > -50){
-                        cap--;
-                        p.sendMessage(ChatColor.BLUE + "Cap at " + (cap * -2) + "%");
-                        if(cap <= -50){
-                            p.sendMessage(ChatColor.BLUE + "Point Captured!");
-                            if(!BlueTeam.points.contains(e.getClickedBlock().getLocation())){
-                                BlueTeam.points.add(e.getClickedBlock().getLocation());
-                                Block b = e.getClickedBlock().getLocation().add(0, 1, 0).getBlock();
-                                b.setType(Material.STAINED_GLASS);
-                                b.setData((byte) 11);
+                    }else if(BlueTeam.getPlayers().contains(p)){
+                        if(cap > -50){
+                            cap--;
+                            p.sendMessage(ChatColor.BLUE + "Cap at " + (cap * -2) + "%");
+                            if(cap <= -50){
+                                p.sendMessage(ChatColor.BLUE + "Point Captured!");
+                                if(!BlueTeam.points.contains(e.getClickedBlock().getLocation())){
+                                    BlueTeam.points.add(e.getClickedBlock().getLocation());
+                                    Block b = e.getClickedBlock().getLocation().add(0, 1, 0).getBlock();
+                                    b.setType(Material.STAINED_GLASS);
+                                    b.setData((byte) 11);
+                                }
+                                if(RedTeam.points.contains(e.getClickedBlock().getLocation())){
+                                    RedTeam.points.remove(e.getClickedBlock().getLocation());
+                                }
+                            }else{
+                                capAmount.put(e.getClickedBlock().getLocation(), cap);
                             }
-                            if(RedTeam.points.contains(e.getClickedBlock().getLocation())){
-                                RedTeam.points.remove(e.getClickedBlock().getLocation());
-                            }
-                        }else{
-                            capAmount.put(e.getClickedBlock().getLocation(), cap);
                         }
                     }
                 }
-                
             }
         }
         

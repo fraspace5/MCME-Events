@@ -77,6 +77,9 @@ public class Main extends JavaPlugin{
     @Getter
     private static File playerDirectory;
     
+    @Getter
+    private static boolean blockprotect = false;
+    
     @Override
     public void onEnable(){
         plugin = this;
@@ -108,6 +111,7 @@ public class Main extends JavaPlugin{
         this.getCommand("World").setExecutor(new CommandCore());
         this.getCommand("PlugUp").setExecutor(new CommandCore());
         PluginManager pm = this.getServer().getPluginManager();
+        pm.registerEvents(new ListenerCore(), this);
         boolean PVP = this.getConfig().getBoolean("PVP.Enabled");
         if(PVP){
             PVPCore = new PVPCore();

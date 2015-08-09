@@ -21,6 +21,7 @@ package com.mcmiddleearth.mcme.events.PVP;
 import com.mcmiddleearth.mcme.events.Util.EventLocation;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.FreeForAll;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Infected;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.KingOfTheHill;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.RingBearer;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Siege;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamConquest;
@@ -125,6 +126,10 @@ public class MapEditor implements CommandExecutor, Listener{
                                 }else if(args[3].equalsIgnoreCase("TeamConquest")){
                                     m.setGm(new TeamConquest());
                                     m.setGmType("TeamConquest");
+                                    real = true;
+                                }else if(args[3].equalsIgnoreCase("kingofthehill")){
+                                    m.setGm(new KingOfTheHill());
+                                    m.setGmType("King Of The Hill");
                                     real = true;
                                 }else if(args[3].equalsIgnoreCase("TeamDeathmatch")){
                                     m.setGm(new TeamDeathmatch());

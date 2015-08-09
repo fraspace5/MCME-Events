@@ -68,9 +68,7 @@ public class Locker implements CommandExecutor, Listener{
     
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onServerListPing(ServerListPingEvent e){
-        System.out.println("Locked Ping!");
         if(locked){
-            System.out.println("Locked Ping!");
             e.setMotd(ChatColor.BLUE + "server locked");
             e.setMaxPlayers(0);
         }
@@ -78,7 +76,6 @@ public class Locker implements CommandExecutor, Listener{
     
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
-        System.out.println("Locked Join!");
         if(locked && !e.getPlayer().isOp()){
             e.getPlayer().kickPlayer("Server is locked");
         }

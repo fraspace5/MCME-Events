@@ -33,16 +33,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -74,7 +71,7 @@ public class KingOfTheHill implements Gamemode{
     private Scoreboard Score;
     
     @Getter
-    private int target = 100;
+    private int target = 50;
     
     @Getter
     private static final ArrayList<String> reqPoints = new ArrayList<String>(Arrays.asList(new String[] {
@@ -198,7 +195,6 @@ public class KingOfTheHill implements Gamemode{
                         Points.getScore(ChatColor.RED + "Red:").setScore(0);
                         Points.setDisplaySlot(DisplaySlot.SIDEBAR);
                         for(Player p : RedTeam.getPlayers()){
-//                            p.sendMessage(String.valueOf(((LeatherArmorMeta) p.getItemInHand().getItemMeta()).getColor().asRGB()));
                             p.sendMessage(ChatColor.GREEN + "Game Start!");
                             p.teleport(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
                             p.setGameMode(RedTeam.getGamemode());
@@ -206,10 +202,7 @@ public class KingOfTheHill implements Gamemode{
                             ItemStack[] armor = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
                                 new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS)};
                             for(int i = 0; i <= 3; i++){
-//                                LeatherArmorMeta LAM = (LeatherArmorMeta) armor[i].getItemMeta();
-//                                LAM.setColor(Color.fromRGB(10040115));
-//                                LAM.addEnchant(Enchantment.DURABILITY, 100, false);
-//                                armor[i].setItemMeta(LAM);
+                                armor[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
                             }
                             p.getInventory().clear();
                             p.getInventory().setHelmet(armor[0]);
@@ -217,20 +210,15 @@ public class KingOfTheHill implements Gamemode{
                             p.getInventory().setLeggings(armor[2]);
                             p.getInventory().setBoots(armor[3]);
                             ItemStack sword = new ItemStack(Material.IRON_SWORD);
-                            ItemMeta SwordMeta = sword.getItemMeta();
-                            SwordMeta.addEnchant(Enchantment.DURABILITY, 100, false);
-                            sword.setItemMeta(SwordMeta);
+                            sword.addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
                             p.getInventory().addItem(sword);
                             ItemStack bow = new ItemStack(Material.BOW);
-                            ItemMeta BowMeta = bow.getItemMeta();
-                            BowMeta.addEnchant(Enchantment.DURABILITY, 100, false);
-                            bow.setItemMeta(BowMeta);
+                            bow.addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
                             p.getInventory().addItem(bow);
                             ItemStack Arrows = new ItemStack(Material.ARROW);
                             Arrows.setAmount(64);
                             p.getInventory().addItem(Arrows);
                             p.getInventory().addItem(Arrows);
-                            
                         }
                         for(Player p : BlueTeam.getPlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game Start!");
@@ -240,9 +228,7 @@ public class KingOfTheHill implements Gamemode{
                             ItemStack[] armor = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
                                 new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS)};
                             for(int i = 0; i <= 3; i++){
-//                                MaterialData md = armor[i].getData();
-//                                md.setData((byte) 11);
-//                                armor[i].setData(md);
+                                armor[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
                             }
                             p.getInventory().clear();
                             p.getInventory().setHelmet(armor[0]);
@@ -250,14 +236,10 @@ public class KingOfTheHill implements Gamemode{
                             p.getInventory().setLeggings(armor[2]);
                             p.getInventory().setBoots(armor[3]);
                             ItemStack sword = new ItemStack(Material.IRON_SWORD);
-                            ItemMeta SwordMeta = sword.getItemMeta();
-                            SwordMeta.addEnchant(Enchantment.DURABILITY, 100, false);
-                            sword.setItemMeta(SwordMeta);
+                            sword.addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
                             p.getInventory().addItem(sword);
                             ItemStack bow = new ItemStack(Material.BOW);
-                            ItemMeta BowMeta = bow.getItemMeta();
-                            BowMeta.addEnchant(Enchantment.DURABILITY, 100, false);
-                            bow.setItemMeta(BowMeta);
+                            bow.addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
                             p.getInventory().addItem(bow);
                             ItemStack Arrows = new ItemStack(Material.ARROW);
                             Arrows.setAmount(64);
@@ -274,7 +256,7 @@ public class KingOfTheHill implements Gamemode{
                     }
                 }
 
-            }, 20, 11);
+            }, 40, 11);
     }
     
     @Override
@@ -328,63 +310,78 @@ public class KingOfTheHill implements Gamemode{
         
         HashMap<Location, Integer> capAmount = new HashMap<>();//red = +; blue = -
         
+        int HillCapAmount = 0;
+        
+        ArrayList<Player> InHill = new ArrayList<>();
+        
         public GameEvents(){
-            for(java.util.Map.Entry<String, EventLocation> e : map.getImportantPoints().entrySet()){
-                if(e.getKey().contains("Point")){
-                    points.add(e.getValue().toBukkitLoc());
-                    capAmount.put(e.getValue().toBukkitLoc(), 0);
+            points.add(map.getImportantPoints().get("Hill").toBukkitLoc());
+            capAmount.put(map.getImportantPoints().get("Hill").toBukkitLoc(), 0);
+        }
+        
+        @EventHandler
+        public void onPlayerMove(PlayerMoveEvent e){
+            if(Running && players.contains(e.getPlayer())){
+                Player p = e.getPlayer();
+                Location cent = map.getImportantPoints().get("Hill").toBukkitLoc();
+                if(p.getLocation().distance(cent) < 4){
+                    if(RedTeam.getPlayers().contains(p)){
+                        if(HillCapAmount > 0){
+                            HillCapAmount++;
+                        }
+                    }else if(BlueTeam.getPlayers().contains(p)){
+                        
+                    }
+                    
+                }else if(InHill.contains(p)){
+                    InHill.remove(p);
+                    HillCapAmount--;
                 }
             }
         }
         
         @EventHandler
-        public void onPlayerInteract(PlayerInteractEvent e){
-            if(Running && players.contains(e.getPlayer()) && 
-                    e.getClickedBlock().getType().equals(Material.BEACON) &&
-                    e.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
-                e.setUseInteractedBlock(Event.Result.DENY);
-                int cap = capAmount.get(e.getClickedBlock().getLocation());
-                Player p = e.getPlayer();
-                if(RedTeam.getPlayers().contains(p)){
-                    if(cap < 50){
-                        cap++;
-                        p.sendMessage(ChatColor.RED + "Cap at " + (cap * 2) + "%");
-                        if(cap >= 50){
-                            p.sendMessage(ChatColor.RED + "Point Captured!");
-                            if(!RedTeam.points.contains(e.getClickedBlock().getLocation())){
-                                RedTeam.points.add(e.getClickedBlock().getLocation());
-                                Block b = e.getClickedBlock().getLocation().add(0, 1, 0).getBlock();
-                                b.setType(Material.STAINED_GLASS);
-                                b.setData((byte) 14);
-                            }
-                            if(BlueTeam.points.contains(e.getClickedBlock().getLocation())){
-                                BlueTeam.points.remove(e.getClickedBlock().getLocation());
-                            }
-                        }else{
-                            capAmount.put(e.getClickedBlock().getLocation(), cap);
-                        }
-                    }
-                }else if(BlueTeam.getPlayers().contains(p)){
-                    if(cap > -50){
-                        cap--;
-                        p.sendMessage(ChatColor.BLUE + "Cap at " + (cap * -2) + "%");
-                        if(cap <= -50){
-                            p.sendMessage(ChatColor.BLUE + "Point Captured!");
-                            if(!BlueTeam.points.contains(e.getClickedBlock().getLocation())){
-                                BlueTeam.points.add(e.getClickedBlock().getLocation());
-                                Block b = e.getClickedBlock().getLocation().add(0, 1, 0).getBlock();
-                                b.setType(Material.STAINED_GLASS);
-                                b.setData((byte) 11);
-                            }
-                            if(RedTeam.points.contains(e.getClickedBlock().getLocation())){
-                                RedTeam.points.remove(e.getClickedBlock().getLocation());
-                            }
-                        }else{
-                            capAmount.put(e.getClickedBlock().getLocation(), cap);
-                        }
-                    }
+        public void onPlayerRespawn(PlayerRespawnEvent e){
+            if(Running && players.contains(e.getPlayer())){
+                if(RedTeam.getPlayers().contains(e.getPlayer())){
+                    e.setRespawnLocation(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
+                }else if(BlueTeam.getPlayers().contains(e.getPlayer())){
+                    e.setRespawnLocation(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
                 }
-                
+            }
+        }
+        
+        private void PlayerCapture(Player p, Location cent){
+            int cap = capAmount.get(cent);
+            if(cap < 200){
+                cap++;
+                p.sendMessage(ChatColor.RED + "Cap at " + (cap/2) + "%");
+                if(cap >= 200){
+                    if(!RedTeam.points.contains(cent)){
+                        RedTeam.points.add(cent);
+                        p.sendMessage(ChatColor.RED + "Point Captured!");
+                    }
+                    if(BlueTeam.points.contains(cent)){
+                        BlueTeam.points.remove(cent);
+                    }
+                }else{
+                    capAmount.put(cent, cap);
+                }
+            }
+            if(cap > -200){
+                cap--;
+                p.sendMessage(ChatColor.BLUE + "Cap at " + (cap/-2) + "%");
+                if(cap <= -200){
+                    if(!BlueTeam.points.contains(cent)){
+                        BlueTeam.points.add(cent);
+                        p.sendMessage(ChatColor.BLUE + "Point Captured!");
+                    }
+                    if(RedTeam.points.contains(cent)){
+                        RedTeam.points.remove(cent);
+                    }
+                }else{
+                    capAmount.put(cent, cap);
+                }
             }
         }
     }

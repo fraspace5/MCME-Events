@@ -33,14 +33,18 @@ public class ListenerCore implements Listener{
     
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e){
-        if(e.getPlayer().getWorld().getName().equals(Main.getPlugin().getSpawnWorld())){
-            e.setCancelled(true);
+        if(Main.isBlockprotect()){
+            if(e.getPlayer().getWorld().getName().equals(Main.getPlugin().getSpawnWorld())){
+                e.setCancelled(true);
+            }
         }
     }
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e){
-        if(e.getPlayer().getWorld().getName().equals(Main.getPlugin().getSpawnWorld())){
-            e.setCancelled(true);
+        if(Main.isBlockprotect()){
+            if(e.getPlayer().getWorld().getName().equals(Main.getPlugin().getSpawnWorld())){
+                e.setCancelled(true);
+            }
         }
     }
     @EventHandler

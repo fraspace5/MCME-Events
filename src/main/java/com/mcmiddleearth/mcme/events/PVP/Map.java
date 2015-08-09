@@ -72,6 +72,9 @@ public class Map {
     
     @Getter @Setter
     private ArrayList<EventLocation> spawnPoints = new ArrayList<>();
+    
+//    @Getter
+//    private String rp = "";
 
     public static HashMap<String, Map> maps = new HashMap<>();
     
@@ -199,5 +202,10 @@ public class Map {
         }
         return null;
     }
+    
+//    @JsonIgnore
+//    public void setRp(String rp){
+//        this.rp = rp;
+//    }
     
 }
