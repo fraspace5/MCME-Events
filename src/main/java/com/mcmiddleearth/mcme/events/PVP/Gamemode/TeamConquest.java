@@ -310,12 +310,16 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                 new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
         }
         Score.clearSlot(DisplaySlot.SIDEBAR);
+        for(Player p : players){
+            p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+        }
         m.playerLeaveAll();
         BlueTeam = new Team("Blue", GameMode.ADVENTURE);
         RedTeam = new Team("Red", GameMode.ADVENTURE);
         if(Bukkit.getScoreboardManager().getMainScoreboard() != null){
             org.bukkit.scoreboard.Team blu = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("blue");
             org.bukkit.scoreboard.Team rd = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("red");
+            
             if(blu != null && rd != null){
                 for(OfflinePlayer p : blu.getPlayers()){
                     blu.removePlayer(p);
