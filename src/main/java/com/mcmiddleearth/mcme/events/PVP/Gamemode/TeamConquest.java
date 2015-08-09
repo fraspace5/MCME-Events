@@ -232,11 +232,10 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                                     LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
                                     lam.setColor(org.bukkit.Color.fromRGB(153, 51, 51));
                                     items[i].setItemMeta(lam);
+                                }else{
+                                    items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
                                 }
-//                                ItemMeta.Spigot im = 
                                 items[i].getItemMeta().spigot().setUnbreakable(true);
-//                                im.setUnbreakable(true);
-//                                items[i].setItemMeta((ItemMeta) im);
                             }
                             p.getInventory().clear();
                             p.getInventory().setHelmet(items[0]);
@@ -263,11 +262,11 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                                     LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
                                     lam.setColor(org.bukkit.Color.fromRGB(51, 76, 178));
                                     items[i].setItemMeta(lam);
+                                }else{
+                                    items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
                                 }
-//                                ItemMeta.Spigot im = 
                                 items[i].getItemMeta().spigot().setUnbreakable(true);
-//                                im.setUnbreakable(true);
-//                                items[i].setItemMeta((ItemMeta) im);
+                                
                             }
                             p.getInventory().clear();
                             p.getInventory().setHelmet(items[0]);
@@ -305,6 +304,8 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
         }
         for(Player p : players){
             p.teleport(PVPCore.getSpawn());
+            p.setDisplayName(p.getName());
+            p.getInventory().clear();
         }
         Score.clearSlot(DisplaySlot.SIDEBAR);
         m.playerLeaveAll();
