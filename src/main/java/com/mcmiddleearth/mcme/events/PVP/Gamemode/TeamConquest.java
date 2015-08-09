@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import javafx.scene.paint.Color;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -45,6 +46,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.ItemMeta.Spigot;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -220,22 +224,27 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                             p.teleport(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
                             p.setGameMode(RedTeam.getGamemode());
                             p.setScoreboard(Score);
-                            ItemStack[] armor = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
-                                new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS)};
-                            for(int i = 0; i <= 3; i++){
-                                armor[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
+                            ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
+                                new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
+                                new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
+                            for(int i = 0; i <= 5; i++){
+                                if(i<=3){
+                                    LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
+                                    lam.setColor(org.bukkit.Color.fromRGB(153, 51, 51));
+                                    items[i].setItemMeta(lam);
+                                }
+//                                ItemMeta.Spigot im = 
+                                items[i].getItemMeta().spigot().setUnbreakable(true);
+//                                im.setUnbreakable(true);
+//                                items[i].setItemMeta((ItemMeta) im);
                             }
                             p.getInventory().clear();
-                            p.getInventory().setHelmet(armor[0]);
-                            p.getInventory().setChestplate(armor[1]);
-                            p.getInventory().setLeggings(armor[2]);
-                            p.getInventory().setBoots(armor[3]);
-                            ItemStack sword = new ItemStack(Material.IRON_SWORD);
-                            sword.addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
-                            p.getInventory().addItem(sword);
-                            ItemStack bow = new ItemStack(Material.BOW);
-                            bow.addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
-                            p.getInventory().addItem(bow);
+                            p.getInventory().setHelmet(items[0]);
+                            p.getInventory().setChestplate(items[1]);
+                            p.getInventory().setLeggings(items[2]);
+                            p.getInventory().setBoots(items[3]);
+                            p.getInventory().addItem(items[4]);
+                            p.getInventory().addItem(items[5]);
                             ItemStack Arrows = new ItemStack(Material.ARROW);
                             Arrows.setAmount(64);
                             p.getInventory().addItem(Arrows);
@@ -246,22 +255,27 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                             p.teleport(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
                             p.setGameMode(BlueTeam.getGamemode());
                             p.setScoreboard(Score);
-                            ItemStack[] armor = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
-                                new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS)};
-                            for(int i = 0; i <= 3; i++){
-                                armor[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
+                            ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
+                                new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
+                                new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
+                            for(int i = 0; i <= 5; i++){
+                                if(i<=3){
+                                    LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
+                                    lam.setColor(org.bukkit.Color.fromRGB(51, 76, 178));
+                                    items[i].setItemMeta(lam);
+                                }
+//                                ItemMeta.Spigot im = 
+                                items[i].getItemMeta().spigot().setUnbreakable(true);
+//                                im.setUnbreakable(true);
+//                                items[i].setItemMeta((ItemMeta) im);
                             }
                             p.getInventory().clear();
-                            p.getInventory().setHelmet(armor[0]);
-                            p.getInventory().setChestplate(armor[1]);
-                            p.getInventory().setLeggings(armor[2]);
-                            p.getInventory().setBoots(armor[3]);
-                            ItemStack sword = new ItemStack(Material.IRON_SWORD);
-                            sword.addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
-                            p.getInventory().addItem(sword);
-                            ItemStack bow = new ItemStack(Material.BOW);
-                            bow.addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
-                            p.getInventory().addItem(bow);
+                            p.getInventory().setHelmet(items[0]);
+                            p.getInventory().setChestplate(items[1]);
+                            p.getInventory().setLeggings(items[2]);
+                            p.getInventory().setBoots(items[3]);
+                            p.getInventory().addItem(items[4]);
+                            p.getInventory().addItem(items[5]);
                             ItemStack Arrows = new ItemStack(Material.ARROW);
                             Arrows.setAmount(64);
                             p.getInventory().addItem(Arrows);
