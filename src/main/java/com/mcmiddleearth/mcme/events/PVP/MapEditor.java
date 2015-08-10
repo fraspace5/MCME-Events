@@ -22,6 +22,7 @@ import com.mcmiddleearth.mcme.events.Util.EventLocation;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.FreeForAll;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Infected;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.KingOfTheHill;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.OneInTheQuiver;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.RingBearer;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Siege;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamConquest;
@@ -119,9 +120,16 @@ public class MapEditor implements CommandExecutor, Listener{
                                         p.sendMessage("WARNING: there is not yet a redblock location for this map!");
                                     }
                                     real = true;
+                                }else if(args[3].equalsIgnoreCase("oneinthequiver")){
+                                    m.setGm(new OneInTheQuiver());
+                                    m.setGmType("One In The Quiver");
+                                    if(!m.getImportantPoints().containsKey("RedBlock")){
+                                        p.sendMessage("WARNING: there is not yet a redblock location for this map!");
+                                    }
+                                    real = true;
                                 }else if(args[3].equalsIgnoreCase("Ringbearer")){
                                     m.setGm(new RingBearer());
-                                    m.setGmType("RignBearer");
+                                    m.setGmType("RingBearer");
                                     real = true;
                                 }else if(args[3].equalsIgnoreCase("TeamConquest")){
                                     m.setGm(new TeamConquest());
