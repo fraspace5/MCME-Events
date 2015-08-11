@@ -28,6 +28,3 @@ commands:
     pvp:
         description: PVP commands go to the read-me for more info
         usage: /pvp <some shit>
-    lookup:
-        description: PVP commands go to the read-me for more info
-        usage: /pvp <some shit>

@@ -67,11 +67,18 @@ public class PVPCore implements Event{
             maps = new HashMap<>();
         }
         for(Entry<String, Object> e : maps.entrySet()){
-            Map m = (Map) e.getValue();
-            if(m.getGmType() != null){
-                m.bindGamemode();
+            try{
+                Map m = (Map) e.getValue();
+                if(m.getGmType() != null){
+                    m.bindGamemode();
+                }
+                Map.maps.put(e.getKey(), m);
+            }catch(Exception ex){
+                File f = new File(Main.getPluginDirectory() + Main.getFileSep() + "PVP" + Main.getFileSep() + "Maps" + Main.getFileSep() + e.getKey());
+                if(f.exists()){
+                    f.delete();
+                }
             }
-            Map.maps.put(e.getKey(), m);
         }
         CLog.println(maps);
         Main.getPlugin().getCommand("pvp").setExecutor(new PVPCommandCore());
