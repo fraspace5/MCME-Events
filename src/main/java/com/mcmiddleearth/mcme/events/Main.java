@@ -112,11 +112,11 @@ public class Main extends JavaPlugin{
         this.getCommand("PlugUp").setExecutor(new CommandCore());
         PluginManager pm = this.getServer().getPluginManager();
         pm.registerEvents(new ListenerCore(), this);
-        boolean PVP = this.getConfig().getBoolean("PVP.Enabled");
-        if(PVP){
+//        boolean PVP = this.getConfig().getBoolean("PVP.Enabled");
+//        if(PVP){
             PVPCore = new PVPCore();
             PVPCore.onEnable();
-        }
+//        }
         boolean Winter = this.getConfig().getBoolean("WinterEvent.Enabled");
         boolean Summer = this.getConfig().getBoolean("SummerEvent.Enabled");
         if(Summer){

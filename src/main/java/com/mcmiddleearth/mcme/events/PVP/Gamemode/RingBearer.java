@@ -38,13 +38,18 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -86,6 +91,26 @@ public class RingBearer implements Gamemode{//Handled by plugin
     private boolean Running = false;
     
     boolean hasTeams = false;
+    
+    Runnable exp = new Runnable(){
+
+            @Override
+            public void run() {
+                if(Running){
+                    if(RedTeam.getBearer().getExp() < 7f){
+                        RedTeam.getBearer().setExp(RedTeam.getBearer().getExp() + 0.004f);
+                    }
+                    if(BlueTeam.getBearer().getExp() < 7f){
+                        BlueTeam.getBearer().setExp(BlueTeam.getBearer().getExp() + 0.004f);
+                    }
+                }
+            }
+            
+        };
+    
+    public RingBearer(){
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(), exp, 20, 20);
+    }
     
     @Override
     public void Start(Map m) {
@@ -335,6 +360,36 @@ public class RingBearer implements Gamemode{//Handled by plugin
     private class GameEvents implements Listener{
         
         @EventHandler
+        public void onPlayerInteract(PlayerInteractEvent e){
+            if(Running && players.contains(e.getPlayer()) && (
+                    e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK))){
+                System.out.println("Enter");
+                final Player p = e.getPlayer();
+                if(p.getItemInHand() != null){
+                    ItemStack ring = p.getItemInHand();
+                    if(ring.getItemMeta().getDisplayName().equalsIgnoreCase("The Ring")){
+                        System.out.println(p.getExp());
+                        if(p.getExp() >= 1.00f){
+                            p.setExp(0);
+                            p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 600, 1, true, true));
+                            final ItemStack[] armor = new ItemStack[] {p.getInventory().getHelmet(), p.getInventory().getChestplate(),
+                                p.getInventory().getLeggings(), p.getInventory().getBoots()};
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
+                            @Override
+                            public void run() {
+                                p.getInventory().setHelmet(armor[0]);
+                                p.getInventory().setChestplate(armor[1]);
+                                p.getInventory().setLeggings(armor[2]);
+                                p.getInventory().setBoots(armor[3]);
+                            }
+                            }, 600);
+                        }
+                    }
+                }
+            }
+        }
+        
+        @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
             if(Running && players.contains(e.getPlayer())){
                 if(RedTeam.getPlayers().contains(e.getPlayer())){
@@ -378,7 +433,7 @@ public class RingBearer implements Gamemode{//Handled by plugin
                                 p.sendMessage(ChatColor.RED + "Red Team Wins!");
                             }
                             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
-
+                                
                                 @Override
                                 public void run() {
                                     End(map);
