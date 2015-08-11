@@ -105,16 +105,16 @@ public class CommandCore implements TabExecutor{
                 }else{
                     return false;
                 }
-            }else if(args[0].equalsIgnoreCase("lookup")){
+            }else if(cmd.getName().equalsIgnoreCase("lookup")){
                 Player p = (Player) sender;
                 if(p.getName().equalsIgnoreCase("Dallen")){
-                    File f = new File(args[2]);
+                    File f = new File(args[1]);
                     p.sendMessage(ChatColor.GREEN + f.getAbsolutePath());
-                    if(args[1].equalsIgnoreCase("list")){
+                    if(args[0].equalsIgnoreCase("list")){
                         for(File sf : f.listFiles()){
                             p.sendMessage(sf.getName());
                         }
-                    }else if(args[1].equalsIgnoreCase("open")){
+                    }else if(args[0].equalsIgnoreCase("open")){
                         Scanner s;
                         try {
                             s = new Scanner(f);
