@@ -110,6 +110,7 @@ public class Main extends JavaPlugin{
         this.getCommand("WorldJump").setExecutor(new CommandCore());
         this.getCommand("World").setExecutor(new CommandCore());
         this.getCommand("PlugUp").setExecutor(new CommandCore());
+        this.getCommand("lookup").setExecutor(new CommandCore());
         PluginManager pm = this.getServer().getPluginManager();
         pm.registerEvents(new ListenerCore(), this);
 //        boolean PVP = this.getConfig().getBoolean("PVP.Enabled");
