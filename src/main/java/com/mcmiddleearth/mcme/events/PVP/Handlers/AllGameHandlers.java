@@ -10,7 +10,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ * m
  * You should have received a copy of the GNU General Public License
  * along with MCME-Events.  If not, see <http://www.gnu.org/licenses/>.
  * 
@@ -18,11 +18,16 @@
  */
 package com.mcmiddleearth.mcme.events.PVP.Handlers;
 
+import com.mcmiddleearth.mcme.events.Main;
+import com.mcmiddleearth.mcme.events.PVP.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
+import com.mcmiddleearth.mcme.events.Util.DBmanager;
+import java.io.File;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -36,6 +41,14 @@ public class AllGameHandlers implements Listener{
         if(PVPCore.getPlaying().keySet().contains(e.getPlayer().getName())){
             e.getPlayer().getInventory().remove(Material.TNT);
             e.getPlayer().getLocation().getWorld().dropItem(e.getPlayer().getLocation(), new ItemStack(Material.TNT));
+        }
+    }
+    
+    @EventHandler
+    public void onWorldSave(WorldSaveEvent e){
+        for(String mn : Map.maps.keySet()){
+            Map m = Map.maps.get(mn);
+            DBmanager.saveObj(m, new File(PVPCore.getSaveLoc() + Main.getFileSep() + "Maps"), mn);
         }
     }
     

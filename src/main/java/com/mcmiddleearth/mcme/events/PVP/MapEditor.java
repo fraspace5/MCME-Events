@@ -28,12 +28,7 @@ import com.mcmiddleearth.mcme.events.PVP.Gamemode.Seige.Siege;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamConquest;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamDeathmatch;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamSlayer;
-import com.mcmiddleearth.mcme.events.Util.CLog;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -135,6 +130,7 @@ public class MapEditor implements CommandExecutor, Listener{
                                 }else if(args[3].equalsIgnoreCase("Siege")){
                                     m.setGm(new Siege());
                                     m.setGmType("Siege");
+                                    p.sendMessage(ChatColor.RED + "Warning, Seige is a very large gamemode that does not fit regular gamemode standards");
                                     real = true;
                                 }
                                 if(real){
