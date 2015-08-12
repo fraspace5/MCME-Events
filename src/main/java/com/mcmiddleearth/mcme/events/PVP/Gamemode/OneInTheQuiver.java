@@ -21,6 +21,7 @@ package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcmiddleearth.mcme.events.PVP.Map;
 import java.util.ArrayList;
+import java.util.Arrays;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -33,6 +34,11 @@ public class OneInTheQuiver implements Gamemode{//Handled by redstone
     
     @Getter @JsonIgnore
     ArrayList<Player> players = new ArrayList<>();
+    
+    @Getter
+    private final ArrayList<String> NeededPoints = new ArrayList<String>(Arrays.asList(new String[] {
+        "RedBlock"
+    }));
     
     @Getter @JsonIgnore
     boolean Running = false;

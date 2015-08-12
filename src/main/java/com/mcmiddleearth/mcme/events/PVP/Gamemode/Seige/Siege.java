@@ -16,11 +16,13 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.PVP.Gamemode;
+package com.mcmiddleearth.mcme.events.PVP.Gamemode.Seige;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.Gamemode;
 import com.mcmiddleearth.mcme.events.PVP.Map;
 import java.util.ArrayList;
+import java.util.Arrays;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
@@ -33,6 +35,11 @@ public class Siege implements Gamemode{//Handled by plugin
     
     @Getter @JsonIgnore
     ArrayList<Player> players = new ArrayList<>();
+    
+    @Getter
+    private final ArrayList<String> NeededPoints = new ArrayList<String>(Arrays.asList(new String[] {
+        "So much shit"
+    }));
     
     @Getter @JsonIgnore
     boolean Running = false;

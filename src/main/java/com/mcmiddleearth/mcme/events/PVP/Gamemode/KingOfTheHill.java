@@ -74,7 +74,7 @@ public class KingOfTheHill implements Gamemode{
     private int target = 50;
     
     @Getter
-    private static final ArrayList<String> reqPoints = new ArrayList<String>(Arrays.asList(new String[] {
+    private final ArrayList<String> NeededPoints = new ArrayList<String>(Arrays.asList(new String[] {
         "RedSpawn",
         "BlueSpawn",
         "Hill"
@@ -129,7 +129,7 @@ public class KingOfTheHill implements Gamemode{
     public void Start(Map m) {
         count = 10;
         this.map = m;
-        if(!m.getImportantPoints().keySet().containsAll(reqPoints)){
+        if(!m.getImportantPoints().keySet().containsAll(NeededPoints)){
             for(Player p : players){
                 p.sendMessage(ChatColor.GREEN + "Game Cannot Start! Map maker f**ked up!");
             }

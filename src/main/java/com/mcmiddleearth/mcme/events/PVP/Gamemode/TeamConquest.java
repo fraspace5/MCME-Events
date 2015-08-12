@@ -85,7 +85,7 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
     private int target = 100;
     
     @Getter
-    private static final ArrayList<String> reqPoints = new ArrayList<String>(Arrays.asList(new String[] {
+    private final ArrayList<String> NeededPoints = new ArrayList<String>(Arrays.asList(new String[] {
         "RedSpawn",
         "BlueSpawn",
         "SpectatorSpawn",
@@ -145,7 +145,7 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
     public void Start(Map m) {
         count = 10;
         this.map = m;
-        if(!m.getImportantPoints().keySet().containsAll(reqPoints)){
+        if(!m.getImportantPoints().keySet().containsAll(NeededPoints)){
             for(Player p : players){
                 p.sendMessage(ChatColor.GREEN + "Game Cannot Start! Map maker f**ked up!");
             }

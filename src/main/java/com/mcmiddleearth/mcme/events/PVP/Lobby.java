@@ -58,16 +58,13 @@ public class Lobby {
                     Map m = Map.findMap(title, gamemode);
                     if(!m.getGm().getPlayers().contains(e.getPlayer()) && !PVPCore.getPlaying().containsKey(e.getPlayer().getName())){
                         if(m.playerJoin(e.getPlayer())){
-                            e.getPlayer().sendMessage("Joining Map...");
-                            Bukkit.broadcastMessage(e.getPlayer().getName() + " Joined");
+                            e.getPlayer().sendMessage(ChatColor.YELLOW + "Joining Map...");
+                            Bukkit.broadcastMessage(ChatColor.YELLOW + e.getPlayer().getName() + " Joined " + m.getTitle() + " playing " + m.getGmType());
                         }else{
-                            e.getPlayer().sendMessage("Failed to Join Map");
+                            e.getPlayer().sendMessage(ChatColor.RED + "Failed to Join Map");
                         }
                     }else{
-                        e.getPlayer().sendMessage("You are already part of a game");
-                        if(e.getPlayer().getName().equalsIgnoreCase("Despot666")){
-                            e.getPlayer().kickPlayer("<3 -Dallen");
-                        }
+                        e.getPlayer().sendMessage(ChatColor.RED + "You are already part of a game");
                     }
                 }
             }

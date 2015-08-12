@@ -16,26 +16,12 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.PVP.Gamemode;
-
-import com.mcmiddleearth.mcme.events.PVP.Map;
-import java.util.ArrayList;
-import org.bukkit.entity.Player;
+package com.mcmiddleearth.mcme.events.PVP.Gamemode.Seige;
 
 /**
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public interface Gamemode {
-    
-    void Start(Map m);
-    
-    ArrayList<Player> getPlayers();
-    
-    ArrayList<String> getNeededPoints();
-    
-    void End(Map m);
-    
-    boolean isRunning();
+public class SeigeEditor {
     
 }

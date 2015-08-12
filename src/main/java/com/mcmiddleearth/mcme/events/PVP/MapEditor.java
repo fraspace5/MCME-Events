@@ -23,8 +23,8 @@ import com.mcmiddleearth.mcme.events.PVP.Gamemode.FreeForAll;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Infected;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.KingOfTheHill;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.OneInTheQuiver;
-import com.mcmiddleearth.mcme.events.PVP.Gamemode.RingBearer;
-import com.mcmiddleearth.mcme.events.PVP.Gamemode.Siege;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.Ringbearer;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.Seige.Siege;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamConquest;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamDeathmatch;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamSlayer;
@@ -50,18 +50,13 @@ import org.bukkit.inventory.meta.ItemMeta;
  */
 public class MapEditor implements CommandExecutor, Listener{
     
-    private static HashMap<String, String> poiHelp = new HashMap<String, String>() {{
-        put("RedBlock", "Redstone Block location for commandblock gamemodes");
-        put("SpawnPoint", "Sets a Spawnpoint");
-    }};
-
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String label, String[] args) {
         if(cs instanceof Player){
             Player p = (Player) cs;
             if(cmnd.getName().equalsIgnoreCase("pvp") && args.length > 0){
                 if(args[0].equalsIgnoreCase("lobby")){
-                    p.sendMessage("Sending Signs");
+                    p.sendMessage(ChatColor.GREEN + "Sending Signs");
                     for(Map m : Map.maps.values()){
                         ItemStack sign = new ItemStack(Material.SIGN);
                         ItemMeta im = sign.getItemMeta();
@@ -82,17 +77,16 @@ public class MapEditor implements CommandExecutor, Listener{
                             Map m = Map.maps.get(args[1]);
                             if(args[2].equalsIgnoreCase("spawn")){
                                 m.setSpawn(new EventLocation(p.getLocation()));
-                                p.sendMessage("Map spawn set");
+                                p.sendMessage(ChatColor.GREEN + "Map spawn set");
                             }else if(args[2].equalsIgnoreCase("poi") && args.length > 3){
-                                if(args[3].equalsIgnoreCase("help")){
-                                    for(Entry<String, String> e: poiHelp.entrySet()){
-                                        p.sendMessage(e.getKey() + " - " + e.getValue());
-                                    }
-                                }else if(args[3].equalsIgnoreCase("SpawnPoint")){
-                                    m.getSpawnPoints().add(new EventLocation(p.getLocation().add(0, -1, 0)));
+                                if(m.getGm() == null){
+                                    p.sendMessage(ChatColor.YELLOW + "WARNING: no gamemode has been set yet!");
                                 }else{
-                                    m.getImportantPoints().put(args[3], new EventLocation(p.getLocation().add(0, -1, 0)));
+                                    if(!m.getGm().getNeededPoints().contains(args[3])){
+                                        p.sendMessage(ChatColor.YELLOW + "WARNING: That is not a poi for this maps gamemode");
+                                    }
                                 }
+                                m.getImportantPoints().put(args[3], new EventLocation(p.getLocation().add(0, -1, 0)));
                                 EventLocation el = new EventLocation(p.getLocation().add(0, -1, 0));
                                 p.sendMessage(ChatColor.YELLOW + args[3] + " set to (" + 
                                         el.getX() + ", " + 
@@ -100,36 +94,27 @@ public class MapEditor implements CommandExecutor, Listener{
                                         el.getZ() + ")");
                             }else if(args[2].equalsIgnoreCase("setMax") && args.length > 3){
                                 m.setMax(Integer.parseInt(args[3]));
-                                p.sendMessage("Max players set to " + args[3]);
+                                p.sendMessage(ChatColor.GREEN + "Max players set to " + args[3]);
                             }else if(args[2].equalsIgnoreCase("setTitle") && args.length > 3){
                                 m.setTitle(args[3]);
-                                p.sendMessage("map Title set to " + args[3]);
+                                p.sendMessage(ChatColor.GREEN + "map Title set to " + args[3]);
                             }else if(args[2].equalsIgnoreCase("setGamemode") && args.length > 3){
                                 boolean real = false;
                                 if(args[3].equalsIgnoreCase("Freeforall")){
                                     m.setGm(new FreeForAll());
                                     m.setGmType("Free For All");
-                                    if(!m.getImportantPoints().containsKey("RedBlock")){
-                                        p.sendMessage("WARNING: there is not yet a redblock location for this map!");
-                                    }
                                     real = true;
                                 }else if(args[3].equalsIgnoreCase("Infected")){
                                     m.setGm(new Infected());
                                     m.setGmType("Infected");
-                                    if(!m.getImportantPoints().containsKey("RedBlock")){
-                                        p.sendMessage("WARNING: there is not yet a redblock location for this map!");
-                                    }
                                     real = true;
                                 }else if(args[3].equalsIgnoreCase("oneinthequiver")){
                                     m.setGm(new OneInTheQuiver());
                                     m.setGmType("One In The Quiver");
-                                    if(!m.getImportantPoints().containsKey("RedBlock")){
-                                        p.sendMessage("WARNING: there is not yet a redblock location for this map!");
-                                    }
                                     real = true;
                                 }else if(args[3].equalsIgnoreCase("Ringbearer")){
-                                    m.setGm(new RingBearer());
-                                    m.setGmType("RingBearer");
+                                    m.setGm(new Ringbearer());
+                                    m.setGmType("Ringbearer");
                                     real = true;
                                 }else if(args[3].equalsIgnoreCase("TeamConquest")){
                                     m.setGm(new TeamConquest());
@@ -142,16 +127,10 @@ public class MapEditor implements CommandExecutor, Listener{
                                 }else if(args[3].equalsIgnoreCase("TeamDeathmatch")){
                                     m.setGm(new TeamDeathmatch());
                                     m.setGmType("Team Deathmatch");
-                                    if(!m.getImportantPoints().containsKey("RedBlock")){
-                                        p.sendMessage("WARNING: there is not yet a redblock location for this map!");
-                                    }
                                     real = true;
                                 }else if(args[3].equalsIgnoreCase("TeamSlayer")){
                                     m.setGm(new TeamSlayer());
                                     m.setGmType("Team Slayer");
-                                    if(!m.getImportantPoints().containsKey("RedBlock")){
-                                        p.sendMessage("WARNING: there is not yet a redblock location for this map!");
-                                    }
                                     real = true;
                                 }else if(args[3].equalsIgnoreCase("Siege")){
                                     m.setGm(new Siege());
@@ -159,28 +138,37 @@ public class MapEditor implements CommandExecutor, Listener{
                                     real = true;
                                 }
                                 if(real){
-                                    p.sendMessage("Gamemode set to " + args[3]);
+                                    p.sendMessage(ChatColor.GREEN + "Gamemode set to " + args[3]);
+                                    if(!m.getImportantPoints().keySet().containsAll(m.getGm().getNeededPoints())){
+                                        p.sendMessage(ChatColor.YELLOW + "WARNING: The following points are not set: [");
+                                        for(String s : m.getGm().getNeededPoints()){
+                                            if(!m.getImportantPoints().containsKey(s)){
+                                                p.sendMessage(ChatColor.YELLOW + " - " + s);
+                                            }
+                                        }
+                                        p.sendMessage("]");
+                                    }
                                 }else{
-                                    p.sendMessage("No such gamemode " + args[3]);
+                                    p.sendMessage(ChatColor.RED+ "No such gamemode " + args[3]);
                                 }
                             }
                         }else{
                             if(args[2].equalsIgnoreCase("spawn")){
-                                p.sendMessage("Creating new map");
+                                p.sendMessage(ChatColor.GREEN + "Creating new map");
                                 Map.maps.put(args[1], new Map(p.getLocation(), args[1]));
                                 System.out.println(args[1]);
                             }else{
-                                p.sendMessage("No such map!");
+                                p.sendMessage(ChatColor.RED + "No such map!");
                             }
                         }
                     }else{
                         if(args.length > 1){
                             if(args[1].equalsIgnoreCase("list")){
-                                p.sendMessage("Maps: [");
+                                p.sendMessage(ChatColor.YELLOW + "Maps: [");
                                 for(Map m : Map.maps.values()){
-                                    p.sendMessage(m.getName() + " - " + m.getTitle() + ", " + m.getGmType());
+                                    p.sendMessage(ChatColor.YELLOW + m.getName() + " - " + m.getTitle() + ", " + m.getGmType());
                                 }
-                                p.sendMessage("]");
+                                p.sendMessage(ChatColor.YELLOW + "]");
                             }
                         }
                     }
