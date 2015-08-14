@@ -372,16 +372,35 @@ public class Ringbearer implements Gamemode{//Handled by plugin
                         if(p.getExp() >= 1.00f){
                             p.setExp(0);
                             p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 600, 1, true, true));
-                            final ItemStack[] armor = new ItemStack[] {p.getInventory().getHelmet(), p.getInventory().getChestplate(),
-                                p.getInventory().getLeggings(), p.getInventory().getBoots()};
+                            p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR), 
+                                new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
                             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
-                            @Override
-                            public void run() {
-                                p.getInventory().setHelmet(armor[0]);
-                                p.getInventory().setChestplate(armor[1]);
-                                p.getInventory().setLeggings(armor[2]);
-                                p.getInventory().setBoots(armor[3]);
-                            }
+                                
+                                @Override
+                                public void run() {
+                                    ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
+                                        new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS)};
+                                    for(int i = 0; i <= 5; i++){
+                                        if(i<=3){
+                                            LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
+                                            if(RedTeam.getPlayers().contains(p)){
+                                                lam.setColor(org.bukkit.Color.fromRGB(153, 51, 51));
+                                            }else{
+                                                lam.setColor(org.bukkit.Color.fromRGB(51, 76, 178));
+                                            }
+                                            items[i].setItemMeta(lam);
+                                        }else{
+                                            items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
+                                        }
+                                        items[i].getItemMeta().spigot().setUnbreakable(true);
+
+                                    }
+                                    p.getInventory().clear();
+                                    p.getInventory().setHelmet(items[0]);
+                                    p.getInventory().setChestplate(items[1]);
+                                    p.getInventory().setLeggings(items[2]);
+                                    p.getInventory().setBoots(items[3]);
+                                }
                             }, 600);
                         }
                     }
