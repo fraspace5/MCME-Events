@@ -20,6 +20,7 @@ package com.mcmiddleearth.mcme.events.PVP;
 
 import com.mcmiddleearth.mcme.events.Event;
 import com.mcmiddleearth.mcme.events.Main;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.AllGameHandlers;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.JoinLeaveHandler;
 import com.mcmiddleearth.mcme.events.PVP.Servlet.PVPServer;
@@ -62,7 +63,11 @@ public class PVPCore implements Event{
     @Override
     public void onEnable(){
         File loc = new File(saveLoc + Main.getFileSep() + "Maps");
-        HashMap<String, Object> maps = DBmanager.loadAllObj(Map.class, loc);
+        HashMap<String, Object> maps = new HashMap<>();
+        try{
+            maps = DBmanager.loadAllObj(Map.class, loc);
+        }catch(Exception ex){
+        }
         if(maps == null){
             maps = new HashMap<>();
         }
@@ -74,10 +79,11 @@ public class PVPCore implements Event{
                 }
                 Map.maps.put(e.getKey(), m);
             }catch(Exception ex){
-                File f = new File(Main.getPluginDirectory() + Main.getFileSep() + "PVP" + Main.getFileSep() + "Maps" + Main.getFileSep() + e.getKey());
-                if(f.exists()){
-                    f.delete();
-                }
+                System.out.println("Error loading map " + e.getKey());
+//                File f = new File(Main.getPluginDirectory() + Main.getFileSep() + "PVP" + Main.getFileSep() + "Maps" + Main.getFileSep() + e.getKey());
+//                if(f.exists()){
+//                    f.delete();
+//                }
             }
         }
         CLog.println(maps);
@@ -90,6 +96,7 @@ public class PVPCore implements Event{
         pm.registerEvents(new ChatHandler(), Main.getPlugin());
         pm.registerEvents(new Locker(), Main.getPlugin());
         pm.registerEvents(new JoinLeaveHandler(), Main.getPlugin());
+        pm.registerEvents(new AllGameHandlers(), Main.getPlugin());
         try {
             server = new PVPServer(8080);
             server.getServ().start();

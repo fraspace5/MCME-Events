@@ -380,22 +380,17 @@ public class Ringbearer implements Gamemode{//Handled by plugin
                                 public void run() {
                                     ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
                                         new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS)};
-                                    for(int i = 0; i <= 5; i++){
-                                        if(i<=3){
-                                            LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
-                                            if(RedTeam.getPlayers().contains(p)){
-                                                lam.setColor(org.bukkit.Color.fromRGB(153, 51, 51));
-                                            }else{
-                                                lam.setColor(org.bukkit.Color.fromRGB(51, 76, 178));
-                                            }
-                                            items[i].setItemMeta(lam);
+                                    for(int i = 0; i <= 3; i++){
+                                        LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
+                                        if(RedTeam.getPlayers().contains(p)){
+                                            lam.setColor(org.bukkit.Color.fromRGB(153, 51, 51));
                                         }else{
-                                            items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
+                                            lam.setColor(org.bukkit.Color.fromRGB(51, 76, 178));
                                         }
+                                        items[i].setItemMeta(lam);
                                         items[i].getItemMeta().spigot().setUnbreakable(true);
 
                                     }
-                                    p.getInventory().clear();
                                     p.getInventory().setHelmet(items[0]);
                                     p.getInventory().setChestplate(items[1]);
                                     p.getInventory().setLeggings(items[2]);
