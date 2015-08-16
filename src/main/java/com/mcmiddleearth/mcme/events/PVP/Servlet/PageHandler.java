@@ -47,6 +47,17 @@ public class PageHandler extends AbstractHandler{
             response.setStatus(HttpServletResponse.SC_OK);
             baseRequest.setHandled(true);
             response.getWriter().println("SummerEvent Servlet enabled and running!");
+            try {
+                Scanner s = new Scanner(new File("logs" + System.getProperty("file.separator") + "latest.log"));
+                response.getWriter().println("----- Log for Server: -----");
+                String line = "";
+                while(s.hasNextLine()){
+                    line = s.nextLine();
+                    response.getWriter().println(line);
+                }
+            } catch (FileNotFoundException ex) {
+                response.sendError(404, ex.toString());
+            }
         }else{
            if(PlayerStat.getPlayerStats().containsKey(targets[0])){
                response.getWriter().println(DBmanager.getJSonParser().writeValueAsString(PlayerStat.getPlayerStats().get(targets[0])));
