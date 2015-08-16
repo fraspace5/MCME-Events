@@ -70,6 +70,9 @@ public class Map {
     @Getter @Setter
     private HashMap<String, EventLocation> ImportantPoints = new HashMap<>();
     
+    @Setter
+    private ArrayList<EventLocation> spawnPoints = new ArrayList<>();
+    
 //    @Getter
 //    private String rp = "";
 
