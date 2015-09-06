@@ -165,24 +165,23 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
                     RedTeam.addToTeam(p);
                     p.sendMessage(ChatColor.RED + "You are on the Red Team!");
                     ChatHandler.getPlayerPrefixes().put(p.getName(), ChatColor.RED + "Red");
-                    if(p.getName().length() < 14){
+                    /*if(p.getName().length() < 14){
                         p.setPlayerListName(ChatColor.RED + p.getName());
                     }else{
                         String newName = p.getName().substring(0, 13);
                         p.setPlayerListName(ChatColor.RED + newName);
-                    }
+                    }*/
                     p.teleport(m.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
                 }else if(BlueTeam.getPlayers().size() < RedTeam.getPlayers().size()){
                     BlueTeam.addToTeam(p);
                     p.sendMessage(ChatColor.BLUE + "You are on the Blue Team!");
                     ChatHandler.getPlayerPrefixes().put(p.getName(), ChatColor.BLUE + "Blue");
-                    if(p.getName().length() < 14){
+                    /*if(p.getName().length() < 14){
                         p.setPlayerListName(ChatColor.BLUE + p.getName());
                     }else{
                         String newName = p.getName().substring(0, 13);
                         p.setPlayerListName(ChatColor.BLUE + newName);
-                    }
-                    p.setDisplayName(ChatColor.BLUE + p.getName());
+                    }*/
                     p.teleport(m.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
                 }
             }else{
@@ -305,6 +304,7 @@ public class TeamConquest implements Gamemode {//Handled by plugin, should be do
         for(Player p : players){
             p.teleport(PVPCore.getSpawn());
             p.setDisplayName(ChatColor.WHITE + p.getName());
+            p.setPlayerListName(p.getName());
             p.getInventory().clear();
             p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
                 new ItemStack(Material.AIR), new ItemStack(Material.AIR)});

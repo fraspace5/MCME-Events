@@ -56,6 +56,9 @@ public class Lobby {
                         gamemode = "Team Deathmatch";
                     }
                     Map m = Map.findMap(title, gamemode);
+                    if(m == null){
+                        return;
+                    }
                     if(!m.getGm().getPlayers().contains(e.getPlayer()) && !PVPCore.getPlaying().containsKey(e.getPlayer().getName())){
                         if(m.playerJoin(e.getPlayer())){
                             e.getPlayer().sendMessage(ChatColor.YELLOW + "Joining Map...");

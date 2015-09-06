@@ -39,8 +39,15 @@ public class AllGameHandlers implements Listener{
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent e){
         if(PVPCore.getPlaying().keySet().contains(e.getPlayer().getName())){
-            e.getPlayer().getInventory().remove(Material.TNT);
-            e.getPlayer().getLocation().getWorld().dropItem(e.getPlayer().getLocation(), new ItemStack(Material.TNT));
+            Map m = Map.maps.get(PVPCore.getPlaying().get(e.getPlayer().getName()));
+            if(m != null){
+                if(m.getName().contains("HD")){
+                    if(e.getPlayer().getInventory().contains(new ItemStack(Material.TNT))){
+                        e.getPlayer().getInventory().remove(Material.TNT);
+                        e.getPlayer().getLocation().getWorld().dropItem(e.getPlayer().getLocation(), new ItemStack(Material.TNT));
+                    }
+                }
+            }
         }
     }
     

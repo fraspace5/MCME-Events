@@ -118,7 +118,6 @@ public class Map {
             return false;
         }
         Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").addPlayer(p);
-//        p.teleport(Spawn.toBukkitLoc());
         PVPCore.getPlaying().put(p.getName(), name);
         gm.getPlayers().add(p);
         if(!gm.isRunning()){
