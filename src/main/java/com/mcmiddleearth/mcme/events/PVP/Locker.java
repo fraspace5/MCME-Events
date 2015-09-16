@@ -53,7 +53,10 @@ public class Locker implements CommandExecutor, Listener{
                     cs.sendMessage("Kicked all!");
                 }else if(args[0].equalsIgnoreCase("lock")){
                     if(args.length > 1){
-                        Message = args[1];
+                        Message = "";
+                        for(int i = 1; i < args.length; i++){
+                            Message += args[i];
+                        }
                     }
                     if(locked){
                         cs.sendMessage("Server Unlocked!");
