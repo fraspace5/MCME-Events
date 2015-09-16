@@ -38,26 +38,33 @@ public class Locker implements CommandExecutor, Listener{
     
     private static volatile boolean locked = false;
     
+    private static String Message = "Server Locked";
+    
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] args) {
         if(cs.isOp()){
-            if(args[0].equalsIgnoreCase("kickall")){
-                for(Player p : Bukkit.getOnlinePlayers()){
-                    if(!p.isOp()){
-                        p.kickPlayer("admin kicked all players");
-                    }
-                }
-                cs.sendMessage("Kicked all!");
-            }else if(args[0].equalsIgnoreCase("lock")){
-                if(locked){
-                    cs.sendMessage("Server Unlocked!");
-                    locked=false;
-                }else{
-                    cs.sendMessage("Server Locked!");
-                    locked=true;
+            if(args.length > 0){
+                if(args[0].equalsIgnoreCase("kickall")){
                     for(Player p : Bukkit.getOnlinePlayers()){
                         if(!p.isOp()){
-                            p.kickPlayer("Server locked");
+                            p.kickPlayer("admin kicked all players");
+                        }
+                    }
+                    cs.sendMessage("Kicked all!");
+                }else if(args[0].equalsIgnoreCase("lock")){
+                    if(args.length > 1){
+                        Message = args[1];
+                    }
+                    if(locked){
+                        cs.sendMessage("Server Unlocked!");
+                        locked=false;
+                    }else{
+                        cs.sendMessage("Server Locked!");
+                        locked=true;
+                        for(Player p : Bukkit.getOnlinePlayers()){
+                            if(!p.isOp()){
+                                p.kickPlayer("Server locked");
+                            }
                         }
                     }
                 }
@@ -69,7 +76,7 @@ public class Locker implements CommandExecutor, Listener{
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onServerListPing(ServerListPingEvent e){
         if(locked){
-            e.setMotd(ChatColor.BLUE + "server locked");
+            e.setMotd(ChatColor.BLUE + Message);
             e.setMaxPlayers(0);
         }
     }
