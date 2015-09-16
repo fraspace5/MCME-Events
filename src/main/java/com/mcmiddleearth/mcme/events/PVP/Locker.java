@@ -55,7 +55,7 @@ public class Locker implements CommandExecutor, Listener{
                     if(args.length > 1){
                         Message = "";
                         for(int i = 1; i < args.length; i++){
-                            Message += args[i];
+                            Message = Message.concat(args[i] + " ");
                         }
                     }
                     if(locked){
@@ -79,7 +79,7 @@ public class Locker implements CommandExecutor, Listener{
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onServerListPing(ServerListPingEvent e){
         if(locked){
-            e.setMotd(ChatColor.BLUE + Message);
+            e.setMotd(e.getMotd() + "\n" + ChatColor.BLUE + Message);
             e.setMaxPlayers(0);
         }
     }
