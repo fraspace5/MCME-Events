@@ -74,6 +74,7 @@ public class PVPCore implements Event{
         for(Entry<String, Object> e : maps.entrySet()){
             try{
                 Map m = (Map) e.getValue();
+                m.setCurr(0);
                 if(m.getGmType() != null){
                     m.bindGamemode();
                 }
@@ -94,6 +95,7 @@ public class PVPCore implements Event{
         pm.registerEvents(new Locker(), Main.getPlugin());
         pm.registerEvents(new JoinLeaveHandler(), Main.getPlugin());
         pm.registerEvents(new AllGameHandlers(), Main.getPlugin());
+        pm.registerEvents(new PlayerStat.StatListener(), Main.getPlugin());
         try {
             server = new PVPServer(8080);
             server.getServ().start();
@@ -105,6 +107,7 @@ public class PVPCore implements Event{
                     @Override
                     public void run() {
                         Spawn = new Location(Bukkit.getWorld("world"), 346, 40, 513);
+                        
                     }
                 }, 20);
         

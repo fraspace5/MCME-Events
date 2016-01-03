@@ -86,6 +86,10 @@ public class PVPCommandCore implements CommandExecutor{
                                 }
                             }
                         }
+                    }else if(args[1].equalsIgnoreCase("end") && 
+                            PVPCore.getPlaying().keySet().contains((p).getName())){
+                        Map m = Map.maps.get(PVPCore.getPlaying().get(p.getName()));
+                        m.getGm().End(m);
                     }
                 }else if(args[0].equalsIgnoreCase("join")){
                     if(args.length >= 2){

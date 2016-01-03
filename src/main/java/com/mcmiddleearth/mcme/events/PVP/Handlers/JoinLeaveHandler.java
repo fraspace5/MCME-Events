@@ -18,10 +18,15 @@
  */
 package com.mcmiddleearth.mcme.events.PVP.Handlers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mcmiddleearth.mcme.events.Main;
+import com.mcmiddleearth.mcme.events.PVP.Lobby;
 import com.mcmiddleearth.mcme.events.PVP.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
+import com.mcmiddleearth.mcme.events.Util.DBmanager;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -37,12 +42,18 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class JoinLeaveHandler implements Listener{
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
+//        Lobby.LoadLobby();
         final Player p = e.getPlayer();
         PlayerStat.loadStat(p);
         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
             @Override
             public void run(){
                 p.setMaxHealth(20);
+                try {
+                    System.out.println(DBmanager.getJSonParser().writeValueAsString(PlayerStat.getPlayerStats()));
+                } catch (JsonProcessingException ex) {
+                    Logger.getLogger(JoinLeaveHandler.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 if(!p.hasPlayedBefore()){
                     p.teleport(p.getWorld().getSpawnLocation());
                 }else{
@@ -52,10 +63,13 @@ public class JoinLeaveHandler implements Listener{
         }, 20);
     }
     
-    public void onPlayerLeave(PlayerQuitEvent e){
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent e){
+        System.out.println("Player Quit");
         if(PVPCore.getPlaying().containsKey(e.getPlayer().getName())){
             Map.maps.get(PVPCore.getPlaying().get(e.getPlayer().getName())).playerLeave(e.getPlayer());
         }
         PlayerStat.getPlayerStats().get(e.getPlayer().getName()).saveStat();
+        PlayerStat.getPlayerStats().remove(e.getPlayer().getName());
     }
 }

@@ -19,12 +19,17 @@
 package com.mcmiddleearth.mcme.events.PVP;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.Util.DBmanager;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Gamemode;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.JoinLeaveHandler;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.OfflinePlayer;
@@ -61,39 +66,52 @@ public class PlayerStat {
     private ArrayList<Achivement> chives = new ArrayList<>();
     
     @Getter @Setter
-    private HashMap<Gamemode, Integer> favGames = new HashMap<>();
+    private HashMap<String, Integer> favGames = new HashMap<>();
     
     @Getter @Setter
     private static HashMap<String, PlayerStat> playerStats = new HashMap<>();
     
     @Getter @Setter @JsonIgnore    
-    private String name;
+    private UUID uuid;
     
     public PlayerStat(){}
+    
+    public PlayerStat(UUID uuid){this.uuid = uuid;}
     
     public static boolean loadStat(OfflinePlayer p){
         File loc = new File(PVPCore.getSaveLoc() + Main.getFileSep() + "stats" + Main.getFileSep() + p.getUniqueId());
         if(loc.exists()){
             PlayerStat ps = (PlayerStat) DBmanager.loadObj(PlayerStat.class, loc);
-            ps.setName(p.getName());
+            ps.setUuid(p.getUniqueId());
+            try {
+                System.out.println("Loaded: " + DBmanager.getJSonParser().writeValueAsString(ps));
+            } catch (JsonProcessingException ex) {
+                Logger.getLogger(JoinLeaveHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
             playerStats.put(p.getName(), ps);
             return true;
         }else{
-            playerStats.put(p.getName(), new PlayerStat());
+            playerStats.put(p.getName(), new PlayerStat(p.getUniqueId()));
+            
             return false;
         }
     }
-    
+        
     public void saveStat(){
         File loc = new File(PVPCore.getSaveLoc() + Main.getFileSep() + "stats");
-        DBmanager.saveObj(PlayerStat.class, loc, name);
+        try {
+            System.out.println("Saved: " + DBmanager.getJSonParser().writeValueAsString(this));
+        } catch (JsonProcessingException ex) {
+            Logger.getLogger(JoinLeaveHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        DBmanager.saveObj(this, loc, uuid.toString());
     }
     
     public void addDeath(){Deaths++;}
     public void addSuicide(){Suicides++;}
     public void addKill(String k){Kills.add(k);}
 //    public void addScore(int score){Score+=score;}
-    public void addPlayedGame(Gamemode g){favGames.put(g, favGames.get(g));}
+    public void addPlayedGame(String g){favGames.put(g, favGames.get(g));}
     
     public static class Achivement{
         @Getter @Setter
@@ -103,7 +121,7 @@ public class PlayerStat {
         private int Points;
     }
     
-    public static class StatLitener implements Listener{
+    public static class StatListener implements Listener{
         
         @EventHandler
         public void onPlayerDeath(PlayerDeathEvent e){
@@ -113,7 +131,9 @@ public class PlayerStat {
                 if(d.getKiller() != null){
                     Player k = d.getKiller();
                     if(PVPCore.getPlaying().containsKey(k.getName())){
-                        PlayerStat.getPlayerStats().get(k.getName()).addKill(d.getName());
+                        if(!PlayerStat.getPlayerStats().get(k.getName()).getKills().contains(d.getName())){
+                            PlayerStat.getPlayerStats().get(k.getName()).addKill(d.getName());
+                        }
                     }
                 }else{
                     ps.addSuicide();

@@ -19,7 +19,6 @@
 package com.mcmiddleearth.mcme.events.PVP.Servlet;
 
 import com.mcmiddleearth.mcme.events.Main;
-import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.Util.DBmanager;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
@@ -27,8 +26,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,16 +59,38 @@ public class PageHandler extends AbstractHandler{
                 response.sendError(404, ex.toString());
             }
         }else{
-            if(PlayerStat.getPlayerStats().containsKey(targets[0])){
-                response.getWriter().println(DBmanager.getJSonParser().writeValueAsString(PlayerStat.getPlayerStats().get(targets[0])));
+            PlayerStat ps = null;
+            if(PlayerStat.getPlayerStats().containsKey(targets[1])){
+                ps = PlayerStat.getPlayerStats().get(targets[1]);
             }else{
-                File loc = new File(PVPCore.getSaveLoc() + Main.getFileSep() + "stats" + Main.getFileSep() + Bukkit.getOfflinePlayer(targets[0]).getUniqueId());
+                File loc = new File(PVPCore.getSaveLoc() + Main.getFileSep() + "stats" + Main.getFileSep() + Bukkit.getOfflinePlayer(targets[1]).getUniqueId());
                 if(!loc.exists()){
-                    response.getWriter().println("Player " + targets[0] + " not found");
+                    response.getWriter().println("Player " + targets[1] + " not found");
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    baseRequest.setHandled(true);
+                    return;
                 }else{
-                    response.getWriter().println(DBmanager.getJSonParser().writeValueAsString(DBmanager.loadObj(PlayerStat.class, loc)));
+                    ps = (PlayerStat) DBmanager.loadObj(PlayerStat.class, loc);
                 }
             }
+            if(targets.length > 2){
+                if(targets[2].equalsIgnoreCase("raw")){
+                    response.getWriter().println(DBmanager.getJSonParser().writeValueAsString(ps));
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    baseRequest.setHandled(true);
+                    return;
+                }
+            }
+            String resp = "Viewing stats for " + targets[1] + ":<br><br>" +
+                    "Deaths: " + ps.getDeaths() + "<br><ul>" + 
+                    "<li>Suicides: " + ps.getSuicides() + "</li></ul>" +
+                    "Kills: " + ps.getKills().size() + "<br><ul>";
+            for(String s : ps.getKills()){
+                resp += "<li>" + s + "</li>";
+            }
+            resp += "</ul>"; 
+            response.getWriter().println(resp);
+            response.setContentType("text/html; charset=utf-8");
             response.setStatus(HttpServletResponse.SC_OK);
             baseRequest.setHandled(true);
         }

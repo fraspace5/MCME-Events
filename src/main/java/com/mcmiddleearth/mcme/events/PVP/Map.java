@@ -151,7 +151,9 @@ public class Map {
         }else{
             gm.getPlayers().remove(p);
         }
-        Curr--;
+        if(!p.getGameMode().equals(GameMode.SPECTATOR)){
+            Curr--;
+        }
         PVPCore.getPlaying().remove(p.getName());
         Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
         s.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + "" + Curr+"/"+Max);
@@ -171,7 +173,9 @@ public class Map {
             for(Player pl : gm.getPlayers()){
 //                pl.sendMessage(p.getName() + " left");
             }
-            Curr--;
+            if(!p.getGameMode().equals(GameMode.SPECTATOR)){
+                Curr--;
+            }
             PVPCore.getPlaying().remove(p.getName());
             Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
             s.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + Curr+"/"+Max);

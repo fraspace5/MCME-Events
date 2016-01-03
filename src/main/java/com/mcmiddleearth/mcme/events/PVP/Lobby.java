@@ -41,7 +41,9 @@ public class Lobby {
     public Lobby(){}
     
     public static void LoadLobby(){
-        
+        for(Map m : Map.maps.values()){
+            m.rebindSign(m.getLobbySign().toBukkitLoc());
+        }
     }
     
     public static class SignClickListener implements Listener{
