@@ -80,10 +80,7 @@ public class PVPCore implements Event{
                 Map.maps.put(e.getKey(), m);
             }catch(Exception ex){
                 System.out.println("Error loading map " + e.getKey());
-//                File f = new File(Main.getPluginDirectory() + Main.getFileSep() + "PVP" + Main.getFileSep() + "Maps" + Main.getFileSep() + e.getKey());
-//                if(f.exists()){
-//                    f.delete();
-//                }
+                
             }
         }
         CLog.println(maps);

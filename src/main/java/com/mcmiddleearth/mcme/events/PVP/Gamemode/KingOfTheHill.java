@@ -50,10 +50,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public class KingOfTheHill implements Gamemode{
-    
-    @Getter @JsonIgnore
-    ArrayList<Player> players = new ArrayList<>();
+public class KingOfTheHill extends BasePluginGamemode{
     
     @Getter
     private Team BlueTeam = new KingOfTheHill.Team("Blue", GameMode.ADVENTURE); 

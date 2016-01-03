@@ -21,6 +21,7 @@ package com.mcmiddleearth.mcme.events.PVP.Handlers;
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
+import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -37,22 +38,24 @@ public class JoinLeaveHandler implements Listener{
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
         final Player p = e.getPlayer();
-        
-            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
-                @Override
-                public void run(){
-                    if(!p.hasPlayedBefore()){
-                        p.teleport(p.getWorld().getSpawnLocation());
-                    }else{
-                        p.teleport(new Location(p.getWorld(), 346, 40, 513));
-                    }
+        PlayerStat.loadStat(p);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
+            @Override
+            public void run(){
+                p.setMaxHealth(20);
+                if(!p.hasPlayedBefore()){
+                    p.teleport(p.getWorld().getSpawnLocation());
+                }else{
+                    p.teleport(new Location(p.getWorld(), 346, 40, 513));
                 }
-            }, 20);
+            }
+        }, 20);
     }
     
     public void onPlayerLeave(PlayerQuitEvent e){
         if(PVPCore.getPlaying().containsKey(e.getPlayer().getName())){
             Map.maps.get(PVPCore.getPlaying().get(e.getPlayer().getName())).playerLeave(e.getPlayer());
         }
+        PlayerStat.getPlayerStats().get(e.getPlayer().getName()).saveStat();
     }
 }

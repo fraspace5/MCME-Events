@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import javafx.scene.paint.Color;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -60,11 +59,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
  * @author Donovan <dallen@dallen.xyz>
  */
 
-public class TeamConquest implements Gamemode {//Handled by plugin, should be done needs testing
-    
-    
-    @Getter @JsonIgnore
-    ArrayList<Player> players = new ArrayList<>();
+public class TeamConquest extends BasePluginGamemode {//Handled by plugin, should be done needs testing
     
     @Getter
     private Team BlueTeam = new Team("Blue", GameMode.ADVENTURE); 

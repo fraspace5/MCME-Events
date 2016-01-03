@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -55,7 +57,7 @@ public class PlayerStat {
     @Getter @Setter
     private int Score;
     
-    @Getter @Setter
+    @Getter @Setter @JsonIgnore
     private ArrayList<Achivement> chives = new ArrayList<>();
     
     @Getter @Setter
@@ -67,19 +69,31 @@ public class PlayerStat {
     @Getter @Setter @JsonIgnore    
     private String name;
     
-    public PlayerStat(){
-        
-    }
+    public PlayerStat(){}
     
-    public static void loadStat(String p){
-        File loc = new File(PVPCore.getSaveLoc() + Main.getFileSep() + "stats" + Main.getFileSep() + p);
-        playerStats.put(p, (PlayerStat) DBmanager.loadObj(PlayerStat.class, loc));
+    public static boolean loadStat(OfflinePlayer p){
+        File loc = new File(PVPCore.getSaveLoc() + Main.getFileSep() + "stats" + Main.getFileSep() + p.getUniqueId());
+        if(loc.exists()){
+            PlayerStat ps = (PlayerStat) DBmanager.loadObj(PlayerStat.class, loc);
+            ps.setName(p.getName());
+            playerStats.put(p.getName(), ps);
+            return true;
+        }else{
+            playerStats.put(p.getName(), new PlayerStat());
+            return false;
+        }
     }
     
     public void saveStat(){
         File loc = new File(PVPCore.getSaveLoc() + Main.getFileSep() + "stats");
         DBmanager.saveObj(PlayerStat.class, loc, name);
     }
+    
+    public void addDeath(){Deaths++;}
+    public void addSuicide(){Suicides++;}
+    public void addKill(String k){Kills.add(k);}
+//    public void addScore(int score){Score+=score;}
+    public void addPlayedGame(Gamemode g){favGames.put(g, favGames.get(g));}
     
     public static class Achivement{
         @Getter @Setter
@@ -93,9 +107,18 @@ public class PlayerStat {
         
         @EventHandler
         public void onPlayerDeath(PlayerDeathEvent e){
-            if(PVPCore.getPlaying().containsKey(e.getEntity().getName())){
-                PlayerStat ps = PlayerStat.getPlayerStats().get(e.getEntity().getName());
-                ps.setDeaths(ps.getDeaths());
+            Player d = e.getEntity();
+            if(PVPCore.getPlaying().containsKey(d.getName())){
+                PlayerStat ps = PlayerStat.getPlayerStats().get(d.getName());
+                if(d.getKiller() != null){
+                    Player k = d.getKiller();
+                    if(PVPCore.getPlaying().containsKey(k.getName())){
+                        PlayerStat.getPlayerStats().get(k.getName()).addKill(d.getName());
+                    }
+                }else{
+                    ps.addSuicide();
+                }
+                ps.setDeaths(ps.getDeaths()+1);
             }
         }
     }

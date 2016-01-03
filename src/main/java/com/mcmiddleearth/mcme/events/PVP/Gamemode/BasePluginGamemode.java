@@ -10,7 +10,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ * m
  * You should have received a copy of the GNU General Public License
  * along with MCME-Events.  If not, see <http://www.gnu.org/licenses/>.
  * 
@@ -18,18 +18,25 @@
  */
 package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mcmiddleearth.mcme.events.PVP.Map;
 import java.util.ArrayList;
-import java.util.Arrays;
 import lombok.Getter;
+import org.bukkit.entity.Player;
 
 /**
  *
- * @author Donovan <dallen@dallen.xyz>
+ * @author donoa_000
  */
-public class FreeForAll extends BaseRedstoneGamemode{//Handled by redstone
+public abstract class BasePluginGamemode implements Gamemode{
+    @Getter @JsonIgnore
+    ArrayList<Player> players = new ArrayList<>();
     
-    @Getter
-    private final ArrayList<String> NeededPoints = new ArrayList<String>(Arrays.asList(new String[] {
-        "RedBlock"
-    }));    
+    public void playerLeave(Player p){
+        players.remove(p);
+    }
+    
+    public void Start(Map m){};
+    
+    public void End(Map m){};
 }

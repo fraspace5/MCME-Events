@@ -19,6 +19,7 @@
 package com.mcmiddleearth.mcme.events.PVP;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode;
 import com.mcmiddleearth.mcme.events.Util.EventLocation;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Gamemode;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
@@ -145,7 +146,11 @@ public class Map {
         for(Player pl : gm.getPlayers()){
             pl.sendMessage(p.getName() + " left");
         }
-        gm.getPlayers().remove(p);
+        if(gm instanceof BasePluginGamemode){
+            ((BasePluginGamemode) gm).playerLeave(p);
+        }else{
+            gm.getPlayers().remove(p);
+        }
         Curr--;
         PVPCore.getPlaying().remove(p.getName());
         Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
@@ -156,6 +161,7 @@ public class Map {
         if(Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").hasPlayer(p)){
             Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").removePlayer(p);
         }
+        
     }
     
     public void playerLeaveAll(){

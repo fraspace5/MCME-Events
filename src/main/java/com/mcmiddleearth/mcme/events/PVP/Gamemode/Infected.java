@@ -18,51 +18,19 @@
  */
 package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mcmiddleearth.mcme.events.PVP.Map;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import lombok.Getter;
-import lombok.Setter;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 /**
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public class Infected implements Gamemode{//Handled by redstone
-    
-    @Getter @JsonIgnore
-    ArrayList<Player> players = new ArrayList<>();
+public class Infected  extends BaseRedstoneGamemode{
     
     @Getter
     private final ArrayList<String> NeededPoints = new ArrayList<String>(Arrays.asList(new String[] {
         "RedBlock"
     }));
-    
-    @Getter @JsonIgnore
-    boolean Running = false;
-    
-    @Override
-    public void Start(Map m) {
-        Running = true;
-        if(m.getImportantPoints().containsKey("RedBlock")){
-            m.getImportantPoints().get("RedBlock").toBukkitLoc().getBlock().setType(Material.REDSTONE_BLOCK);
-        }else{
-            for(Player p : players){
-                p.sendMessage("Game not ready to start, no RedBlock location set");
-                
-            }
-            End(m);
-        }
-        
-    }
-    
-    @Override
-    public void End(Map m){
-        m.playerLeaveAll();
-        Running = false;
-    }
+
 }

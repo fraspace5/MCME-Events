@@ -30,38 +30,11 @@ import org.bukkit.entity.Player;
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public class OneInTheQuiver implements Gamemode{//Handled by redstone
-    
-    @Getter @JsonIgnore
-    ArrayList<Player> players = new ArrayList<>();
+public class OneInTheQuiver extends BaseRedstoneGamemode{
     
     @Getter
     private final ArrayList<String> NeededPoints = new ArrayList<String>(Arrays.asList(new String[] {
         "RedBlock"
     }));
-    
-    @Getter @JsonIgnore
-    boolean Running = false;
-    
-    @Override
-    public void Start(Map m){
-        Running = true;
-        if(m.getImportantPoints().containsKey("RedBlock")){
-            m.getImportantPoints().get("RedBlock").toBukkitLoc().getBlock().setType(Material.REDSTONE_BLOCK);
-        }else{
-            for(Player p : players){
-                p.sendMessage("Game not ready to start, no RedBlock location set");
-            }
-            End(m);
-        }
-        
-    }
-    
-    @Override
-    public void End(Map m){
-        Running = false;
-        try{
-            m.playerLeaveAll();
-        }catch (Exception ex){}
-    }
+
 }

@@ -18,7 +18,9 @@
  */
 package com.mcmiddleearth.mcme.events.PVP.Servlet;
 
+import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
+import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.Util.DBmanager;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import java.io.File;
@@ -30,6 +32,7 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.bukkit.Bukkit;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
@@ -59,13 +62,18 @@ public class PageHandler extends AbstractHandler{
                 response.sendError(404, ex.toString());
             }
         }else{
-           if(PlayerStat.getPlayerStats().containsKey(targets[0])){
-               response.getWriter().println(DBmanager.getJSonParser().writeValueAsString(PlayerStat.getPlayerStats().get(targets[0])));
-           }else{
-               response.getWriter().println("Player " + targets[0] + " not found");
-           }
-           response.setStatus(HttpServletResponse.SC_OK);
-           baseRequest.setHandled(true);
+            if(PlayerStat.getPlayerStats().containsKey(targets[0])){
+                response.getWriter().println(DBmanager.getJSonParser().writeValueAsString(PlayerStat.getPlayerStats().get(targets[0])));
+            }else{
+                File loc = new File(PVPCore.getSaveLoc() + Main.getFileSep() + "stats" + Main.getFileSep() + Bukkit.getOfflinePlayer(targets[0]).getUniqueId());
+                if(!loc.exists()){
+                    response.getWriter().println("Player " + targets[0] + " not found");
+                }else{
+                    response.getWriter().println(DBmanager.getJSonParser().writeValueAsString(DBmanager.loadObj(PlayerStat.class, loc)));
+                }
+            }
+            response.setStatus(HttpServletResponse.SC_OK);
+            baseRequest.setHandled(true);
         }
     }
     

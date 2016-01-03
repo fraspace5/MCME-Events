@@ -59,10 +59,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public class Ringbearer implements Gamemode{//Handled by plugin
-    
-    @Getter @JsonIgnore
-    ArrayList<Player> players = new ArrayList<>();
+public class Ringbearer extends BasePluginGamemode{//Handled by plugin
     
     @Getter
     private Team BlueTeam = new Team("Blue", GameMode.ADVENTURE); 
@@ -123,7 +120,8 @@ public class Ringbearer implements Gamemode{//Handled by plugin
             End(m);
             return;
         }
-        
+        BlueTeam = new Team("Blue", GameMode.ADVENTURE); 
+        RedTeam = new Team("Red", GameMode.ADVENTURE); 
         PluginManager pm = Main.getServerInstance().getPluginManager();
         pm.registerEvents(new GameEvents(), Main.getPlugin());
         for(Player p : players){
@@ -280,7 +278,16 @@ public class Ringbearer implements Gamemode{//Handled by plugin
             }, 40, 11);
     }
     
-    
+    @Override
+    public void playerLeave(Player p){
+        if(BlueTeam.getBearer().equals(p) || RedTeam.getBearer().equals(p)){
+            End(map);
+        }else{
+            BlueTeam.removeFromTeam(p);
+            RedTeam.removeFromTeam(p);
+            players.remove(p);
+        }
+    }
     
     @Override
     public void End(Map m){
@@ -355,6 +362,11 @@ public class Ringbearer implements Gamemode{//Handled by plugin
             players.add(p);
             Alive.add(p);
         }
+        
+        public void removeFromTeam(Player p){
+            players.remove(p);
+            Alive.remove(p);
+        }
     }
     
     private class GameEvents implements Listener{
@@ -415,6 +427,7 @@ public class Ringbearer implements Gamemode{//Handled by plugin
                         e.setRespawnLocation(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
                     }else{
                         e.getPlayer().setGameMode(GameMode.SPECTATOR);
+                        e.setRespawnLocation(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
                         RedTeam.getAlive().remove(e.getPlayer());
                         if(RedTeam.getAlive().size() == 0){
                             for(Player p : players){
@@ -440,6 +453,7 @@ public class Ringbearer implements Gamemode{//Handled by plugin
                         e.setRespawnLocation(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
                     }else{
                         e.getPlayer().setGameMode(GameMode.SPECTATOR);
+                        e.setRespawnLocation(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
                         BlueTeam.getAlive().remove(e.getPlayer());
                         if(BlueTeam.getAlive().size() == 0){
                             for(Player p : players){
