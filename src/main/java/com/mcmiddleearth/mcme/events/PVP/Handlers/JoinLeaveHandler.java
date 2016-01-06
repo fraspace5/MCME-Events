@@ -24,9 +24,11 @@ import com.mcmiddleearth.mcme.events.PVP.Lobby;
 import com.mcmiddleearth.mcme.events.PVP.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
+import com.mcmiddleearth.mcme.events.Thompson.Thompson;
 import com.mcmiddleearth.mcme.events.Util.DBmanager;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -60,7 +62,7 @@ public class JoinLeaveHandler implements Listener{
                         p.teleport(new Location(p.getWorld(), 346, 40, 513));
                     }
                 }else{
-                    p.sendMessage("Welcome master " + p.getName().toLowerCase());
+                    Thompson.welcome(p);
                 }
             }
         }, 20);
