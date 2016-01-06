@@ -20,6 +20,7 @@ package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcmiddleearth.mcme.events.PVP.Map;
+import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import java.util.ArrayList;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -36,7 +37,13 @@ public abstract class BasePluginGamemode implements Gamemode{
         players.remove(p);
     }
     
-    public void Start(Map m){};
+    @Override
+    public void Start(Map m){
+        for(Player p : players){
+            PlayerStat.getPlayerStats().get(p.getName()).addPlayedGame(m.getGmType());
+        }
+    };
     
+    @Override
     public void End(Map m){};
 }

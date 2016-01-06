@@ -42,7 +42,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class JoinLeaveHandler implements Listener{
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
-//        Lobby.LoadLobby();
         final Player p = e.getPlayer();
         PlayerStat.loadStat(p);
         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
@@ -54,10 +53,14 @@ public class JoinLeaveHandler implements Listener{
                 } catch (JsonProcessingException ex) {
                     Logger.getLogger(JoinLeaveHandler.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                if(!p.hasPlayedBefore()){
-                    p.teleport(p.getWorld().getSpawnLocation());
+                if(!p.isOp()){
+                    if(!p.hasPlayedBefore()){
+                        p.teleport(p.getWorld().getSpawnLocation());
+                    }else{
+                        p.teleport(new Location(p.getWorld(), 346, 40, 513));
+                    }
                 }else{
-                    p.teleport(new Location(p.getWorld(), 346, 40, 513));
+                    p.sendMessage("Welcome master " + p.getName().toLowerCase());
                 }
             }
         }, 20);
@@ -65,11 +68,11 @@ public class JoinLeaveHandler implements Listener{
     
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e){
-        System.out.println("Player Quit");
         if(PVPCore.getPlaying().containsKey(e.getPlayer().getName())){
             Map.maps.get(PVPCore.getPlaying().get(e.getPlayer().getName())).playerLeave(e.getPlayer());
         }
         PlayerStat.getPlayerStats().get(e.getPlayer().getName()).saveStat();
         PlayerStat.getPlayerStats().remove(e.getPlayer().getName());
+        e.setQuitMessage("");
     }
 }

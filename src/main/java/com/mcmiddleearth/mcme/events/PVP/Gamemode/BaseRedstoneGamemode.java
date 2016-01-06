@@ -20,6 +20,7 @@ package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcmiddleearth.mcme.events.PVP.Map;
+import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import java.util.ArrayList;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -41,6 +42,9 @@ public abstract class BaseRedstoneGamemode implements Gamemode{
     public void Start(Map m){
         Running = true;
         if(m.getImportantPoints().containsKey("RedBlock")){
+            for(Player p : players){
+                PlayerStat.getPlayerStats().get(p.getName()).addPlayedGame(m.getGmType());
+            }
             m.getImportantPoints().get("RedBlock").toBukkitLoc().getBlock().setType(Material.REDSTONE_BLOCK);
         }else{
             for(Player p : players){

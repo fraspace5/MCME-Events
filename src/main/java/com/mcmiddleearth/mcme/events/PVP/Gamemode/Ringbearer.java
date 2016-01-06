@@ -111,11 +111,12 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
     
     @Override
     public void Start(Map m) {
+        super.Start(m);
         count = 10;
         this.map = m;
         if(!m.getImportantPoints().keySet().containsAll(NeededPoints)){
             for(Player p : players){
-                p.sendMessage(ChatColor.GREEN + "Game Cannot Start! Map maker f**ked up!");
+                p.sendMessage(ChatColor.YELLOW + "Game Cannot Start! Map maker f**ked up!");
             }
             End(m);
             return;
@@ -247,6 +248,13 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                         im.setDisplayName("The Ring");
                         im.setLore(Arrays.asList(new String[] {"The one ring of power...", "1 of 2"}));
                         ring.setItemMeta(im);
+                        if(RedTeam.getPlayers().size() > 0 &&
+                                BlueTeam.getPlayers().size() > 0){
+                            for(Player p : players){
+                                p.sendMessage(ChatColor.YELLOW + "There must be at least one player on each team!");
+                            }
+                            End(map);
+                        }
                         if(RedTeam.getPlayers().size() == 1){
                             RedTeam.setBearer(RedTeam.getPlayers().get(0));
                         }else{

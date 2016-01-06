@@ -19,6 +19,7 @@
 package com.mcmiddleearth.mcme.events.PVP.Gamemode.Seige;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Gamemode;
 import com.mcmiddleearth.mcme.events.PVP.Map;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ import org.bukkit.entity.Player;
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public class Siege implements Gamemode{//Handled by plugin
+public class Siege extends BasePluginGamemode{//Handled by plugin
     
     @Getter @JsonIgnore
     ArrayList<Player> players = new ArrayList<>();

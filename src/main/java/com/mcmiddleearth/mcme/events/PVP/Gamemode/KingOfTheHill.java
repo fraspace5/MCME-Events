@@ -124,6 +124,7 @@ public class KingOfTheHill extends BasePluginGamemode{
     
     @Override
     public void Start(Map m) {
+        super.Start(m);
         count = 10;
         this.map = m;
         if(!m.getImportantPoints().keySet().containsAll(NeededPoints)){

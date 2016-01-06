@@ -97,7 +97,7 @@ public class PVPCore implements Event{
         pm.registerEvents(new AllGameHandlers(), Main.getPlugin());
         pm.registerEvents(new PlayerStat.StatListener(), Main.getPlugin());
         try {
-            server = new PVPServer(8080);
+            server = new PVPServer(3333);
             server.getServ().start();
         } catch (Exception ex) {
             Logger.getLogger(SummerCore.class.getName()).log(Level.SEVERE, null, ex);

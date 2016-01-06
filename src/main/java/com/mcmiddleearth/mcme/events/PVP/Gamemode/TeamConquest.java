@@ -138,6 +138,7 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
     
     @Override
     public void Start(Map m) {
+        super.Start(m);
         count = 10;
         this.map = m;
         if(!m.getImportantPoints().keySet().containsAll(NeededPoints)){
