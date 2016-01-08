@@ -24,7 +24,7 @@ import com.mcmiddleearth.mcme.events.PVP.Lobby;
 import com.mcmiddleearth.mcme.events.PVP.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
-import com.mcmiddleearth.mcme.events.Thompson.Thompson;
+import com.mcmiddleearth.mcme.events.Util.Thompson;
 import com.mcmiddleearth.mcme.events.Util.DBmanager;
 import java.util.logging.Level;
 import java.util.logging.Logger;

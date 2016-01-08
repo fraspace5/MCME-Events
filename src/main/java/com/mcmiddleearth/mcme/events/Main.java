@@ -21,6 +21,7 @@ package com.mcmiddleearth.mcme.events;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.Util.CLog;
+import com.mcmiddleearth.mcme.events.Util.Thompson;
 import com.mcmiddleearth.mcme.events.summerevent.SummerCommands;
 import com.mcmiddleearth.mcme.events.summerevent.SummerCore;
 import com.mcmiddleearth.mcme.events.winterevent.SnowManInvasion.EventHandles.SignListener;
@@ -112,6 +113,7 @@ public class Main extends JavaPlugin{
         this.getCommand("PlugUp").setExecutor(new CommandCore());
         PluginManager pm = this.getServer().getPluginManager();
         pm.registerEvents(new ListenerCore(), this);
+        pm.registerEvents(new Thompson.Listeners(), this);
         boolean PVP = this.getConfig().getBoolean("PVP.Enabled");
         if(PVP){
             PVPCore = new PVPCore();

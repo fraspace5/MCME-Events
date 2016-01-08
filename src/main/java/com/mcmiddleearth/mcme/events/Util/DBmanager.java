@@ -61,7 +61,23 @@ public class DBmanager {
     public static Object loadObj(Class type, File loc){
         if(!loc.exists()){
             loc.mkdirs();
-            return new Object();
+            return false;
+        }
+        Object obj;
+        try {
+            obj = JSonParser.readValue(loc, type);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+        return obj;
+    }
+    
+    public static Object loadObj(Class type, String path){
+        File loc = new File(Main.getPluginDirectory() + Main.getFileSep() + path);
+        if(!loc.exists()){
+            loc.mkdirs();
+            return false;
         }
         Object obj;
         try {
