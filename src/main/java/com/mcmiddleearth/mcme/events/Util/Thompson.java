@@ -19,6 +19,7 @@
 package com.mcmiddleearth.mcme.events.Util;
 
 import com.mcmiddleearth.mcme.events.Main;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,7 +59,10 @@ public class Thompson{
     private static final Random rng = new Random();
     
     public static void welcome(Player p){
-        Object profile = DBmanager.loadObj(UserProfile.class, "UserProfiles" + Main.getFileSep() + p.getUniqueId());
+        Object profile = false;
+        try{
+            profile = DBmanager.loadObj(UserProfile.class, "UserProfiles" + Main.getFileSep() + p.getUniqueId());
+        }catch(Exception e){}
         if(!profile.equals(false)){
             UserProfile up = (UserProfile) profile;
             sendMessage(p, "Welcome " + up.getTitle() + " " + p.getName().toLowerCase());
@@ -68,7 +72,7 @@ public class Thompson{
     
     public static void farwell(Player p){
         if(profiles.containsKey(p.getName())){
-            DBmanager.saveObj(profiles.get(p.getName()), new File(Main.getPluginDirectory() + Main.getFileSep() + "UserProfiles" + Main.getFileSep() + p.getUniqueId()), p.getUniqueId().toString());
+            DBmanager.saveObj(profiles.get(p.getName()), new File(Main.getPluginDirectory() + Main.getFileSep() + "UserProfiles"), p.getUniqueId().toString());
             profiles.remove(p.getName());
         }
     }
@@ -114,6 +118,7 @@ public class Thompson{
                 .withEscapeSequence("that is all")
                 .withFirstPrompt(null)
                 .withTimeout(600)
+                .withLocalEcho(false)
                 .thatExcludesNonPlayersWithMessage(formatMessage("I'm afraid I can't work with non players, I'm quite sorry."))
                 .addConversationAbandonedListener(this);
         }
@@ -123,22 +128,35 @@ public class Thompson{
             if(e.getMessage().toLowerCase().contains("thompson")){
                 Player p = e.getPlayer();
                 String msg = e.getMessage();
-                if(profiles.containsKey(e.getPlayer().getName())){
+                if(!profiles.containsKey(e.getPlayer().getName())){
                     convoFactory.withFirstPrompt(new newUser()).buildConversation((Conversable) p).begin();
                 }else{
-                    Conversation c = convoFactory.withFirstPrompt(new newUser()).buildConversation((Conversable) p);
+                    Conversation c = convoFactory.withFirstPrompt(new nextCommand()).buildConversation((Conversable) p);
                     c.getContext().setSessionData("profile", profiles.get(e.getPlayer().getName()));
                     c.begin();
                 }
                 e.getRecipients().clear();
+                e.getRecipients().add(p);
             }
+        }
+        
+        private void echo(Conversable p, String input){
+            p.sendRawMessage(ChatHandler.formatChat((Player) p).replace("%2$s", input));
         }
         
         
 
         @Override
         public void conversationAbandoned(ConversationAbandonedEvent e) {
-            e.getContext().getForWhom().sendRawMessage(formatMessage(goodbye[rng.nextInt(goodbye.length)]));
+            if(!e.gracefulExit()){
+                e.getContext().getForWhom().sendRawMessage(formatMessage(goodbye[rng.nextInt(goodbye.length)]));
+            }
+        }
+        
+        private static interface SureCode{
+            public void sure(ConversationContext context);
+            
+            public Prompt getLast();
         }
         
         private class newUser extends StringPrompt {
@@ -150,6 +168,7 @@ public class Thompson{
 
             @Override
             public Prompt acceptInput(ConversationContext context, String input) {
+                echo(context.getForWhom(), input);
                 UserProfile up = new UserProfile(input);
                 profiles.put(((Player) context.getForWhom()).getName(), up);
                 context.setSessionData("profile", up);
@@ -166,6 +185,7 @@ public class Thompson{
 
             @Override
             public Prompt acceptInput(ConversationContext context, String input) {
+                echo(context.getForWhom(), input);
                 if(input.toLowerCase().contains("no")){
                     return new nextCommand();
                 }else if(input.toLowerCase().contains("yes")){
@@ -187,6 +207,7 @@ public class Thompson{
 
             @Override
             public Prompt acceptInput(ConversationContext context, String input) {
+                echo(context.getForWhom(), input);
                 for(String s : new String[] {",", "."}){
                     input = input.replace(s, "");
                 }
@@ -198,14 +219,12 @@ public class Thompson{
                     cmd.remove("alias");
                     if(cmd.contains("delete") || cmd.contains("remove")){
                         
-                    }
-//                    else if(cmd.contains("edit")){
-//                        String alias = StringUtils.join(cmd.subList(cmd.indexOf("edit"), cmd.size()-1), " ");
-//                        context.setSessionData("alias", alias);
-//                        context.setSessionData("type", "EditAlias");
-//                        return new Edit();
-//                    }
-                    else if(cmd.contains("new") || cmd.contains("set")){
+                    }else if(cmd.contains("edit")){
+                        String alias = StringUtils.join(cmd.subList(cmd.indexOf("edit"), cmd.size()-1), " ");
+                        context.setSessionData("alias", alias);
+                        context.setSessionData("type", "EditAlias");
+                        return new editAlias();
+                    }else if(cmd.contains("new") || cmd.contains("set")){
                         
                     }
                 }
@@ -214,7 +233,7 @@ public class Thompson{
             }
         }
         
-        private class editAlias extends StringPrompt {
+        private class editAlias extends StringPrompt implements SureCode{
 
             @Override
             public String getPromptText(ConversationContext context) {
@@ -224,6 +243,18 @@ public class Thompson{
 
             @Override
             public Prompt acceptInput(ConversationContext context, String input) {
+                echo(context.getForWhom(), input);
+                context.setSessionData("SureOfWhat", "make the alias " + context.getSessionData("alias").toString() + " excute " + input);
+                return new Sure();
+            }
+
+            @Override
+            public void sure(ConversationContext context) {
+                
+            }
+
+            @Override
+            public Prompt getLast() {
                 return null;
             }
         }
@@ -232,17 +263,18 @@ public class Thompson{
 
             @Override
             public String getPromptText(ConversationContext context) {
-                return formatMessage("What would you like the alias " + context.getSessionData("alias").toString() + " changed to " + 
+                return formatMessage("What would you like the alias " + context.getSessionData("alias").toString() + " to do " + 
                                     ((UserProfile)context.getSessionData("profile")).getTitle() + "?");
             }
 
             @Override
             public Prompt acceptInput(ConversationContext context, String input) {
+                echo(context.getForWhom(), input);
                 return null;
             }
         }
         
-        private class sure extends StringPrompt {
+        private class Sure extends StringPrompt {
 
             @Override
             public String getPromptText(ConversationContext context) {
@@ -252,13 +284,16 @@ public class Thompson{
 
             @Override
             public Prompt acceptInput(ConversationContext context, String input) {
+                echo(context.getForWhom(), input);
                 if(input.toLowerCase().contains("no")){
-                    return new anythingElse();
+                    return ((SureCode) context.getSessionData("SureCode")).getLast();
                 }else if(input.toLowerCase().contains("yes")){
+                    SureCode sc = (SureCode) context.getSessionData("SureCode");
+                    sc.sure(context);
                     return new anythingElse();
                 }else{
                     context.getForWhom().sendRawMessage(formatMessage("I'm afraid I don't understand,"));
-                    return new sure();
+                    return new Sure();
                 }
             }
         }

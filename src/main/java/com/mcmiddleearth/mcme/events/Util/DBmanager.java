@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.mcmiddleearth.mcme.events.Main;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import lombok.Getter;
@@ -82,8 +83,8 @@ public class DBmanager {
         Object obj;
         try {
             obj = JSonParser.readValue(loc, type);
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (Exception ex) {
+//            ex.printStackTrace();
             return false;
         }
         return obj;

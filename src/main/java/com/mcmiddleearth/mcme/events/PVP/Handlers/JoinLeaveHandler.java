@@ -75,6 +75,7 @@ public class JoinLeaveHandler implements Listener{
         }
         PlayerStat.getPlayerStats().get(e.getPlayer().getName()).saveStat();
         PlayerStat.getPlayerStats().remove(e.getPlayer().getName());
+        Thompson.farwell(e.getPlayer());
         e.setQuitMessage("");
     }
 }

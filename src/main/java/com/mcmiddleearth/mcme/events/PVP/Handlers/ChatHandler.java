@@ -21,6 +21,7 @@ package com.mcmiddleearth.mcme.events.PVP.Handlers;
 import java.util.HashMap;
 import lombok.Getter;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -34,16 +35,20 @@ public class ChatHandler implements Listener{
     @Getter
     private static HashMap<String, String> playerPrefixes = new HashMap<String, String>();
     
-    @EventHandler
-    public void onChat(AsyncPlayerChatEvent e){
-        if(playerPrefixes.containsKey(e.getPlayer().getName())){
-            e.setFormat(playerPrefixes.get(e.getPlayer().getName()) + " " + e.getPlayer().getName() + ChatColor.RESET + ": " + "%2$s");
+    public static String formatChat(Player p){
+        if(playerPrefixes.containsKey(p.getName())){
+            return playerPrefixes.get(p.getName()) + " " + p.getName() + ChatColor.RESET + ": " + "%2$s";
         }else{
-            if(e.getPlayer().isOp()){
-                e.setFormat(ChatColor.GOLD + "Staff" + " " + e.getPlayer().getName() + ChatColor.RESET + ": " + "%2$s");
+            if(p.isOp()){
+                return ChatColor.GOLD + "Staff" + " " + p.getName() + ChatColor.RESET + ": " + "%2$s";
             }else{
-                e.setFormat(ChatColor.GRAY + "Lobby" + " " + e.getPlayer().getName() + ChatColor.RESET + ": " + "%2$s");
+                return ChatColor.GRAY + "Lobby" + " " + p.getName() + ChatColor.RESET + ": " + "%2$s";
             }
         }
+    }
+    
+    @EventHandler
+    public void onChat(AsyncPlayerChatEvent e){
+        e.setFormat(formatChat(e.getPlayer()));
     }
 }
