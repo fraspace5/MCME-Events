@@ -62,7 +62,7 @@ public class JoinLeaveHandler implements Listener{
                         p.teleport(new Location(p.getWorld(), 346, 40, 513));
                     }
                 }else{
-                    Thompson.welcome(p);
+                    Thompson.getInst().welcome(p);
                 }
             }
         }, 20);
@@ -75,7 +75,7 @@ public class JoinLeaveHandler implements Listener{
         }
         PlayerStat.getPlayerStats().get(e.getPlayer().getName()).saveStat();
         PlayerStat.getPlayerStats().remove(e.getPlayer().getName());
-        Thompson.farwell(e.getPlayer());
+        Thompson.getInst().farwell(e.getPlayer());
         e.setQuitMessage("");
     }
 }
