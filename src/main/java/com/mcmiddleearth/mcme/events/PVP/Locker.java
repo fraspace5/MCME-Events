@@ -18,6 +18,7 @@
  */
 package com.mcmiddleearth.mcme.events.PVP;
 
+import com.mcmiddleearth.mcme.events.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -87,7 +88,13 @@ public class Locker implements CommandExecutor, Listener{
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
         if(locked && !e.getPlayer().isOp()){
-            e.getPlayer().kickPlayer("Server is locked");
+            final Player p = e.getPlayer();
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
+                @Override
+                public void run() {
+                    p.kickPlayer("Server is locked");
+                }
+            }, 20);
         }
     }
 }
