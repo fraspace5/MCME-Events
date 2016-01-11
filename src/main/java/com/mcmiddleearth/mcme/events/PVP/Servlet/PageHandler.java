@@ -46,6 +46,7 @@ public class PageHandler extends AbstractHandler{
         if(targets.length == 0){
             response.setStatus(HttpServletResponse.SC_OK);
             baseRequest.setHandled(true);
+            response.setBufferSize(10485760);
             response.getWriter().println("SummerEvent Servlet enabled and running!");
             try {
                 Scanner s = new Scanner(new File("logs" + System.getProperty("file.separator") + "latest.log"));
