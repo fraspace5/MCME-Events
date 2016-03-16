@@ -39,7 +39,7 @@ public abstract class BaseRedstoneGamemode implements Gamemode{
     boolean Running = false;
     
     @Override
-    public void Start(Map m){
+    public void Start(Map m, int parameter){
         Running = true;
         if(m.getImportantPoints().containsKey("RedBlock")){
             for(Player p : players){

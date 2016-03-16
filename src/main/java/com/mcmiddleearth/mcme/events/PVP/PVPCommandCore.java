@@ -22,8 +22,10 @@ import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.CommandBlockHandler;
 import java.io.File;
 import java.util.HashMap;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -36,6 +38,7 @@ import org.bukkit.entity.Player;
  */
 public class PVPCommandCore implements CommandExecutor{
     
+    @Getter
     private static HashMap<String, String> StartedGames = new HashMap<>();
     
     @Override
@@ -52,7 +55,12 @@ public class PVPCommandCore implements CommandExecutor{
                     if(args[1].equalsIgnoreCase("start") && 
                             PVPCore.getPlaying().keySet().contains((p).getName())){
                         Map m = Map.maps.get(PVPCore.getPlaying().get(p.getName()));
-                        m.getGm().Start(m);
+                        if(args[2] != null){
+                            m.getGm().Start(m,Integer.parseInt(args[2]));
+                        }
+                        else{
+                            m.getGm().Start(m,0);
+                        }
                         return true;
                     }else if(args[1].equalsIgnoreCase("quickstart")){
                         if(p.isOp()){
@@ -66,7 +74,6 @@ public class PVPCommandCore implements CommandExecutor{
                             }else if(args.length >= 3){
                                 if(Map.maps.containsKey(args[2])){
                                     Map m = Map.maps.get(args[2]);
-                                    p.sendMessage("Starting game " + m.getName());
                                     p.sendMessage("Map: " + m.getTitle() + ", Gamemode: " + m.getGmType());
                                     for(Player pl : Bukkit.getOnlinePlayers()){
                                         if(!PVPCore.getPlaying().containsKey(pl.getName())){
@@ -86,6 +93,9 @@ public class PVPCommandCore implements CommandExecutor{
                             PVPCore.getPlaying().keySet().contains((p).getName())){
                         Map m = Map.maps.get(PVPCore.getPlaying().get(p.getName()));
                         m.getGm().End(m);
+                    }else if(args[1].equalsIgnoreCase("getgames")){
+                        p.sendMessage("Getting maps");
+                        p.sendMessage(StartedGames.toString());
                     }
                 }else if(args[0].equalsIgnoreCase("join")){
                     if(args.length >= 2){
@@ -133,3 +143,4 @@ public class PVPCommandCore implements CommandExecutor{
     }
     
 }
+                

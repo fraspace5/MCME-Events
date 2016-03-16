@@ -25,7 +25,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Team;
+import com.mcmiddleearth.mcme.events.PVP.Team;
 
 /**
  *
@@ -34,28 +34,58 @@ import org.bukkit.scoreboard.Team;
 public class TeamChat implements CommandExecutor{
     
     private Player p;
-    
-    private Set<String> pTeammates;
    
+    private String messageString = "";
     
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String label, String[] args) {
         
        if(args.length >= 1 && cs instanceof Player) {
-           
+                      
            p = (Player) cs;
            
-           pTeammates = p.getScoreboard().getPlayerTeam(p).getEntries();
-           
-           
-           for(String playerUUID : pTeammates) {
-               
-               Player player = Bukkit.getPlayer(playerUUID);
-               
-               player.sendMessage(args);
+           if(!Team.getRedPlayers().contains(p) && !Team.getBluePlayers().contains(p)){
+               Team.addToTeam(p, Team.Teams.RED);
            }
+           
+           for(String str : args) {
+               
+               if(messageString.equals("")) {
+                   messageString += str;
+               }
+               
+               else if(!str.equals("")) {
+                   messageString += (" " + str);
+               }
+               
+               else {
+                   return false;
+               }
+               
+           }
+           if(Team.getRedPlayers().contains(p)){
+               for(Player player : Team.getRedPlayers()){
+                   
+                   player.sendMessage(ChatColor.DARK_RED + "[TEAM] " + p.getName() + ChatColor.RED + ": " + messageString);
+                   
+               }    
+           }
+           else if(Team.getBluePlayers().contains(p)){
+               for(Player player : Team.getBluePlayers()){
+                   
+                   player.sendMessage(ChatColor.DARK_BLUE + "[TEAM] " + p.getName() + ChatColor.BLUE + ": " + messageString);
+                   
+               }
+           }
+           else{
+               p.sendMessage(ChatColor.RED + "You aren't on a team!");
+           }
+           
+           messageString = "";
            return true;
-        }
+        }else{
            return false;
+       }
+           
     }
 }

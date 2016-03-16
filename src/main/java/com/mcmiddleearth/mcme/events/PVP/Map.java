@@ -123,19 +123,21 @@ public class Map {
         gm.getPlayers().add(p);
         if(!gm.isRunning()){
             Curr++;
-            Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
-            if(Max == Curr){
-                gm.Start(this);
-                s.setLine(2, ChatColor.RED + "" + ChatColor.BOLD + "" + Curr+"/"+Max);
-            }else{
+            try{
+                Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
                 s.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + "" + Curr+"/"+Max);
+                s.update(true, true);
+                LobbySign.toBukkitLoc().getBlock().getState().update();
+            }catch(NullPointerException e){
+                System.err.println("Couldn't find game signs!");
             }
-            s.update(true, true);
-            LobbySign.toBukkitLoc().getBlock().getState().update();
-        }else{
+        }    
+        else if(gm.isRunning() && gm.midgamePlayerJoin(p)){}
+        else{
             p.teleport(Spawn.toBukkitLoc());
             p.setGameMode(GameMode.SPECTATOR);
-            p.sendMessage(ChatColor.YELLOW + "Joined as Spectator");
+            p.sendMessage(ChatColor.YELLOW + "Can't join " + gmType + " midgame!");
+            p.sendMessage(ChatColor.YELLOW + "Joining as Spectator");
         }
         return true;
     }
@@ -177,10 +179,16 @@ public class Map {
                 Curr--;
             }
             PVPCore.getPlaying().remove(p.getName());
-            Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
-            s.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + Curr+"/"+Max);
-            s.update(true, true);
-            LobbySign.toBukkitLoc().getBlock().getState().update();
+            try{
+                Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
+                s.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + Curr+"/"+Max);
+                s.update(true, true);
+                LobbySign.toBukkitLoc().getBlock().getState().update();
+            }
+            catch(NullPointerException e){
+                System.err.println("Couldn't find game sign!");
+            }
+            
             p.getInventory().clear();
             if(Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").hasPlayer(p)){
                 Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").removePlayer(p);

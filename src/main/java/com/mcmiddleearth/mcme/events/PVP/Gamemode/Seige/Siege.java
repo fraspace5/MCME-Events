@@ -46,13 +46,17 @@ public class Siege extends BasePluginGamemode{//Handled by plugin
     boolean Running = false;
     
     @Override
-    public void Start(Map m) {
+    public void Start(Map m,int parameter) {
         throw new UnsupportedOperationException("TODO: ADD STUFF");
     }
 
     @Override
     public void End(Map m){
         
+    }
+    @Override
+    public boolean midgamePlayerJoin(Player p){
+        return false;
     }
     
 }

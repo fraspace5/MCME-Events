@@ -28,7 +28,7 @@ import org.bukkit.entity.Player;
  */
 public interface Gamemode {
     
-    void Start(Map m);
+    void Start(Map m, int parameter);
     
     ArrayList<Player> getPlayers();
     
@@ -37,5 +37,7 @@ public interface Gamemode {
     void End(Map m);
     
     boolean isRunning();
+    
+    boolean midgamePlayerJoin(Player p);
     
 }
