@@ -76,9 +76,6 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
     private Objective Points;
     
     @Getter
-    private Scoreboard Score;
-    
-    @Getter
     private final int target = 100;
     
     @Getter
@@ -93,10 +90,13 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
     
     Map map;
     
-    int count;
+    int count = 10;
     
     @Getter
-    private boolean Running = false;
+    private boolean midgameJoin = false;
+    
+    @Getter
+    private GameState state = GameState.IDLE;
     
     GameEvents events;
     
@@ -105,7 +105,7 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
     Runnable tick = new Runnable(){
             @Override
             public void run() {
-                if(Running){
+                if(state == GameState.RUNNING){
                     redTeam.setScore(redTeam.getScore() + redTeam.getCapturedPoints().size());
                     blueTeam.setScore(blueTeam.getScore() + blueTeam.getCapturedPoints().size());
                     if(redTeam.getScore() > target){
@@ -142,6 +142,7 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
     public void Start(Map m, int parameter) {
         super.Start(m, parameter);
         count = 10;
+        state = GameState.COUNTDOWN;
         this.map = m;
         if(!m.getImportantPoints().keySet().containsAll(NeededPoints)){
             for(Player p : players){
@@ -157,7 +158,6 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
         PluginManager pm = Main.getServerInstance().getPluginManager();
         pm.registerEvents(events, Main.getPlugin());
         for(Player p : players){
-            p.sendMessage("selecting teams");
             if(Team.getBluePlayers().size() < 16 && Team.getRedPlayers().size() < 16){
                 if(Team.getBluePlayers().size() >= Team.getRedPlayers().size()){
                     Team.addToTeam(p,Teams.RED);
@@ -176,14 +176,12 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                 @Override
                 public void run() {
                     if(count == 0){
-                        if(Running){
+                        if(state == GameState.RUNNING){
                             return;
                         }
-                        ScoreboardManager sbm = Bukkit.getScoreboardManager();
-                        Score = sbm.getNewScoreboard();
-                        if(sbm.getMainScoreboard() != null){
-                            org.bukkit.scoreboard.Team blu = sbm.getMainScoreboard().getTeam("blue");
-                            org.bukkit.scoreboard.Team rd =  sbm.getMainScoreboard().getTeam("red");
+                        if(Bukkit.getScoreboardManager().getMainScoreboard() != null){
+                            org.bukkit.scoreboard.Team blu = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("blue");
+                            org.bukkit.scoreboard.Team rd =  Bukkit.getScoreboardManager().getMainScoreboard().getTeam("red");
                             if(blu != null && rd != null){
                                 for(Player p : Team.getRedPlayers()){
                                     rd.addPlayer(p);
@@ -193,15 +191,20 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                                 }
                             }
                         }
-                        Points = Score.registerNewObjective("Score", "dummy");
+                        Points = getScoreboard().registerNewObjective("Score", "dummy");
                         Points.setDisplayName("Score");
                         Points.getScore(ChatColor.BLUE + "Blue:").setScore(0);
                         Points.getScore(ChatColor.RED + "Red:").setScore(0);
                         Points.setDisplaySlot(DisplaySlot.SIDEBAR);
-                        for(Player p : Team.getRedPlayers()){
+                        
+                        for(Player p : Bukkit.getServer().getOnlinePlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game Start!");
+                        }
+                        
+                        for(Player p : Team.getRedPlayers()){
+                            
                             p.teleport(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
-                            p.setScoreboard(Score);
+                            p.setScoreboard(getScoreboard());
                             ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
                                 new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
                                 new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
@@ -228,9 +231,9 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                             p.getInventory().addItem(Arrows);
                         }
                         for(Player p : Team.getBluePlayers()){
-                            p.sendMessage(ChatColor.GREEN + "Game Start!");
+                            
                             p.teleport(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
-                            p.setScoreboard(Score);
+                            p.setScoreboard(getScoreboard());
                             ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
                                 new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
                                 new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
@@ -257,10 +260,10 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                             p.getInventory().addItem(Arrows);
                             p.getInventory().addItem(Arrows);
                         }
-                        Running = true;
+                        state = GameState.RUNNING;
                         count = -1;
                     }else if(count != -1){
-                        for(Player p : players){
+                        for(Player p : Bukkit.getServer().getOnlinePlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game begins in " + count);
                         }
                         count--;
@@ -274,8 +277,7 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
     
     @Override
     public void End(Map m){
-        Running = false;
-        super.End(m);
+        state = GameState.IDLE;
         
         for(Location l : events.points){
             l.getBlock().setType(Material.AIR);
@@ -287,7 +289,7 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
             p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
                 new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
         }
-        Score.clearSlot(DisplaySlot.SIDEBAR);
+        getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
         for(Player p : players){
             p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
             Team.removeFromTeam(p);
@@ -308,8 +310,17 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                 }
             }
         }
+        super.End(m);
+
     }
     
+    public boolean midgamePlayerJoin(Player p){
+        return false;
+    }
+    
+    public String requiresParameter(){
+        return null;
+    }
     
     private class GameEvents implements Listener{
         
@@ -328,7 +339,7 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
         
         @EventHandler
         public void onPlayerInteract(PlayerInteractEvent e){
-            if(Running && players.contains(e.getPlayer()) && 
+            if(state == GameState.RUNNING && players.contains(e.getPlayer()) && 
                     e.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
                 if(e.getClickedBlock().getType().equals(Material.BEACON)){
                     e.setUseInteractedBlock(Event.Result.DENY);
@@ -382,7 +393,8 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
         
         @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
-            if(Running && players.contains(e.getPlayer())){
+            System.out.println("tc");
+            if(state == GameState.RUNNING && players.contains(e.getPlayer())){
                 if(redTeam.getRedPlayers().contains(e.getPlayer())){
                     e.setRespawnLocation(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
                 }else if(blueTeam.getBluePlayers().contains(e.getPlayer())){
@@ -390,8 +402,5 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                 }
             }
         }
-    }
-    public boolean midgamePlayerJoin(Player p){
-        return false;
     }
 }

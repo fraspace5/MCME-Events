@@ -19,12 +19,23 @@
 package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mcmiddleearth.mcme.events.Main;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
 import com.mcmiddleearth.mcme.events.PVP.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import lombok.Getter;
+import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 
 /**
  *
@@ -34,12 +45,20 @@ public abstract class BasePluginGamemode implements Gamemode{
     @Getter @JsonIgnore
     ArrayList<Player> players = new ArrayList<>();
     
+    public enum GameState {
+        IDLE, COUNTDOWN, RUNNING
+    }
+    
+    @Getter
+    private static Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+    
     public void playerLeave(Player p){
         players.remove(p);
     }
     
     @Override
     public void Start(Map m, int parameter){
+        PVPCommandCore.toggleVoxel(true);
         for(Player p : players){
             PlayerStat.getPlayerStats().get(p.getName()).addPlayedGame(m.getGmType());
         }
@@ -48,5 +67,23 @@ public abstract class BasePluginGamemode implements Gamemode{
     @Override
     public void End(Map m){
         PVPCommandCore.getStartedGames().clear();
+        
+        Bukkit.getScheduler().cancelAllTasks();
+        for(Objective o : scoreboard.getObjectives()){
+            o.unregister();
+        }
+      
+        for(Player p : Bukkit.getServer().getOnlinePlayers()){
+            ChatHandler.getPlayerColors().put(p.getName(), ChatColor.WHITE);
+            p.setHealth(20);
+        }
     };
+    
+    
+    public boolean midgamePlayerJoin(Player p){
+        p.setWalkSpeed(0.2F);
+        
+        return true;
+    };
+    
 }

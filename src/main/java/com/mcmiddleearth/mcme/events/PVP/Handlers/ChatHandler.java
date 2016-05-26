@@ -37,6 +37,9 @@ public class ChatHandler implements Listener {
     @Getter
     private static HashMap<String, String> playerPrefixes = new HashMap<String, String>();
     
+    @Getter
+    private static HashMap<String, ChatColor> playerColors = new HashMap<String, ChatColor>();
+    
     public static String formatChat(Player p){
         if(playerPrefixes.containsKey(p.getName())){
             return playerPrefixes.get(p.getName()) + " " + p.getName() + ChatColor.RESET + ": " + "%2$s";

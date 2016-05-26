@@ -20,6 +20,7 @@ package com.mcmiddleearth.mcme.events.PVP;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.GameState;
 import com.mcmiddleearth.mcme.events.Util.EventLocation;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Gamemode;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
@@ -118,10 +119,9 @@ public class Map {
         if(Max <= Curr){
             return false;
         }
-        Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").addPlayer(p);
         PVPCore.getPlaying().put(p.getName(), name);
         gm.getPlayers().add(p);
-        if(!gm.isRunning()){
+        if(gm.getState() == GameState.IDLE){
             Curr++;
             try{
                 Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
@@ -132,12 +132,10 @@ public class Map {
                 System.err.println("Couldn't find game signs!");
             }
         }    
-        else if(gm.isRunning() && gm.midgamePlayerJoin(p)){}
+        else if(gm.getState() == GameState.RUNNING && gm.midgamePlayerJoin(p)){}
         else{
-            p.teleport(Spawn.toBukkitLoc());
-            p.setGameMode(GameMode.SPECTATOR);
             p.sendMessage(ChatColor.YELLOW + "Can't join " + gmType + " midgame!");
-            p.sendMessage(ChatColor.YELLOW + "Joining as Spectator");
+            return false;
         }
         return true;
     }
@@ -157,15 +155,19 @@ public class Map {
             Curr--;
         }
         PVPCore.getPlaying().remove(p.getName());
-        Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
-        s.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + "" + Curr+"/"+Max);
-        s.update(true, true);
-        LobbySign.toBukkitLoc().getBlock().getState().update();
-        p.getInventory().clear();
-        if(Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").hasPlayer(p)){
-            Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").removePlayer(p);
+        try{
+            Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
+            s.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + "" + Curr+"/"+Max);
+            s.update(true, true);
+            LobbySign.toBukkitLoc().getBlock().getState().update();
+            p.getInventory().clear();
+            if(Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").hasPlayer(p)){
+                Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").removePlayer(p);
+            }
         }
-        
+        catch(NullPointerException e){
+            System.out.println("Couldn't find game signs!");
+        }
     }
     
     public void playerLeaveAll(){

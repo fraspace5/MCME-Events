@@ -18,14 +18,17 @@
  */
 package com.mcmiddleearth.mcme.events.PVP;
 
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.FreeForAll;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.Infected;
 import com.mcmiddleearth.mcme.events.Util.EventLocation;
 //import com.mcmiddleearth.mcme.events.PVP.Gamemode.FreeForAll;
 //import com.mcmiddleearth.mcme.events.PVP.Gamemode.Infected;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.KingOfTheHill;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.OneInTheQuiver;
 //import com.mcmiddleearth.mcme.events.PVP.Gamemode.OneInTheQuiver;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Ringbearer;
-import com.mcmiddleearth.mcme.events.PVP.Gamemode.Seige.Siege;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamConquest;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamDeathmatch;
 //import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamDeathmatch;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamSlayer;
 import java.util.Arrays;
@@ -76,10 +79,11 @@ public class MapEditor implements CommandExecutor, Listener{
                             }else if(args[2].equalsIgnoreCase("poi") && args.length > 3){
                                 if(m.getGm() == null){
                                     p.sendMessage(ChatColor.YELLOW + "WARNING: no gamemode has been set yet!");
-                                }else{
-                                    if(!m.getGm().getNeededPoints().contains(args[3])){
-                                        p.sendMessage(ChatColor.YELLOW + "WARNING: That is not a poi for this maps gamemode");
-                                    }
+                                }else if(m.getGmType().equalsIgnoreCase("freeforall")){
+                                    p.sendMessage(ChatColor.GREEN + String.valueOf(m.getImportantPoints().size()) + " spawn points configured!");
+                                }
+                                else if(!m.getGm().getNeededPoints().contains(args[3])){
+                                    p.sendMessage(ChatColor.YELLOW + "WARNING: That is not a poi for this maps gamemode");
                                 }
                                 m.getImportantPoints().put(args[3], new EventLocation(p.getLocation().add(0, -1, 0)));
                                 EventLocation el = new EventLocation(p.getLocation().add(0, -1, 0));
@@ -95,7 +99,7 @@ public class MapEditor implements CommandExecutor, Listener{
                                 p.sendMessage(ChatColor.GREEN + "map Title set to " + args[3]);
                             }else if(args[2].equalsIgnoreCase("setGamemode") && args.length > 3){
                                 boolean real = false;
-                                /*if(args[3].equalsIgnoreCase("Freeforall")){
+                                if(args[3].equalsIgnoreCase("Freeforall")){
                                     m.setGm(new FreeForAll());
                                     m.setGmType("Free For All");
                                     real = true;
@@ -107,7 +111,7 @@ public class MapEditor implements CommandExecutor, Listener{
                                     m.setGm(new OneInTheQuiver());
                                     m.setGmType("One In The Quiver");
                                     real = true;
-                                }else */if(args[3].equalsIgnoreCase("Ringbearer")){
+                                }else if(args[3].equalsIgnoreCase("Ringbearer")){
                                     m.setGm(new Ringbearer());
                                     m.setGmType("Ringbearer");
                                     real = true;
@@ -119,20 +123,20 @@ public class MapEditor implements CommandExecutor, Listener{
                                     m.setGm(new KingOfTheHill());
                                     m.setGmType("King Of The Hill");
                                     real = true;
-                                }/*else if(args[3].equalsIgnoreCase("TeamDeathmatch")){
+                                }else if(args[3].equalsIgnoreCase("TeamDeathmatch")){
                                     m.setGm(new TeamDeathmatch());
                                     m.setGmType("Team Deathmatch");
                                     real = true;
-                                }*/else if(args[3].equalsIgnoreCase("TeamSlayer")){
+                                }else if(args[3].equalsIgnoreCase("TeamSlayer")){
                                     m.setGm(new TeamSlayer());
                                     m.setGmType("Team Slayer");
                                     real = true;
-                                }else if(args[3].equalsIgnoreCase("Siege")){
+                                }/*else if(args[3].equalsIgnoreCase("Siege")){
                                     m.setGm(new Siege());
                                     m.setGmType("Siege");
                                     p.sendMessage(ChatColor.RED + "Warning, Seige is a very large gamemode that does not fit regular gamemode standards");
                                     real = true;
-                                }
+                                }*/
                                 if(real){
                                     p.sendMessage(ChatColor.GREEN + "Gamemode set to " + args[3]);
                                     if(!m.getImportantPoints().keySet().containsAll(m.getGm().getNeededPoints())){

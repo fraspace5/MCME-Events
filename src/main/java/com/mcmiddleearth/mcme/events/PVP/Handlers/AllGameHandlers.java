@@ -20,12 +20,16 @@ package com.mcmiddleearth.mcme.events.PVP.Handlers;
 
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Map;
+import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.Util.DBmanager;
 import java.io.File;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.inventory.ItemStack;
@@ -37,7 +41,13 @@ import org.bukkit.inventory.ItemStack;
 public class AllGameHandlers implements Listener{
     
     @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent e){
+        e.setDeathMessage(ChatHandler.getPlayerColors().get(e.getEntity().getName()) + e.getEntity().getName() + ChatColor.GRAY + " was killed by " + ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName());
+    }
+    
+    @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent e){
+        System.out.println("Called!");
         if(PVPCore.getPlaying().keySet().contains(e.getPlayer().getName())){
             Map m = Map.maps.get(PVPCore.getPlaying().get(e.getPlayer().getName()));
             if(m != null){
@@ -49,6 +59,11 @@ public class AllGameHandlers implements Listener{
                 }
             }
         }
+        System.out.println("HERE");
+        if(PVPCommandCore.getStartedGames().isEmpty()){
+            System.out.println("here");
+            e.setRespawnLocation(PVPCore.getSpawn());
+        }
     }
     
     @EventHandler
@@ -58,5 +73,4 @@ public class AllGameHandlers implements Listener{
             DBmanager.saveObj(m, new File(PVPCore.getSaveLoc() + Main.getFileSep() + "Maps"), mn);
         }
     }
-    
 }

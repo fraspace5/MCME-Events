@@ -18,6 +18,8 @@
  */
 package com.mcmiddleearth.mcme.events.PVP.Handlers;
 
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.GameState;
 import com.mcmiddleearth.mcme.events.PVP.Map;
 import java.util.Arrays;
 import java.util.Random;
@@ -54,11 +56,11 @@ public class CommandBlockHandler implements CommandExecutor{
                 }else if(args[1].equalsIgnoreCase("endGame") && args.length >= 3){
                     if(args[2].equalsIgnoreCase("all")){
                         for(Map m : Map.maps.values()){
-                            if(m.getGm().isRunning()){
+                            if(m.getGm().getState() == GameState.RUNNING){
                                 m.getGm().End(m);
                             }
                         }
-                    }else if(Map.maps.containsKey(args[2]) && Map.maps.get(args[2]).getGm().isRunning()){
+                    }else if(Map.maps.containsKey(args[2]) && Map.maps.get(args[2]).getGm().getState() == GameState.RUNNING){
                         Map.maps.get(args[2]).getGm().End(Map.maps.get(args[2]));
                         if(args.length == 4){
                             if(args[3].equalsIgnoreCase("next")){//wip

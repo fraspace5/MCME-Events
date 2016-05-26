@@ -45,7 +45,7 @@ public class TeamChat implements CommandExecutor{
            p = (Player) cs;
            
            if(!Team.getRedPlayers().contains(p) && !Team.getBluePlayers().contains(p)){
-               Team.addToTeam(p, Team.Teams.RED);
+               p.sendMessage(ChatColor.RED + "You aren't on a team!");
            }
            
            for(String str : args) {
@@ -76,9 +76,6 @@ public class TeamChat implements CommandExecutor{
                    player.sendMessage(ChatColor.DARK_BLUE + "[TEAM] " + p.getName() + ChatColor.BLUE + ": " + messageString);
                    
                }
-           }
-           else{
-               p.sendMessage(ChatColor.RED + "You aren't on a team!");
            }
            
            messageString = "";

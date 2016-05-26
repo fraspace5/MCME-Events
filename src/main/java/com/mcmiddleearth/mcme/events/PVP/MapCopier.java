@@ -16,34 +16,43 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.PVP.Gamemode;
+package com.mcmiddleearth.mcme.events.PVP;
 
-import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.GameState;
-import com.mcmiddleearth.mcme.events.PVP.Map;
 import java.util.ArrayList;
-import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Objective;
+import java.util.List;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 
 /**
  *
- * @author Donovan <dallen@dallen.xyz>
+ * @author Eric
  */
-public interface Gamemode {
+
+public class MapCopier {
+   
+    private int posLow[];
+    private int posHigh[];
     
-    void Start(Map m, int parameter);
+    public void copyMapAcrossWorld(int pos1[], int pos2[]){
+        posLow = pos1;
+        posHigh = pos2;
+        
+        
+    }
     
-    ArrayList<Player> getPlayers();
+    public void copyMapInWorld(double originPos1[], double originPos2[], double endPos1[]){
+        
+    }
     
-    GameState getState();
-    
-    ArrayList<String> getNeededPoints();
-    
-    void End(Map m);
-    
-    boolean midgamePlayerJoin(Player p);
-    
-    String requiresParameter();
-    
-    boolean isMidgameJoin();
-    
+    private void divideAreaIntoChunks(){
+        
+        Block[][][] chunk;
+        
+        ArrayList<Block[][][]> chunkList = new ArrayList();
+        
+         
+        
+    }
 }

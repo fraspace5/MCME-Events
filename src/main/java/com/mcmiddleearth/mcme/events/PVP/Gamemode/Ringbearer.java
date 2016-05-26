@@ -85,18 +85,21 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
     
     Map map;
     
-    int count;
+    int count = 10;
     
     @Getter
-    private boolean Running = false;
+    private GameState state = GameState.IDLE;
     
     boolean hasTeams = false;
+    
+    @Getter
+    private boolean midgameJoin = false;
     
     Runnable exp = new Runnable(){
 
             @Override
             public void run() {
-                if(Running){
+                if(state == GameState.RUNNING){
                     if(redTeam.getBearer().getExp() < 7f){
                         redTeam.getBearer().setExp(redTeam.getBearer().getExp() + 0.004f);
                     }
@@ -116,6 +119,7 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
     public void Start(Map m,int parameter) {
         super.Start(m,parameter);
         count = 10;
+        state = GameState.COUNTDOWN;
         this.map = m;
         if(!m.getImportantPoints().keySet().containsAll(NeededPoints)){
             for(Player p : players){
@@ -129,7 +133,6 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
         PluginManager pm = Main.getServerInstance().getPluginManager();
         pm.registerEvents(new GameEvents(), Main.getPlugin());
         for(Player p : players){
-            p.sendMessage("selecting teams");
             if(Team.getBluePlayers().size() < 16 && Team.getRedPlayers().size() < 16){
                 if(Team.getBluePlayers().size() >= Team.getRedPlayers().size()){
                     Team.addToTeam(p,Teams.RED);
@@ -148,13 +151,17 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                 @Override
                 public void run() {
                     if(count == 0){
-                        if(Running){
+                        if(state == GameState.RUNNING){
                             return;
                         }
                         ScoreboardManager sbm = Bukkit.getScoreboardManager();
-                 
-                        for(Player p : Team.getRedPlayers()){
+                        
+                        for(Player p : Bukkit.getServer().getOnlinePlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game Start!");
+                        }
+                        
+                        for(Player p : Team.getRedPlayers()){
+                            
                             p.teleport(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
                             ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
                                 new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
@@ -183,7 +190,7 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                             p.setScoreboard(redTeam.getBoard());
                         }
                         for(Player p : Team.getBluePlayers()){
-                            p.sendMessage(ChatColor.GREEN + "Game Start!");
+
                             p.teleport(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
                             ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
                                 new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
@@ -242,10 +249,10 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                         blueTeam.getBearer().getInventory().addItem(ring);
                         redTeam.getBoard().getObjective(DisplaySlot.SIDEBAR).getScore(redTeam.getBearer().getName()).setScore(0);
                         blueTeam.getBoard().getObjective(DisplaySlot.SIDEBAR).getScore(blueTeam.getBearer().getName()).setScore(0);
-                        Running = true;
+                        state = GameState.RUNNING;
                         count = -1;
                     }else if(count != -1){
-                        for(Player p : players){
+                        for(Player p : Bukkit.getServer().getOnlinePlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game begins in " + count);
                         }
                         count--;
@@ -268,8 +275,8 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
     
     @Override
     public void End(Map m){
-        Running = false;
-        super.End(m);
+        state = GameState.IDLE;
+        
         
         for(Player p : players){
             p.teleport(PVPCore.getSpawn());
@@ -300,13 +307,21 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                 }
             }
         }
+        super.End(m);
     }
     
+    public boolean midgamePlayerJoin(Player p){
+        return false;
+    }
+    
+    public String requiresParameter(){
+        return null;
+    }
     private class GameEvents implements Listener{
         
         @EventHandler
         public void onPlayerInteract(PlayerInteractEvent e){
-            if(Running && players.contains(e.getPlayer()) && (
+            if(state == GameState.RUNNING && players.contains(e.getPlayer()) && (
                     e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK))){
                 System.out.println("Enter");
                 final Player p = e.getPlayer();
@@ -350,7 +365,8 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
         
         @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
-            if(Running && players.contains(e.getPlayer())){
+            System.out.println("rb");
+            if(state == GameState.RUNNING && players.contains(e.getPlayer())){
                 if(Team.getRedPlayers().contains(e.getPlayer())){
                     if(redTeam.isCanRespawn()){
                         if(redTeam.getBearer().equals(e.getPlayer())){
@@ -406,8 +422,5 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                 }
             }
         }
-    }
-    public boolean midgamePlayerJoin(Player p){
-        return false;
     }
 }
