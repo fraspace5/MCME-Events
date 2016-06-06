@@ -47,21 +47,21 @@ public class AllGameHandlers implements Listener{
     
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent e){
-        System.out.println("Called!");
-        if(PVPCore.getPlaying().keySet().contains(e.getPlayer().getName())){
-            Map m = Map.maps.get(PVPCore.getPlaying().get(e.getPlayer().getName()));
-            if(m != null){
-                if(m.getName().contains("HD")){
-                    if(e.getPlayer().getInventory().contains(new ItemStack(Material.TNT))){
-                        e.getPlayer().getInventory().remove(Material.TNT);
-                        e.getPlayer().getLocation().getWorld().dropItem(e.getPlayer().getLocation(), new ItemStack(Material.TNT));
+        if(PVPCommandCore.getRunningGame() != null){
+            if(PVPCommandCore.getRunningGame().getGm().getPlayers().contains(e.getPlayer())){
+                Map m = PVPCommandCore.getRunningGame();
+                if(m != null){
+                    if(m.getName().contains("HD")){
+                        if(e.getPlayer().getInventory().contains(new ItemStack(Material.TNT))){
+                            e.getPlayer().getInventory().remove(Material.TNT);
+                            e.getPlayer().getLocation().getWorld().dropItem(e.getPlayer().getLocation(), new ItemStack(Material.TNT));
+                        }
                     }
                 }
             }
         }
-        System.out.println("HERE");
-        if(PVPCommandCore.getStartedGames().isEmpty()){
-            System.out.println("here");
+        if(PVPCommandCore.getRunningGame() == null){
+            
             e.setRespawnLocation(PVPCore.getSpawn());
         }
     }

@@ -119,7 +119,7 @@ public class Map {
         if(Max <= Curr){
             return false;
         }
-        PVPCore.getPlaying().put(p.getName(), name);
+        
         gm.getPlayers().add(p);
         if(gm.getState() == GameState.IDLE){
             Curr++;
@@ -154,7 +154,7 @@ public class Map {
         if(!p.getGameMode().equals(GameMode.SPECTATOR)){
             Curr--;
         }
-        PVPCore.getPlaying().remove(p.getName());
+        
         try{
             Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
             s.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + "" + Curr+"/"+Max);
@@ -180,7 +180,7 @@ public class Map {
             if(!p.getGameMode().equals(GameMode.SPECTATOR)){
                 Curr--;
             }
-            PVPCore.getPlaying().remove(p.getName());
+            
             try{
                 Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
                 s.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + Curr+"/"+Max);

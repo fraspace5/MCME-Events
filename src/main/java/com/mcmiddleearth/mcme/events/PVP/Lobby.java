@@ -61,7 +61,7 @@ public class Lobby {
                     if(m == null){
                         return;
                     }
-                    if(!m.getGm().getPlayers().contains(e.getPlayer()) && !PVPCore.getPlaying().containsKey(e.getPlayer().getName())){
+                    if(!m.getGm().getPlayers().contains(e.getPlayer())){
                         if(m.playerJoin(e.getPlayer())){
                             e.getPlayer().sendMessage(ChatColor.YELLOW + "Joining Map...");
                             Bukkit.broadcastMessage(ChatColor.YELLOW + e.getPlayer().getName() + " Joined " + m.getTitle() + " playing " + m.getGmType());

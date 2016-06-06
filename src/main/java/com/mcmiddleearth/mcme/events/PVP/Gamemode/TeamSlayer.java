@@ -19,8 +19,11 @@
 package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
 import com.mcmiddleearth.mcme.events.Main;
+import static com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.getScoreboard;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.SpecialGear;
 import com.mcmiddleearth.mcme.events.PVP.Map;
-import com.mcmiddleearth.mcme.events.PVP.PVPCore;
+import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import com.mcmiddleearth.mcme.events.PVP.Team;
 import com.mcmiddleearth.mcme.events.PVP.Team.Teams;
 import java.util.ArrayList;
@@ -29,24 +32,16 @@ import java.util.Random;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
 
 /**
  *
@@ -119,7 +114,6 @@ public class TeamSlayer extends BasePluginGamemode{
         for(Player p : players){
             if(Team.getRedPlayers().size() <= Team.getBluePlayers().size()){
                 Team.addToTeam(p, Teams.RED);
-                p.setWalkSpeed(0);
                 switch(lastRedSpawn){
                     case 1:
                         p.teleport(m.getImportantPoints().get("RedSpawn2").toBukkitLoc().add(0, 2, 0));
@@ -141,7 +135,6 @@ public class TeamSlayer extends BasePluginGamemode{
             }
             else if(Team.getBluePlayers().size() < Team.getRedPlayers().size()){
                 Team.addToTeam(p, Teams.BLUE);
-                p.setWalkSpeed(0);
                 switch(lastBlueSpawn){
                     case 1:
                         p.teleport(m.getImportantPoints().get("BlueSpawn2").toBukkitLoc().add(0, 2, 0));
@@ -197,65 +190,14 @@ public class TeamSlayer extends BasePluginGamemode{
                         
                         for(Player p : Bukkit.getServer().getOnlinePlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game Start!");
+                            p.setScoreboard(getScoreboard());
                         }
                         
                         for(Player p : Team.getRedPlayers()){
-                            
-                            p.setWalkSpeed(0.2F);
-                            p.setScoreboard(getScoreboard());
-                            ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
-                                new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
-                                new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
-                            for(int i = 0; i <= 5; i++){
-                                if(i<=3){
-                                    LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
-                                    lam.setColor(org.bukkit.Color.fromRGB(153, 51, 51));
-                                    items[i].setItemMeta(lam);
-                                }else{
-                                    items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
-                                }
-                                items[i].getItemMeta().spigot().setUnbreakable(true);
-                            }
-                            p.getInventory().clear();
-                            p.getInventory().setHelmet(items[0]);
-                            p.getInventory().setChestplate(items[1]);
-                            p.getInventory().setLeggings(items[2]);
-                            p.getInventory().setBoots(items[3]);
-                            p.getInventory().addItem(items[4]);
-                            p.getInventory().addItem(items[5]);
-                            ItemStack Arrows = new ItemStack(Material.ARROW);
-                            Arrows.setAmount(64);
-                            p.getInventory().addItem(Arrows);
-                            p.getInventory().addItem(Arrows);
+                            GearHandler.giveGear(p, ChatColor.RED, SpecialGear.NONE);
                         }
                         for(Player p : Team.getBluePlayers()){
-                            p.setWalkSpeed(0.2F);
-                            p.setScoreboard(getScoreboard());
-                            ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
-                                new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
-                                new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
-                            for(int i = 0; i <= 5; i++){
-                                if(i<=3){
-                                    LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
-                                    lam.setColor(org.bukkit.Color.fromRGB(51, 76, 178));
-                                    items[i].setItemMeta(lam);
-                                }else{
-                                    items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
-                                }
-                                items[i].getItemMeta().spigot().setUnbreakable(true);
-                                
-                            }
-                            p.getInventory().clear();
-                            p.getInventory().setHelmet(items[0]);
-                            p.getInventory().setChestplate(items[1]);
-                            p.getInventory().setLeggings(items[2]);
-                            p.getInventory().setBoots(items[3]);
-                            p.getInventory().addItem(items[4]);
-                            p.getInventory().addItem(items[5]);
-                            ItemStack Arrows = new ItemStack(Material.ARROW);
-                            Arrows.setAmount(64);
-                            p.getInventory().addItem(Arrows);
-                            p.getInventory().addItem(Arrows);
+                            GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
                         }
                         state = GameState.RUNNING;
                         count = -1;
@@ -273,18 +215,7 @@ public class TeamSlayer extends BasePluginGamemode{
     public void End(Map m){
         state = GameState.IDLE;
         
-        
         for(Player p : players){
-            p.teleport(PVPCore.getSpawn());
-            p.setDisplayName(ChatColor.WHITE + p.getName());
-            p.getInventory().clear();
-            p.setMaxHealth(20);
-            p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
-                new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
-            p.setGameMode(GameMode.ADVENTURE);
-        }
-        for(Player p : players){
-            p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
             Team.removeFromTeam(p);
         }
         getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
@@ -319,62 +250,14 @@ public class TeamSlayer extends BasePluginGamemode{
             p.teleport(map.getImportantPoints().get("BlueSpawn1").toBukkitLoc().add(0, 2, 0));
             super.midgamePlayerJoin(p);
             
-            ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
-                new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
-                new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
-            for(int i = 0; i <= 5; i++){
-                if(i<=3){
-                    LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
-                    lam.setColor(org.bukkit.Color.fromRGB(51, 76, 178));
-                    items[i].setItemMeta(lam);
-                }else{
-                    items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
-                }
-                items[i].getItemMeta().spigot().setUnbreakable(true);
-                                
-            }
-            p.getInventory().clear();
-            p.getInventory().setHelmet(items[0]);
-            p.getInventory().setChestplate(items[1]);
-            p.getInventory().setLeggings(items[2]);
-            p.getInventory().setBoots(items[3]);
-            p.getInventory().addItem(items[4]);
-            p.getInventory().addItem(items[5]);
-            ItemStack Arrows = new ItemStack(Material.ARROW);
-            Arrows.setAmount(64);
-            p.getInventory().addItem(Arrows);
-            p.getInventory().addItem(Arrows);
-            
+            GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
         }
         else if(Points.getScore(ChatColor.BLUE + "Blue:").getScore() >= Points.getScore(ChatColor.RED + "Red:").getScore()){
             Team.addToTeam(p, Teams.RED);
             p.teleport(map.getImportantPoints().get("RedSpawn1").toBukkitLoc().add(0, 2, 0));
             super.midgamePlayerJoin(p);
             
-            ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
-                    new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
-                    new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
-                for(int i = 0; i <= 5; i++){
-                    if(i<=3){
-                        LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
-                        lam.setColor(org.bukkit.Color.fromRGB(153, 51, 51));
-                        items[i].setItemMeta(lam);
-                    }else{
-                        items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
-                    }
-                        items[i].getItemMeta().spigot().setUnbreakable(true);
-                }
-                p.getInventory().clear();
-                p.getInventory().setHelmet(items[0]);
-                p.getInventory().setChestplate(items[1]);
-                p.getInventory().setLeggings(items[2]);
-                p.getInventory().setBoots(items[3]);
-                p.getInventory().addItem(items[4]);
-                p.getInventory().addItem(items[5]);
-                ItemStack Arrows = new ItemStack(Material.ARROW);
-                Arrows.setAmount(64);
-                p.getInventory().addItem(Arrows);
-                p.getInventory().addItem(Arrows);
+            GearHandler.giveGear(p, ChatColor.RED, SpecialGear.NONE);
         }
         return true;
     }
@@ -395,11 +278,6 @@ public class TeamSlayer extends BasePluginGamemode{
                 }
                 
                 if(p != null){
-                    
-                    if(Team.getRedPlayers().contains(p) && Team.getRedPlayers().contains(p.getKiller()) || Team.getBluePlayers().contains(p) && Team.getBluePlayers().contains(p.getKiller())){
-                        return;
-                    }
-                    
                     if(Team.getRedPlayers().contains(p)){
                         Points.getScore(ChatColor.BLUE + "Blue:").setScore(blueScore + 1);
                     }
@@ -410,20 +288,22 @@ public class TeamSlayer extends BasePluginGamemode{
             
                 if(Points.getScore(ChatColor.RED + "Red:").getScore() >= target){
                                 
-                    for(Player player : players){
+                    for(Player player : Bukkit.getOnlinePlayers()){
                         player.sendMessage(ChatColor.RED + "Game over!");
                         player.sendMessage(ChatColor.RED + "Red Team Wins!");
                     }
+                    PlayerStat.addGameWon(Teams.RED);
                     End(map);
-                    e.getEntity().teleport(new Location(p.getWorld(), 346, 40, 513));
                 
                 }
                 else if(Points.getScore(ChatColor.BLUE + "Blue:").getScore() >= target){
                 
-                    for(Player player : players){
+                    for(Player player : Bukkit.getOnlinePlayers()){
                         player.sendMessage(ChatColor.BLUE + "Game over!");
                         player.sendMessage(ChatColor.BLUE + "Blue Team Wins!");
+                        PlayerStat.addGameWon(Teams.BLUE);
                     }
+                    PlayerStat.addGameWon(Teams.BLUE);
                     End(map);
                 
                 }
@@ -431,14 +311,27 @@ public class TeamSlayer extends BasePluginGamemode{
         }
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent e){
-        if(state != GameState.IDLE){
+        if(state == GameState.RUNNING || state == GameState.COUNTDOWN){
             Team.removeFromTeam(e.getPlayer());
-        
-            e.getPlayer().getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
-               new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
             
-            if(Bukkit.getServer().getOnlinePlayers().size() == 1){
+            if(Team.getRedPlayers().size() <= 0){
+                
+                for(Player p : Bukkit.getOnlinePlayers()){
+                    p.sendMessage(ChatColor.BLUE + "Game over!");
+                    p.sendMessage(ChatColor.BLUE + "Blue Team Wins!");
+                }
+                PlayerStat.addGameWon(Teams.BLUE);
                 End(map);
+            }
+            if(Team.getBluePlayers().size() <= 0){
+                
+                for(Player p : Bukkit.getOnlinePlayers()){
+                    p.sendMessage(ChatColor.RED + "Game over!");
+                    p.sendMessage(ChatColor.RED + "Red Team Wins!");
+                }
+                PlayerStat.addGameWon(Teams.RED);
+                End(map);
+                
             }
         }
     }
@@ -446,7 +339,6 @@ public class TeamSlayer extends BasePluginGamemode{
         public void onPlayerRespawn(PlayerRespawnEvent e){
             Random random = new Random();
             int spawn = random.nextInt(2) + 1;
-        System.out.println("ts");
             if(state == GameState.RUNNING){
                 if(Team.getRedPlayers().contains(e.getPlayer())){
                     switch(spawn){

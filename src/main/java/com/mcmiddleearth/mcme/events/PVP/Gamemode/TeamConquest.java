@@ -21,8 +21,11 @@ package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.SpecialGear;
 import com.mcmiddleearth.mcme.events.PVP.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
+import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import com.mcmiddleearth.mcme.events.Util.EventLocation;
 import com.mcmiddleearth.mcme.events.PVP.Team;
 import com.mcmiddleearth.mcme.events.PVP.Team.Teams;
@@ -44,7 +47,9 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -78,14 +83,16 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
     @Getter
     private final int target = 100;
     
+    private static boolean eventsRegistered = false;
+    
     @Getter
     private final ArrayList<String> NeededPoints = new ArrayList<String>(Arrays.asList(new String[] {
         "RedSpawn",
         "BlueSpawn",
         "SpectatorSpawn",
-        "Point1",
-        "Point2",
-        "Point3"
+        "CapturePoint1",
+        "CapturePoint2",
+        "CapturePoint3"
     }));
     
     Map map;
@@ -93,72 +100,44 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
     int count = 10;
     
     @Getter
-    private boolean midgameJoin = false;
+    private boolean midgameJoin = true;
     
     @Getter
     private GameState state = GameState.IDLE;
     
-    GameEvents events;
+    private GameEvents events;
     
     boolean hasTeams = false;
     
-    Runnable tick = new Runnable(){
-            @Override
-            public void run() {
-                if(state == GameState.RUNNING){
-                    redTeam.setScore(redTeam.getScore() + redTeam.getCapturedPoints().size());
-                    blueTeam.setScore(blueTeam.getScore() + blueTeam.getCapturedPoints().size());
-                    if(redTeam.getScore() > target){
-                        redTeam.setScore(target);
-                    }
-                    if(blueTeam.getScore() > target){
-                        blueTeam.setScore(target);
-                    }
-                    Points.getScore(ChatColor.BLUE + "Blue:").setScore(blueTeam.getScore());
-                    Points.getScore(ChatColor.RED + "Red:").setScore(redTeam.getScore());
-                    System.out.println(redTeam.getScore() + ", " + blueTeam.getScore());
-                    if(redTeam.getScore() >= target){
-                        for(Player p : players){
-                            p.sendMessage(ChatColor.RED + "Game over!");
-                            p.sendMessage(ChatColor.RED + "Red Team Wins!");
-                        }
-                        End(map);
-                    }else if(blueTeam.getScore() >= target){
-                        for(Player p : players){
-                            p.sendMessage(ChatColor.BLUE + "Game over!");
-                            p.sendMessage(ChatColor.BLUE + "Blue Team Wins!");
-                        }
-                        End(map);
-                    }
-                }
-            }
-        };
-    
-    public TeamConquest(){
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(), tick, 0, 200);//every ten seconds
-    }
+    private int goal;
     
     @Override
     public void Start(Map m, int parameter) {
         super.Start(m, parameter);
+        goal = parameter;
         count = 10;
         state = GameState.COUNTDOWN;
         this.map = m;
         if(!m.getImportantPoints().keySet().containsAll(NeededPoints)){
             for(Player p : players){
-                p.sendMessage(ChatColor.GREEN + "Game Cannot Start! Map maker f**ked up!");
+                p.sendMessage(ChatColor.RED + "Game Cannot Start! Not all needed points have been added!");
             }
             End(m);
             return;
         }
-        events = new GameEvents();
         for(Location l : events.points){
             l.getBlock().setType(Material.BEACON);
         }
-        PluginManager pm = Main.getServerInstance().getPluginManager();
-        pm.registerEvents(events, Main.getPlugin());
-        for(Player p : players){
-            if(Team.getBluePlayers().size() < 16 && Team.getRedPlayers().size() < 16){
+        
+        if(!eventsRegistered){
+            events = new GameEvents();
+            PluginManager pm = Main.getServerInstance().getPluginManager();
+            pm.registerEvents(events, Main.getPlugin());
+            eventsRegistered = true;
+        }
+        
+        for(Player p : Bukkit.getOnlinePlayers()){
+            if(players.contains(p)){
                 if(Team.getBluePlayers().size() >= Team.getRedPlayers().size()){
                     Team.addToTeam(p,Teams.RED);
                     p.teleport(m.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
@@ -167,8 +146,8 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                     p.teleport(m.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
                 }
             }else{
-                Team.addToTeam(p,Teams.SPECTATORS);
-                p.teleport(m.getImportantPoints().get("SpectatorSpawn").toBukkitLoc().add(0, 2, 0));
+                Team.addToTeam(p, Teams.SPECTATORS);
+                p.teleport(m.getSpawn().toBukkitLoc().add(0, 2, 0));
             }
         }
         
@@ -199,66 +178,14 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                         
                         for(Player p : Bukkit.getServer().getOnlinePlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game Start!");
+                            p.setScoreboard(getScoreboard());
                         }
                         
                         for(Player p : Team.getRedPlayers()){
-                            
-                            p.teleport(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
-                            p.setScoreboard(getScoreboard());
-                            ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
-                                new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
-                                new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
-                            for(int i = 0; i <= 5; i++){
-                                if(i<=3){
-                                    LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
-                                    lam.setColor(org.bukkit.Color.fromRGB(153, 51, 51));
-                                    items[i].setItemMeta(lam);
-                                }else{
-                                    items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
-                                }
-                                items[i].getItemMeta().spigot().setUnbreakable(true);
-                            }
-                            p.getInventory().clear();
-                            p.getInventory().setHelmet(items[0]);
-                            p.getInventory().setChestplate(items[1]);
-                            p.getInventory().setLeggings(items[2]);
-                            p.getInventory().setBoots(items[3]);
-                            p.getInventory().addItem(items[4]);
-                            p.getInventory().addItem(items[5]);
-                            ItemStack Arrows = new ItemStack(Material.ARROW);
-                            Arrows.setAmount(64);
-                            p.getInventory().addItem(Arrows);
-                            p.getInventory().addItem(Arrows);
+                            GearHandler.giveGear(p, ChatColor.RED, SpecialGear.NONE);
                         }
                         for(Player p : Team.getBluePlayers()){
-                            
-                            p.teleport(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
-                            p.setScoreboard(getScoreboard());
-                            ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
-                                new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
-                                new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
-                            for(int i = 0; i <= 5; i++){
-                                if(i<=3){
-                                    LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
-                                    lam.setColor(org.bukkit.Color.fromRGB(51, 76, 178));
-                                    items[i].setItemMeta(lam);
-                                }else{
-                                    items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
-                                }
-                                items[i].getItemMeta().spigot().setUnbreakable(true);
-                                
-                            }
-                            p.getInventory().clear();
-                            p.getInventory().setHelmet(items[0]);
-                            p.getInventory().setChestplate(items[1]);
-                            p.getInventory().setLeggings(items[2]);
-                            p.getInventory().setBoots(items[3]);
-                            p.getInventory().addItem(items[4]);
-                            p.getInventory().addItem(items[5]);
-                            ItemStack Arrows = new ItemStack(Material.ARROW);
-                            Arrows.setAmount(64);
-                            p.getInventory().addItem(Arrows);
-                            p.getInventory().addItem(Arrows);
+                            GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
                         }
                         state = GameState.RUNNING;
                         count = -1;
@@ -283,15 +210,8 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
             l.getBlock().setType(Material.AIR);
             l.getBlock().getRelative(0, 1, 0).setType(Material.AIR);
         }
-        for(Player p : players){
-            p.teleport(PVPCore.getSpawn());
-            p.getInventory().clear();
-            p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
-                new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
-        }
         getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
         for(Player p : players){
-            p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
             Team.removeFromTeam(p);
         }
         m.playerLeaveAll();
@@ -310,16 +230,14 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                 }
             }
         }
+        Team.getBlueCapturedPoints().clear();
+        Team.getRedCapturedPoints().clear();
         super.End(m);
 
     }
     
-    public boolean midgamePlayerJoin(Player p){
-        return false;
-    }
-    
     public String requiresParameter(){
-        return null;
+        return "point goal";
     }
     
     private class GameEvents implements Listener{
@@ -351,8 +269,8 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                             p.sendMessage(ChatColor.RED + "Cap at " + (cap * 2) + "%");
                             if(cap >= 50){
                                 p.sendMessage(ChatColor.RED + "Point Captured!");
-                                if(!redTeam.getCapturedPoints().contains(e.getClickedBlock().getLocation())){
-                                    redTeam.getCapturedPoints().add(e.getClickedBlock().getLocation());
+                                if(!Team.getRedCapturedPoints().contains(e.getClickedBlock().getLocation())){
+                                    Team.getRedCapturedPoints().add(e.getClickedBlock().getLocation());
                                     Block b = e.getClickedBlock().getLocation().add(0, 1, 0).getBlock();
                                     b.setType(Material.STAINED_GLASS);
                                     b.setData((byte) 14);
@@ -360,8 +278,8 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                                         pl.sendMessage("Red Captured ");
                                     }
                                 }
-                                if(blueTeam.getCapturedPoints().contains(e.getClickedBlock().getLocation())){
-                                    blueTeam.getCapturedPoints().remove(e.getClickedBlock().getLocation());
+                                if(Team.getBlueCapturedPoints().contains(e.getClickedBlock().getLocation())){
+                                    Team.getBlueCapturedPoints().remove(e.getClickedBlock().getLocation());
                                 }
                             }else{
                                 capAmount.put(e.getClickedBlock().getLocation(), cap);
@@ -373,14 +291,14 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                             p.sendMessage(ChatColor.BLUE + "Cap at " + (cap * -2) + "%");
                             if(cap <= -50){
                                 p.sendMessage(ChatColor.BLUE + "Point Captured!");
-                                if(!blueTeam.getCapturedPoints().contains(e.getClickedBlock().getLocation())){
-                                    blueTeam.getCapturedPoints().add(e.getClickedBlock().getLocation());
+                                if(!Team.getBlueCapturedPoints().contains(e.getClickedBlock().getLocation())){
+                                    Team.getBlueCapturedPoints().add(e.getClickedBlock().getLocation());
                                     Block b = e.getClickedBlock().getLocation().add(0, 1, 0).getBlock();
                                     b.setType(Material.STAINED_GLASS);
                                     b.setData((byte) 11);
                                 }
-                                if(redTeam.getCapturedPoints().contains(e.getClickedBlock().getLocation())){
-                                    redTeam.getCapturedPoints().remove(e.getClickedBlock().getLocation());
+                                if(Team.getRedCapturedPoints().contains(e.getClickedBlock().getLocation())){
+                                    Team.getRedCapturedPoints().remove(e.getClickedBlock().getLocation());
                                 }
                             }else{
                                 capAmount.put(e.getClickedBlock().getLocation(), cap);
@@ -392,8 +310,56 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
         }
         
         @EventHandler
+        public void onPlayerDeath(PlayerDeathEvent e){
+            
+            if(state == GameState.RUNNING && e.getEntity() instanceof Player){
+                
+                if(Team.getRedPlayers().contains(e.getEntity())){
+                    
+                    int pointModifier = Team.getBlueCapturedPoints().size() - Team.getRedCapturedPoints().size();
+                    
+                    if(pointModifier > 0){
+                        Points.getScore(ChatColor.BLUE + "Blue:").setScore(Points.getScore(ChatColor.BLUE + "Blue:").getScore() + pointModifier);
+                    }
+                    
+                }
+                else if(Team.getBluePlayers().contains(e.getEntity())){
+                    
+                    int pointModifier = Team.getRedCapturedPoints().size() - Team.getBlueCapturedPoints().size();
+                    
+                    if(pointModifier > 0){
+                        Points.getScore(ChatColor.RED + "Red:").setScore(Points.getScore(ChatColor.RED + "Red:").getScore() + pointModifier);
+                    }
+                    
+                }
+                
+                if(Points.getScore(ChatColor.BLUE + "Blue:").getScore() >= goal){
+                    
+                    for(Player p : Bukkit.getOnlinePlayers()){
+                        p.sendMessage(ChatColor.BLUE + "Game over!");
+                        p.sendMessage(ChatColor.BLUE + "Blue Team Wins!");
+                    }
+                    PlayerStat.addGameWon(Teams.BLUE);
+                    End(map);
+                }
+                else if(Points.getScore(ChatColor.RED + "Red:").getScore() >= goal){
+                    
+                    for(Player p : Bukkit.getOnlinePlayers()){
+                        p.sendMessage(ChatColor.RED + "Game over!");
+                        p.sendMessage(ChatColor.RED + "Red Team Wins!");
+                    }
+                    PlayerStat.addGameWon(Teams.RED);
+                    End(map);
+                    
+                }
+                
+            }
+            
+        }
+        
+        @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
-            System.out.println("tc");
+            
             if(state == GameState.RUNNING && players.contains(e.getPlayer())){
                 if(redTeam.getRedPlayers().contains(e.getPlayer())){
                     e.setRespawnLocation(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
@@ -402,5 +368,65 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                 }
             }
         }
+        
+        @EventHandler
+        public void onPlayerLeave(PlayerQuitEvent e){
+            
+            if(state == GameState.RUNNING || state == GameState.COUNTDOWN){
+                
+                Team.removeFromTeam(e.getPlayer());
+                
+                if(Team.getRedPlayers().size() <= 0){
+                    
+                    for(Player p : Bukkit.getOnlinePlayers()){
+                        p.sendMessage(ChatColor.BLUE + "Game over!");
+                        p.sendMessage(ChatColor.BLUE + "Blue Team Wins!");
+                    }
+                    PlayerStat.addGameWon(Teams.BLUE);
+                    End(map);
+                }
+                else if(Team.getBluePlayers().size() <= 0){
+                    
+                    for(Player p : Bukkit.getOnlinePlayers()){
+                        p.sendMessage(ChatColor.RED + "Game over!");
+                        p.sendMessage(ChatColor.RED + "Red Team Wins!");
+                    }
+                    PlayerStat.addGameWon(Teams.RED);
+                    End(map);
+                    
+                }
+            }
+            
+        }
+    }
+    
+    @Override
+    public boolean midgamePlayerJoin (Player p){
+        
+        if(state == GameState.RUNNING){
+            
+            if(Points.getScore(ChatColor.RED + "Red:").getScore() >= Points.getScore(ChatColor.BLUE + "Blue:").getScore()){
+                
+                Team.addToTeam(p, Teams.BLUE);
+                p.setGameMode(GameMode.ADVENTURE);
+                
+                p.teleport(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
+                GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
+            }
+            if(Points.getScore(ChatColor.RED + "Red:").getScore() < Points.getScore(ChatColor.BLUE + "Blue:").getScore()){
+                
+                Team.addToTeam(p, Teams.RED);
+                p.setGameMode(GameMode.ADVENTURE);
+                
+                p.teleport(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
+                GearHandler.giveGear(p, ChatColor.RED, SpecialGear.NONE);
+            }
+            super.midgamePlayerJoin(p);
+            return true;
+        }
+        else{
+            return false;
+        }
+        
     }
 }

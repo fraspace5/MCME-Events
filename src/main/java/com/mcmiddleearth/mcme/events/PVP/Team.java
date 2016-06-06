@@ -33,7 +33,10 @@ public class Team {
         private int score;
         
         @Getter
-        private ArrayList<Location> capturedPoints = new ArrayList<>();
+        private static ArrayList<Location> redCapturedPoints = new ArrayList<>();
+        
+        @Getter
+        private static ArrayList<Location> blueCapturedPoints = new ArrayList<>();
         
         @Getter @Setter
         private Player bearer;

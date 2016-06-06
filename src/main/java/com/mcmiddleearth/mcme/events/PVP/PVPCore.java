@@ -50,13 +50,6 @@ public class PVPCore implements Event{
     @Getter
     private static File saveLoc = new File(Main.getPluginDirectory() + Main.getFileSep() + "PVP");
     
-    @Getter @Setter
-    private static HashMap<String, String> playing = new HashMap<>();
-    
-    
-    @Getter
-    private static ArrayList<String> Playing = new ArrayList<>();
-    
     @Getter
     private static Location Spawn;
     

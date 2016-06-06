@@ -19,9 +19,13 @@
 package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
 import com.mcmiddleearth.mcme.events.Main;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.SpecialGear;
 import com.mcmiddleearth.mcme.events.PVP.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
+import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import com.mcmiddleearth.mcme.events.PVP.Team;
+import com.mcmiddleearth.mcme.events.PVP.Team.Teams;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -41,6 +45,8 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -86,10 +92,13 @@ public class Infected extends BasePluginGamemode{
     Runnable tick = new Runnable(){
         @Override
         public void run(){
-            time = Points.getScore(ChatColor.WHITE + "Time:").getScore();
             time--;
             
-            Points.getScore(ChatColor.WHITE + "Time:").setScore(time);
+            if(time % 60 == 0){
+                Points.setDisplayName("Time: " + (time / 60) + "m");
+            }else if(time < 60){
+                Points.setDisplayName("Time: " + time + "s");
+            }
             
             if(time == 0){
                 String remainingPlayers = "";
@@ -109,12 +118,13 @@ public class Infected extends BasePluginGamemode{
                     loopnum++;
                 }
                 
-                for(Player p : players){
+                for(Player p : Bukkit.getOnlinePlayers()){
                     p.sendMessage(ChatColor.BLUE + "Game over!");
                     p.sendMessage(ChatColor.BLUE + "Survivors win!");
-                    p.sendMessage(ChatColor.BLUE + "Remaining:" + remainingPlayers);
+                    p.sendMessage(ChatColor.BLUE + "Remaining:" + ChatColor.AQUA + remainingPlayers);
                 }
                 
+                PlayerStat.addGameWon(Teams.SURVIVORS);
                 End(map);
             }
         }
@@ -150,10 +160,12 @@ public class Infected extends BasePluginGamemode{
             
             if(c == infected){
                 Team.addToTeam(p, Team.Teams.INFECTED);
+                p.teleport(m.getImportantPoints().get("InfectedSpawn").toBukkitLoc());
             }
             
             else{
                 Team.addToTeam(p, Team.Teams.SURVIVORS);
+                p.teleport(m.getImportantPoints().get("SurvivorSpawn").toBukkitLoc());
             }
             
             c++;
@@ -172,6 +184,9 @@ public class Infected extends BasePluginGamemode{
                         if(state == GameState.RUNNING){
                             return;
                         }
+                        
+                        Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(), tick, 0, 20);
+                        
                         if(Bukkit.getScoreboardManager().getMainScoreboard() != null){
                             org.bukkit.scoreboard.Team blu = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("blue");
                             org.bukkit.scoreboard.Team rd =  Bukkit.getScoreboardManager().getMainScoreboard().getTeam("red");
@@ -179,13 +194,14 @@ public class Infected extends BasePluginGamemode{
                                 for(Player p : Team.getRedPlayers()){
                                     rd.addPlayer(p);
                                 }
-                                for(Player p : Team.getBluePlayers()){
+                                for(Player p : Team.getSurvivors()){
                                     blu.addPlayer(p);
                                 }
                             }
                         }
                         Points = getScoreboard().registerNewObjective("Remaining", "dummy");
-                        Points.setDisplayName("Remaining");
+                        Points.setDisplayName("Time: " + time + "m");
+                        time *= 60;
                         Points.getScore(ChatColor.BLUE + "Survivors:").setScore(Team.getSurvivors().size());
                         Points.getScore(ChatColor.DARK_RED + "Infected:").setScore(Team.getInfected().size());
                         Points.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -195,61 +211,20 @@ public class Infected extends BasePluginGamemode{
                         }
                         
                         for(Player p : Team.getSurvivors()){
-                            p.setWalkSpeed(0.2F);
                             p.setScoreboard(getScoreboard());
-                            ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
-                                new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
-                                new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
-                            for(int i = 0; i <= 5; i++){
-                                if(i<=3){
-                                    LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
-                                    lam.setColor(org.bukkit.Color.fromRGB(51, 76, 178));
-                                    items[i].setItemMeta(lam);
-                                }else{
-                                    items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
-                                }
-                                items[i].getItemMeta().spigot().setUnbreakable(true);
-                                
+                            GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
                             }
-                            p.getInventory().clear();
-                            p.getInventory().setHelmet(items[0]);
-                            p.getInventory().setChestplate(items[1]);
-                            p.getInventory().setLeggings(items[2]);
-                            p.getInventory().setBoots(items[3]);
-                            p.getInventory().addItem(items[4]);
-                            p.getInventory().addItem(items[5]);
-                            ItemStack Arrows = new ItemStack(Material.ARROW);
-                            Arrows.setAmount(64);
-                            p.getInventory().addItem(Arrows);
-                            p.getInventory().addItem(Arrows);
-                        }
                         for(Player p : Team.getInfected()){
 
-                            p.setWalkSpeed(0.2F);
                             p.setScoreboard(getScoreboard());
-                            ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_CHESTPLATE), 
-                                new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
-                            for(int i = 0; i <= 2; i++){
-                                if(i == 0){
-                                    LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
-                                    lam.setColor(org.bukkit.Color.fromRGB(153, 51, 51));
-                                    items[i].setItemMeta(lam);
-                                }else{
-                                    items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
-                                }
-                                items[i].getItemMeta().spigot().setUnbreakable(true);
-                            }
-                            p.getInventory().clear();
-                            p.getInventory().setChestplate(items[0]);
-                            p.getInventory().addItem(items[1]);
-                            p.getInventory().addItem(items[2]);
-                            ItemStack Arrows = new ItemStack(Material.ARROW);
-                            Arrows.setAmount(64);
-                            p.getInventory().addItem(Arrows);
-                            p.getInventory().addItem(Arrows);
+                            GearHandler.giveGear(p, ChatColor.DARK_RED, SpecialGear.INFECTED);
+                            p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 1, 1000000, true, false));
                         }
                         state = GameState.RUNNING;
                         count = -1;
+                        
+                        
+                        
                     }else if(count != -1){
                         for(Player p : Bukkit.getServer().getOnlinePlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game begins in " + count);
@@ -264,19 +239,8 @@ public class Infected extends BasePluginGamemode{
     @Override
     public void End(Map m){
         state = GameState.IDLE;
-        
-        
+
         for(Player p : players){
-            p.teleport(PVPCore.getSpawn());
-            p.setDisplayName(ChatColor.WHITE + p.getName());
-            p.getInventory().clear();
-            p.setMaxHealth(20);
-            p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
-                new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
-            p.setGameMode(GameMode.ADVENTURE);
-        }
-        for(Player p : players){
-            p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
             Team.removeFromTeam(p);
         }
         getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
@@ -300,7 +264,7 @@ public class Infected extends BasePluginGamemode{
     }
     
     public String requiresParameter(){
-        return "time in seconds";
+        return "time in minutes";
     }
     
     public boolean isMidgameJoin(){
@@ -319,48 +283,24 @@ public class Infected extends BasePluginGamemode{
             
             if(e.getEntity() instanceof Player && state == GameState.RUNNING){
                 Player p = e.getEntity();
-
-                if(Team.getInfected().contains(p) && Team.getInfected().contains(p.getKiller()) || Team.getSurvivors().contains(p) && Team.getSurvivors().contains(p.getKiller())){
-                        return;
-                }
                 
-                if(Team.getBluePlayers().contains(p)){
+                if(Team.getSurvivors().contains(p)){
                     e.setDeathMessage(ChatColor.BLUE + p.getName() + ChatColor.YELLOW + " was infected by " + ChatColor.DARK_RED + p.getKiller().getName());
                     Points.getScore(ChatColor.BLUE + "Survivors:").setScore(Points.getScore(ChatColor.BLUE + "Survivors:").getScore() - 1);
                     Team.removeFromTeam(p);
                     Team.addToTeam(p, Team.Teams.INFECTED);
                     
-                    ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_CHESTPLATE), 
-                        new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
-                    for(int i = 0; i <= 2; i++){
-                        if(i == 0){
-                            LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
-                            lam.setColor(org.bukkit.Color.fromRGB(153, 51, 51));
-                            items[i].setItemMeta(lam);
-                        }else{
-                            items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
-                        }
-                            items[i].getItemMeta().spigot().setUnbreakable(true);
-                        }
-                        p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
-                            new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
-                        p.getInventory().clear();
-                        p.getInventory().setChestplate(items[0]);
-                        p.getInventory().addItem(items[1]);
-                        p.getInventory().addItem(items[2]);
-                        ItemStack Arrows = new ItemStack(Material.ARROW);
-                        Arrows.setAmount(64);
-                        p.getInventory().addItem(Arrows);
-                        p.getInventory().addItem(Arrows);
+                    GearHandler.giveGear(p, ChatColor.DARK_RED, SpecialGear.INFECTED);
                 }
                 
                 if(Points.getScore(ChatColor.BLUE + "Survivors:").getScore() <= 0){
                 
-                    for(Player player : players){
+                    for(Player player : Bukkit.getOnlinePlayers()){
                         player.sendMessage(ChatColor.DARK_RED + "Game over!");
                         player.sendMessage(ChatColor.DARK_RED + "Infected Wins!");
                     
                     }
+                    PlayerStat.addGameWon(Teams.INFECTED);
                     End(map);
                 }
             }
@@ -368,7 +308,7 @@ public class Infected extends BasePluginGamemode{
         
         @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
-            System.out.println("in");
+
             if(state == GameState.RUNNING){
                 e.setRespawnLocation(map.getImportantPoints().get("InfectedSpawn").toBukkitLoc().add(0, 2, 0));
             }
@@ -376,26 +316,57 @@ public class Infected extends BasePluginGamemode{
         
         @EventHandler
         public void onPlayerLeave(PlayerQuitEvent e){
-            if(state == GameState.RUNNING){
-
+            
+            System.out.println("Event called!");
+            if(state == GameState.RUNNING || state == GameState.COUNTDOWN){
+                System.out.println("Entered 1st if!!");
                 if(Team.getInfected().contains(e.getPlayer())){
                     Points.getScore(ChatColor.DARK_RED + "Infected:").setScore(Points.getScore(ChatColor.DARK_RED + "Infected:").getScore() - 1);
                 }
-                if(Team.getBluePlayers().contains(e.getPlayer())){
+                else if(Team.getSurvivors().contains(e.getPlayer())){
                     Points.getScore(ChatColor.BLUE + "Survivors:").setScore(Points.getScore(ChatColor.BLUE + "Survivors:").getScore() - 1);
+                    System.out.println("Entered 2nd if!!");
                 }
                 Team.removeFromTeam(e.getPlayer());
                 e.getPlayer().getInventory().clear();
                 e.getPlayer().getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
                    new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
                 
-                if(Points.getScore(ChatColor.BLUE + "Survivors:").getScore() <= 0){
+                if(Team.getSurvivors().size() <= 0){
                 
-                    for(Player player : players){
-                        player.sendMessage(ChatColor.BLUE + "Game over!");
-                        player.sendMessage(ChatColor.BLUE + "Infected Wins!");
+                    for(Player player : Bukkit.getOnlinePlayers()){
+                        player.sendMessage(ChatColor.DARK_RED + "Game over!");
+                        player.sendMessage(ChatColor.DARK_RED + "Infected Wins!");
                     
                     }
+                    PlayerStat.addGameWon(Teams.INFECTED);
+                    End(map);
+                }
+                else if(Team.getInfected().size() <= 0){
+                    
+                    String remainingPlayers = "";
+                    int loopnum = 0;
+                    for(Player p : Team.getSurvivors()){
+                        if(Team.getSurvivors().size() > 1 && loopnum == (Team.getSurvivors().size() - 1)){
+                
+                            remainingPlayers += (", and " + p.getName());
+                        }
+                        else if(Team.getSurvivors().size() == 1 || loopnum == 0){
+                            remainingPlayers += (" " + p.getName());
+                        }
+                        else{
+                            remainingPlayers += (", " + p.getName());
+                        }
+            
+                        loopnum++;
+                    }
+                    
+                    for(Player player : Bukkit.getOnlinePlayers()){
+                        player.sendMessage(ChatColor.BLUE + "Game over!");
+                        player.sendMessage(ChatColor.BLUE + "Survivors Win!");
+                        player.sendMessage(ChatColor.BLUE + "Remaining:" + ChatColor.AQUA + remainingPlayers);
+                    }
+                    PlayerStat.addGameWon(Teams.SURVIVORS);
                     End(map);
                 }
             }
@@ -407,34 +378,10 @@ public class Infected extends BasePluginGamemode{
         if(time >= 120){
             Team.addToTeam(p, Team.Teams.SURVIVORS);
             p.teleport(map.getImportantPoints().get("SurvivorSpawn").toBukkitLoc().add(0, 2, 0));
-            Points.getScore(ChatColor.BLUE + "Blue:").setScore(Points.getScore(ChatColor.BLUE + "Blue:").getScore() + 1);
+            Points.getScore(ChatColor.BLUE + "Survivors:").setScore(Points.getScore(ChatColor.BLUE + "Survivors:").getScore() + 1);
             super.midgamePlayerJoin(p);
             
-            ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET),new ItemStack(Material.LEATHER_CHESTPLATE), 
-                new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
-                new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
-            for(int i = 0; i <= 5; i++){
-                if(i<=3){
-                    LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
-                    lam.setColor(org.bukkit.Color.fromRGB(51, 76, 178));
-                    items[i].setItemMeta(lam);
-                }else{
-                    items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
-                }
-                items[i].getItemMeta().spigot().setUnbreakable(true);
-                
-            }
-            p.getInventory().clear();
-            p.getInventory().setHelmet(items[0]);
-            p.getInventory().setChestplate(items[1]);
-            p.getInventory().setLeggings(items[2]);
-            p.getInventory().setBoots(items[3]);
-            p.getInventory().addItem(items[4]);
-            p.getInventory().addItem(items[5]);
-            ItemStack Arrows = new ItemStack(Material.ARROW);
-            Arrows.setAmount(64);
-            p.getInventory().addItem(Arrows);
-            p.getInventory().addItem(Arrows);
+            GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
             
             return true;
         }else{

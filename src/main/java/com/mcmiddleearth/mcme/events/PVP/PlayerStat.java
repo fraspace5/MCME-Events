@@ -24,6 +24,7 @@ import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.Util.DBmanager;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Gamemode;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.JoinLeaveHandler;
+import com.mcmiddleearth.mcme.events.PVP.Team.Teams;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,28 +46,22 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 public class PlayerStat {
     
     @Getter @Setter
-    private ArrayList<String> Kills = new ArrayList<String>();
+    private ArrayList<String> playersKilled = new ArrayList<String>();
     
     @Getter @Setter
-    private int Deaths;
+    private int Kills = 0;
     
     @Getter @Setter
-    private String rank;
+    private int Deaths = 0;
     
-    @Getter @Setter
-    private int GamesPlayed;
+    @Getter
+    private int gamesPlayed = 0;
     
-    @Getter @Setter
-    private int Suicides;
-    
-    @Getter @Setter
-    private int Score;
+    @Getter
+    private int gamesWon = 0;
     
     @Getter @Setter @JsonIgnore
     private ArrayList<Achivement> chives = new ArrayList<>();
-    
-    @Getter @Setter
-    private HashMap<String, Integer> favGames = new HashMap<>();
     
     @Getter @Setter
     private static HashMap<String, PlayerStat> playerStats = new HashMap<>();
@@ -108,10 +103,10 @@ public class PlayerStat {
     }
     
     public void addDeath(){Deaths++;}
-    public void addSuicide(){Suicides++;}
-    public void addKill(String k){Kills.add(k);}
-//    public void addScore(int score){Score+=score;}
-    public void addPlayedGame(String g){favGames.put(g, favGames.get(g));}
+    public void addPlayerKilled(String k){playersKilled.add(k);}
+    public void addKill(){Kills++;}
+    public void addPlayedGame(){gamesPlayed++;}
+    public void addGameWon(){gamesWon++;}
     
     public static class Achivement{
         @Getter @Setter
@@ -121,24 +116,53 @@ public class PlayerStat {
         private int Points;
     }
     
+    public static void addGameWon(Teams t){
+        
+        switch(t){
+            case RED:
+                for(Player p : Team.getRedPlayers()){
+                    PlayerStat.getPlayerStats().get(p.getName()).addGameWon();
+                }
+                break;
+                
+            case BLUE:
+                for(Player p : Team.getBluePlayers()){
+                    PlayerStat.getPlayerStats().get(p.getName()).addGameWon();
+                }
+                break;
+            case INFECTED:
+                for(Player p : Team.getInfected()){
+                    PlayerStat.getPlayerStats().get(p.getName()).addGameWon();
+                }
+                break;
+            case SURVIVORS:
+                for(Player p : Team.getSurvivors()){
+                    PlayerStat.getPlayerStats().get(p.getName()).addGameWon();
+                }
+                break;
+        }
+        
+    }
+    
     public static class StatListener implements Listener{
         
         @EventHandler
         public void onPlayerDeath(PlayerDeathEvent e){
-            Player d = e.getEntity();
-            if(PVPCore.getPlaying().containsKey(d.getName())){
-                PlayerStat ps = PlayerStat.getPlayerStats().get(d.getName());
-                if(d.getKiller() != null){
-                    Player k = d.getKiller();
-                    if(PVPCore.getPlaying().containsKey(k.getName())){
-                        if(!PlayerStat.getPlayerStats().get(k.getName()).getKills().contains(d.getName())){
-                            PlayerStat.getPlayerStats().get(k.getName()).addKill(d.getName());
+            if(PVPCommandCore.getRunningGame() != null){
+                Player d = e.getEntity();
+                if(PVPCommandCore.getRunningGame().getGm().getPlayers().contains(d)){
+                    PlayerStat ps = PlayerStat.getPlayerStats().get(d.getName());
+                    if(d.getKiller() != null){
+                        Player k = d.getKiller();
+                        if(PVPCommandCore.getRunningGame().getGm().getPlayers().contains(k)){
+                            if(!PlayerStat.getPlayerStats().get(k.getName()).getPlayersKilled().contains(d.getName())){
+                                PlayerStat.getPlayerStats().get(k.getName()).addPlayerKilled(d.getName());
+                            }
                         }
+                        PlayerStat.getPlayerStats().get(k.getName()).addKill();
                     }
-                }else{
-                    ps.addSuicide();
+                    ps.setDeaths(ps.getDeaths()+1);
                 }
-                ps.setDeaths(ps.getDeaths()+1);
             }
         }
     }

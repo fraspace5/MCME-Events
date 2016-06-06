@@ -19,40 +19,31 @@
 package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
 import com.mcmiddleearth.mcme.events.Main;
+import static com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.getScoreboard;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.SpecialGear;
 import com.mcmiddleearth.mcme.events.PVP.Map;
-import com.mcmiddleearth.mcme.events.PVP.PVPCore;
+import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import com.mcmiddleearth.mcme.events.PVP.Team;
 import com.mcmiddleearth.mcme.events.Util.EventLocation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Statistic;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
+import org.bukkit.Achievement;
 
 /**
  *
@@ -116,7 +107,14 @@ public class FreeForAll extends BasePluginGamemode{
             
         public void run(){
             time--;
-            Points.getScore("Time:").setScore(time);
+            
+            if(time % 60 == 0){
+                Points.setDisplayName("Time: " + (time/60) + "m");
+            }
+            else if(time < 60){
+                Points.setDisplayName("Time: " + time + "s");
+            }
+            
             if(time <= 0){
                 End(map);
             }
@@ -163,7 +161,6 @@ public class FreeForAll extends BasePluginGamemode{
         for(Player p : Bukkit.getServer().getOnlinePlayers()){
             if(players.contains(p)){
                 p.teleport(spawns[c].toBukkitLoc().add(0, 2, 0));
-                p.setWalkSpeed(0.0F);
                 if(spawns.length == (c + 1)){
                     c = 0;
                 }else{
@@ -188,19 +185,19 @@ public class FreeForAll extends BasePluginGamemode{
                         int k = 0;
                         
                         Points = getScoreboard().registerNewObjective("Kills", "dummy");
-                        Points.setDisplayName("Kills");
+                        Points.setDisplayName("Time: " + time + "m");
+                        time *= 60;
                         Points.setDisplaySlot(DisplaySlot.SIDEBAR);
-                        Points.getScore("Time:").setScore(time);
                         
                         for(Player p : Bukkit.getServer().getOnlinePlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game Start!");
+                            p.setScoreboard(getScoreboard());
                         }
                         
                         for(Player p : players){
                             
-                            p.setWalkSpeed(0.2F);
                             p.setGameMode(GameMode.ADVENTURE);
-                            p.setScoreboard(getScoreboard());
+                            
                             ChatHandler.getPlayerPrefixes().put(p.getName(), chatColors[k] + "Player");
                             ChatHandler.getPlayerColors().put(p.getName(), chatColors[k]);
                             hasPlayed.put(p.getName(), chatColors[k]);
@@ -213,48 +210,8 @@ public class FreeForAll extends BasePluginGamemode{
                                 String newName = p.getName().substring(0,13);
                                 p.setPlayerListName(chatColors[k] + newName);
                             }
-                            ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
-                                new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
-                                new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
-                            for(int i = 0; i <= 5; i++){
-                                if(i<=3){
-                                    LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
-                                
-                                    if(chatColors[k] == ChatColor.AQUA) {
-                                        lam.setColor(DyeColor.LIGHT_BLUE.getColor());
-                                        
-                                    }
-                                    else if(chatColors[k] == ChatColor.BLUE) {lam.setColor(DyeColor.BLUE.getColor());}
-                                    else if(chatColors[k] == ChatColor.DARK_AQUA) {lam.setColor(DyeColor.CYAN.getColor());}
-                                    else if(chatColors[k] == ChatColor.DARK_BLUE) {lam.setColor(DyeColor.BROWN.getColor());}
-                                    else if(chatColors[k] == ChatColor.DARK_GRAY) {lam.setColor(DyeColor.BLACK.getColor());}
-                                    else if(chatColors[k] == ChatColor.DARK_GREEN) {lam.setColor(DyeColor.GREEN.getColor());}
-                                    else if(chatColors[k] == ChatColor.DARK_PURPLE) {lam.setColor(DyeColor.PURPLE.getColor());}
-                                    else if(chatColors[k] == ChatColor.DARK_RED) {lam.setColor(DyeColor.RED.getColor());}
-                                    else if(chatColors[k] == ChatColor.GOLD) {lam.setColor(DyeColor.SILVER.getColor());}
-                                    else if(chatColors[k] == ChatColor.GRAY) {lam.setColor(DyeColor.GRAY.getColor());}
-                                    else if(chatColors[k] == ChatColor.GREEN) {lam.setColor(DyeColor.LIME.getColor());}
-                                    else if(chatColors[k] == ChatColor.LIGHT_PURPLE) {lam.setColor(DyeColor.MAGENTA.getColor());}
-                                    else if(chatColors[k] == ChatColor.RED) {lam.setColor(DyeColor.ORANGE.getColor());}
-                                    else if(chatColors[k] == ChatColor.YELLOW) {lam.setColor(DyeColor.YELLOW.getColor());}
-                
-                                    items[i].setItemMeta(lam);
-                                }else{
-                                    items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
-                                }
-                                items[i].getItemMeta().spigot().setUnbreakable(true);
-                        
-                                p.getInventory().clear();
-                                p.getInventory().setHelmet(items[0]);
-                                p.getInventory().setChestplate(items[1]);
-                                p.getInventory().setLeggings(items[2]);
-                                p.getInventory().setBoots(items[3]);
-                                p.getInventory().addItem(items[4]);
-                                p.getInventory().addItem(items[5]);
-                                ItemStack Arrows = new ItemStack(Material.ARROW,64);
-                                p.getInventory().addItem(Arrows);
-                                p.getInventory().addItem(Arrows);
-                            }
+                            GearHandler.giveGear(p, chatColors[k], SpecialGear.NONE);
+                  
                             if(chatColors.length == (k+1)){
                                 k = 0;
                             }else{
@@ -343,6 +300,7 @@ public class FreeForAll extends BasePluginGamemode{
         
         loops = 0;
         for(String playerName : mostKills){
+            PlayerStat.getPlayerStats().get(playerName).addGameWon();
             if(mostKills.size() == 1 && loops == 0){
                 killMessage = ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + " with " + mostKillsNum;
             }else if(loops == (mostKills.size() - 1)){
@@ -372,24 +330,10 @@ public class FreeForAll extends BasePluginGamemode{
             }
         }
         
-        for(Player p : players){
+        for(Player p : Bukkit.getOnlinePlayers()){
             p.sendMessage(ChatColor.GREEN + "Most Kills: " + killMessage);
             p.sendMessage(ChatColor.GREEN + "Most Deaths: " + deathMessage);
             p.sendMessage(ChatColor.GREEN + "Highest KD: " + kDMessage);
-            
-            p.teleport(PVPCore.getSpawn());
-            p.setDisplayName(ChatColor.WHITE + p.getName());
-            p.setPlayerListName(ChatColor.WHITE + p.getName());
-            p.getInventory().clear();
-            p.setMaxHealth(20);
-            p.setHealth(20);
-            p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
-                new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
-            p.setGameMode(GameMode.ADVENTURE);
-        }
-        for(Player p : players){
-            p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
-            ChatHandler.getPlayerPrefixes().remove(p);
         }
         getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
         m.playerLeaveAll();
@@ -418,9 +362,6 @@ public class FreeForAll extends BasePluginGamemode{
             color = hasPlayed.get(p.getName());
             ChatHandler.getPlayerColors().put(p.getName(), color);
         }
-        for(Player pl : players){
-            pl.setPlayerListName(ChatHandler.getPlayerColors().get(pl.getName()) + pl.getName());
-        }
         
         if(p.getName().length() < 14){
             p.setPlayerListName(color + p.getName());
@@ -432,53 +373,14 @@ public class FreeForAll extends BasePluginGamemode{
         p.teleport(spawns[random.nextInt(spawns.length)].toBukkitLoc().add(0, 2, 0));
         p.setGameMode(GameMode.ADVENTURE);
         p.setScoreboard(getScoreboard());
+        GearHandler.giveGear(p, color, SpecialGear.NONE);
         super.midgamePlayerJoin(p);
-        
-        ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
-            new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
-            new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
-        for(int i = 0; i <= 5; i++){
-            if(i<=3){
-                LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
-                                
-                if(color == ChatColor.AQUA) {lam.setColor(DyeColor.LIGHT_BLUE.getColor());}
-                else if(color == ChatColor.BLUE) {lam.setColor(DyeColor.BLUE.getColor());}
-                else if(color == ChatColor.DARK_AQUA) {lam.setColor(DyeColor.CYAN.getColor());}
-                else if(color == ChatColor.DARK_BLUE) {lam.setColor(DyeColor.BROWN.getColor());}
-                else if(color == ChatColor.DARK_GRAY) {lam.setColor(DyeColor.BLACK.getColor());}
-                else if(color == ChatColor.DARK_GREEN) {lam.setColor(DyeColor.GREEN.getColor());}
-                else if(color == ChatColor.DARK_PURPLE) {lam.setColor(DyeColor.PURPLE.getColor());}
-                else if(color == ChatColor.DARK_RED) {lam.setColor(DyeColor.RED.getColor());}
-                else if(color == ChatColor.GOLD) {lam.setColor(DyeColor.SILVER.getColor());}
-                else if(color == ChatColor.GRAY) {lam.setColor(DyeColor.GRAY.getColor());}
-                else if(color == ChatColor.GREEN) {lam.setColor(DyeColor.LIME.getColor());}
-                else if(color == ChatColor.LIGHT_PURPLE) {lam.setColor(DyeColor.MAGENTA.getColor());}
-                else if(color == ChatColor.RED) {lam.setColor(DyeColor.ORANGE.getColor());}
-                else if(color == ChatColor.YELLOW) {lam.setColor(DyeColor.YELLOW.getColor());}
-                
-                items[i].setItemMeta(lam);
-            }else{
-                items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
-            }
-            items[i].getItemMeta().spigot().setUnbreakable(true);
-                        
-            p.getInventory().clear();
-            p.getInventory().setHelmet(items[0]);
-            p.getInventory().setChestplate(items[1]);
-            p.getInventory().setLeggings(items[2]);
-            p.getInventory().setBoots(items[3]);
-            p.getInventory().addItem(items[4]);
-            p.getInventory().addItem(items[5]);
-            ItemStack Arrows = new ItemStack(Material.ARROW,64);
-            p.getInventory().addItem(Arrows);
-            p.getInventory().addItem(Arrows);
-        }
         
         return true;
     }
     
     public String requiresParameter(){
-        return "time in seconds";
+        return "time in minutes";
     }
     
     private class GameEvents implements Listener{
@@ -503,7 +405,6 @@ public class FreeForAll extends BasePluginGamemode{
         
         @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
-            System.out.println("ffa");
             if(state == GameState.RUNNING){
                 
                 Random random = new Random();

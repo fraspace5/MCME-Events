@@ -20,9 +20,13 @@ package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.SpecialGear;
 import com.mcmiddleearth.mcme.events.PVP.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
+import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import com.mcmiddleearth.mcme.events.PVP.Team;
+import com.mcmiddleearth.mcme.events.PVP.Team.Teams;
 import java.util.ArrayList;
 import java.util.Arrays;
 import lombok.Getter;
@@ -111,12 +115,10 @@ public class TeamDeathmatch extends BasePluginGamemode{
         for(Player p : players){
             if(Team.getRedPlayers().size() <= Team.getBluePlayers().size()){
                 Team.addToTeam(p, Team.Teams.RED);
-                p.setWalkSpeed(0);
                 p.teleport(m.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
             }
             else if(Team.getBluePlayers().size() < Team.getRedPlayers().size()){
                 Team.addToTeam(p, Team.Teams.BLUE);
-                p.setWalkSpeed(0);
                 p.teleport(m.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
             }
         }
@@ -160,60 +162,10 @@ public class TeamDeathmatch extends BasePluginGamemode{
                         }
                         
                         for(Player p : Team.getBluePlayers()){
-                            
-                            p.setWalkSpeed(0.2F);
-                            ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
-                                new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
-                                new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
-                            for(int i = 0; i <= 5; i++){
-                                if(i<=3){
-                                    LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
-                                    lam.setColor(org.bukkit.Color.fromRGB(51, 76, 178));
-                                    items[i].setItemMeta(lam);
-                                }else{
-                                    items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
-                                }
-                                items[i].getItemMeta().spigot().setUnbreakable(true);
-                                
-                            }
-                            p.getInventory().clear();
-                            p.getInventory().setHelmet(items[0]);
-                            p.getInventory().setChestplate(items[1]);
-                            p.getInventory().setLeggings(items[2]);
-                            p.getInventory().setBoots(items[3]);
-                            p.getInventory().addItem(items[4]);
-                            p.getInventory().addItem(items[5]);
-                            ItemStack Arrows = new ItemStack(Material.ARROW);
-                            Arrows.setAmount(64);
-                            p.getInventory().addItem(Arrows);
-                            p.getInventory().addItem(Arrows);
+                            GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
                         }
                         for(Player p : Team.getRedPlayers()){
-                            p.setWalkSpeed(0.2F);
-                            ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
-                                new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
-                                new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
-                            for(int i = 0; i <= 5; i++){
-                                if(i<=3){
-                                    LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
-                                    lam.setColor(org.bukkit.Color.fromRGB(153, 51, 51));
-                                    items[i].setItemMeta(lam);
-                                }else{
-                                    items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
-                                }
-                                items[i].getItemMeta().spigot().setUnbreakable(true);
-                            }
-                            p.getInventory().clear();
-                            p.getInventory().setHelmet(items[0]);
-                            p.getInventory().setChestplate(items[1]);
-                            p.getInventory().setLeggings(items[2]);
-                            p.getInventory().setBoots(items[3]);
-                            p.getInventory().addItem(items[4]);
-                            p.getInventory().addItem(items[5]);
-                            ItemStack Arrows = new ItemStack(Material.ARROW);
-                            Arrows.setAmount(64);
-                            p.getInventory().addItem(Arrows);
-                            p.getInventory().addItem(Arrows);
+                            GearHandler.giveGear(p, ChatColor.RED, SpecialGear.NONE);
                         }
                         state = GameState.RUNNING;
                         count = -1;
@@ -231,18 +183,8 @@ public class TeamDeathmatch extends BasePluginGamemode{
     @Override
     public void End(Map m){
         state = GameState.IDLE;
-        
-        
+
         for(Player p : players){
-            p.teleport(PVPCore.getSpawn());
-            p.getInventory().clear();
-            p.setMaxHealth(20);
-            p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
-                new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
-            p.setGameMode(GameMode.ADVENTURE);
-        }
-        for(Player p : players){
-            p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
             Team.removeFromTeam(p);
         }
         getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
@@ -285,10 +227,6 @@ public class TeamDeathmatch extends BasePluginGamemode{
             if(e.getEntity() instanceof Player && state == GameState.RUNNING){
                 Player p = e.getEntity();
                 
-                if(Team.getRedPlayers().contains(p) && Team.getRedPlayers().contains(p.getKiller()) || Team.getBluePlayers().contains(p) && Team.getBluePlayers().contains(p.getKiller())){
-                        return;
-                }
-                
                 if(Team.getRedPlayers().contains(p)){
                     Points.getScore(ChatColor.RED + "Red:").setScore(Points.getScore(ChatColor.RED + "Red:").getScore() - 1);
                 }
@@ -306,6 +244,7 @@ public class TeamDeathmatch extends BasePluginGamemode{
                     player.sendMessage(ChatColor.BLUE + "Blue Team Wins!");
                     
                 }
+                PlayerStat.addGameWon(Teams.BLUE);
                 End(map);
                 }
                 else if(Points.getScore(ChatColor.BLUE + "Blue:").getScore() <= 0){
@@ -314,6 +253,7 @@ public class TeamDeathmatch extends BasePluginGamemode{
                         player.sendMessage(ChatColor.RED + "Red Team Wins!");
                     
                     }
+                    PlayerStat.addGameWon(Teams.RED);
                     End(map);
                     e.getEntity().teleport(new Location(p.getWorld(), 346, 40, 513));
                 }
@@ -322,7 +262,6 @@ public class TeamDeathmatch extends BasePluginGamemode{
         
         @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
-            System.out.println("tdm");
             if(state == GameState.RUNNING){
                 e.setRespawnLocation(map.getImportantPoints().get("SpectatorSpawn").toBukkitLoc().add(0, 2, 0));
             
@@ -334,7 +273,7 @@ public class TeamDeathmatch extends BasePluginGamemode{
         
         @EventHandler
         public void onPlayerLeave(PlayerQuitEvent e){
-            if(state == GameState.RUNNING){
+            if(state == GameState.RUNNING || state == GameState.COUNTDOWN){
                 
                 Points.getScore(ChatColor.BLUE + "Blue:").setScore(Team.getBluePlayers().size());
                 Points.getScore(ChatColor.RED + "Red:").setScore(Team.getRedPlayers().size());
@@ -343,21 +282,23 @@ public class TeamDeathmatch extends BasePluginGamemode{
                 e.getPlayer().getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
                    new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
                 
-                if(Points.getScore(ChatColor.RED + "Red:").getScore() <= 0){
+                if(Team.getRedPlayers().size() <= 0){
                 
                     for(Player player : Bukkit.getServer().getOnlinePlayers()){
                         player.sendMessage(ChatColor.BLUE + "Game over!");
                         player.sendMessage(ChatColor.BLUE + "Blue Team Wins!");
                     
                     }
+                    PlayerStat.addGameWon(Teams.BLUE);
                     End(map);
                 }
-                else if(Points.getScore(ChatColor.BLUE + "Blue:").getScore() <= 0){
+                else if(Team.getBluePlayers().size() <= 0){
                     for(Player player : Bukkit.getServer().getOnlinePlayers()){
                         player.sendMessage(ChatColor.RED + "Game over!");
                         player.sendMessage(ChatColor.RED + "Red Team Wins!");
                     
                     }
+                    PlayerStat.addGameWon(Teams.RED);
                     End(map);
                 }
             }
@@ -372,12 +313,16 @@ public class TeamDeathmatch extends BasePluginGamemode{
                         player.sendMessage(ChatColor.BLUE + "Game over!");
                         player.sendMessage(ChatColor.BLUE + "Blue Team Wins!");
                     }
+                    PlayerStat.addGameWon(Teams.BLUE);
+                    End(map);
                 }
                 else if(Team.getBluePlayers().size() == 0){
                     for(Player player : Bukkit.getServer().getOnlinePlayers()){
                         player.sendMessage(ChatColor.RED + "Game over!");
                         player.sendMessage(ChatColor.RED + "Red Team Wins!");
                     }
+                    PlayerStat.addGameWon(Teams.RED);
+                    End(map);
                 }
             }
         }
@@ -425,32 +370,7 @@ public class TeamDeathmatch extends BasePluginGamemode{
                     }
                     
                 }
-                
-                ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
-                    new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
-                    new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
-                for(int i = 0; i <= 5; i++){
-                    if(i<=3){
-                        LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
-                        lam.setColor(org.bukkit.Color.fromRGB(51, 76, 178));
-                        items[i].setItemMeta(lam);
-                    }else{
-                        items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
-                    }
-                    items[i].getItemMeta().spigot().setUnbreakable(true);
-                                
-                }
-                p.getInventory().clear();
-                p.getInventory().setHelmet(items[0]);
-                p.getInventory().setChestplate(items[1]);
-                p.getInventory().setLeggings(items[2]);
-                p.getInventory().setBoots(items[3]);
-                p.getInventory().addItem(items[4]);
-                p.getInventory().addItem(items[5]);
-                ItemStack Arrows = new ItemStack(Material.ARROW);
-                Arrows.setAmount(64);
-                p.getInventory().addItem(Arrows);
-                p.getInventory().addItem(Arrows);
+                GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
             }
             else if(Team.getBluePlayers().size() > Team.getRedPlayers().size()){
                 Team.addToTeam(p, Team.Teams.RED);
@@ -458,30 +378,7 @@ public class TeamDeathmatch extends BasePluginGamemode{
                 Points.getScore(ChatColor.RED + "Red:").setScore(Points.getScore(ChatColor.RED + "Red:").getScore() + 1);
                 super.midgamePlayerJoin(p);
                 
-                ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
-                    new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
-                    new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
-                for(int i = 0; i <= 5; i++){
-                    if(i<=3){
-                        LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
-                        lam.setColor(org.bukkit.Color.fromRGB(153, 51, 51));
-                        items[i].setItemMeta(lam);
-                    }else{
-                        items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
-                    }
-                        items[i].getItemMeta().spigot().setUnbreakable(true);
-                }
-                p.getInventory().clear();
-                p.getInventory().setHelmet(items[0]);
-                p.getInventory().setChestplate(items[1]);
-                p.getInventory().setLeggings(items[2]);
-                p.getInventory().setBoots(items[3]);
-                p.getInventory().addItem(items[4]);
-                p.getInventory().addItem(items[5]);
-                ItemStack Arrows = new ItemStack(Material.ARROW);
-                Arrows.setAmount(64);
-                p.getInventory().addItem(Arrows);
-                p.getInventory().addItem(Arrows);
+                GearHandler.giveGear(p, ChatColor.RED, SpecialGear.NONE);
             }
             return true;
         }

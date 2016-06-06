@@ -92,8 +92,8 @@ public class KingOfTheHill extends BasePluginGamemode{
             @Override
             public void run() {
                 if(state == GameState.RUNNING){
-                    redTeam.setScore(redTeam.getScore() + redTeam.getCapturedPoints().size());
-                    blueTeam.setScore(blueTeam.getScore() + blueTeam.getCapturedPoints().size());
+                    redTeam.setScore(redTeam.getScore() + Team.getRedCapturedPoints().size());
+                    blueTeam.setScore(blueTeam.getScore() + Team.getBlueCapturedPoints().size());
                     if(redTeam.getScore() > target){
                         redTeam.setScore(target);
                     }
@@ -248,7 +248,6 @@ public class KingOfTheHill extends BasePluginGamemode{
             l.getBlock().getRelative(0, 1, 0).setType(Material.AIR);
         }
         for(Player p : players){
-            p.teleport(PVPCore.getSpawn());
             Team.removeFromTeam(p);
         }
         m.playerLeaveAll();
@@ -309,6 +308,8 @@ public class KingOfTheHill extends BasePluginGamemode{
                 }else if(Team.getBluePlayers().contains(e.getPlayer())){
                     e.setRespawnLocation(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
                 }
+            }else{
+                System.out.println("This is in koth");
             }
         }
         
@@ -318,12 +319,12 @@ public class KingOfTheHill extends BasePluginGamemode{
                 cap++;
                 p.sendMessage(ChatColor.RED + "Cap at " + (cap/2) + "%");
                 if(cap >= 200){
-                    if(!redTeam.getCapturedPoints().contains(cent)){
-                        redTeam.getCapturedPoints().add(cent);
+                    if(!Team.getRedCapturedPoints().contains(cent)){
+                        Team.getRedCapturedPoints().add(cent);
                         p.sendMessage(ChatColor.RED + "Point Captured!");
                     }
-                    if(blueTeam.getCapturedPoints().contains(cent)){
-                        blueTeam.getCapturedPoints().remove(cent);
+                    if(Team.getBlueCapturedPoints().contains(cent)){
+                        Team.getBlueCapturedPoints().remove(cent);
                     }
                 }else{
                     capAmount.put(cent, cap);
@@ -333,12 +334,12 @@ public class KingOfTheHill extends BasePluginGamemode{
                 cap--;
                 p.sendMessage(ChatColor.BLUE + "Cap at " + (cap/-2) + "%");
                 if(cap <= -200){
-                    if(!blueTeam.getCapturedPoints().contains(cent)){
-                        blueTeam.getCapturedPoints().add(cent);
+                    if(!Team.getBlueCapturedPoints().contains(cent)){
+                        Team.getBlueCapturedPoints().add(cent);
                         p.sendMessage(ChatColor.BLUE + "Point Captured!");
                     }
-                    if(redTeam.getCapturedPoints().contains(cent)){
-                        redTeam.getCapturedPoints().remove(cent);
+                    if(Team.getRedCapturedPoints().contains(cent)){
+                        Team.getRedCapturedPoints().remove(cent);
                     }
                 }else{
                     capAmount.put(cent, cap);

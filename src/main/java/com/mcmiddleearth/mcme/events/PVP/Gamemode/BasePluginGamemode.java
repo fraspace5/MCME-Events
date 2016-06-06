@@ -23,6 +23,7 @@ import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
 import com.mcmiddleearth.mcme.events.PVP.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
+import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +32,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Objective;
@@ -59,14 +63,16 @@ public abstract class BasePluginGamemode implements Gamemode{
     @Override
     public void Start(Map m, int parameter){
         PVPCommandCore.toggleVoxel(true);
+        
         for(Player p : players){
-            PlayerStat.getPlayerStats().get(p.getName()).addPlayedGame(m.getGmType());
+            PlayerStat.getPlayerStats().get(p.getName()).addPlayedGame();
         }
+        
     };
     
     @Override
     public void End(Map m){
-        PVPCommandCore.getStartedGames().clear();
+        PVPCommandCore.setRunningGame(null);
         
         Bukkit.getScheduler().cancelAllTasks();
         for(Objective o : scoreboard.getObjectives()){
@@ -75,14 +81,26 @@ public abstract class BasePluginGamemode implements Gamemode{
       
         for(Player p : Bukkit.getServer().getOnlinePlayers()){
             ChatHandler.getPlayerColors().put(p.getName(), ChatColor.WHITE);
-            p.setHealth(20);
+            p.teleport(PVPCore.getSpawn());
+            p.setDisplayName(ChatColor.WHITE + p.getName());
+            p.setPlayerListName(ChatColor.WHITE + p.getName());
+            p.getInventory().clear();
+            p.setMaxHealth(20);
+            p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
+            new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
+            p.setGameMode(GameMode.ADVENTURE);
+            p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+            ChatHandler.getPlayerPrefixes().remove(p);
+            
+            if(!p.isDead()){
+                p.setHealth(20);
+            }
         }
     };
     
     
     public boolean midgamePlayerJoin(Player p){
-        p.setWalkSpeed(0.2F);
-        
+        PVPCommandCore.getRunningGame().getGm().getPlayers().add(p);
         return true;
     };
     

@@ -19,42 +19,34 @@
 package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
 import com.mcmiddleearth.mcme.events.Main;
+import static com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.getScoreboard;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.SpecialGear;
 import com.mcmiddleearth.mcme.events.PVP.Map;
-import com.mcmiddleearth.mcme.events.PVP.PVPCore;
+import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import com.mcmiddleearth.mcme.events.PVP.Team;
 import com.mcmiddleearth.mcme.events.Util.EventLocation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Statistic;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
 
 /**
  *
@@ -158,7 +150,6 @@ public class OneInTheQuiver extends BasePluginGamemode{
         for(Player p : Bukkit.getServer().getOnlinePlayers()){
             if(players.contains(p)){
                 p.teleport(spawns[c].toBukkitLoc().add(0, 2, 0));
-                p.setWalkSpeed(0.0F);
                 if(spawns.length == (c + 1)){
                     c = 0;
                 }else{
@@ -188,13 +179,13 @@ public class OneInTheQuiver extends BasePluginGamemode{
                         
                         for(Player p : Bukkit.getServer().getOnlinePlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game Start!");
+                            p.setScoreboard(getScoreboard());
                         }
                         
                         for(Player p : players){
                             
-                            p.setWalkSpeed(0.2F);
                             p.setGameMode(GameMode.ADVENTURE);
-                            p.setScoreboard(getScoreboard());
+                            
                             ChatHandler.getPlayerPrefixes().put(p.getName(), chatColors[k] + "Player");
                             ChatHandler.getPlayerColors().put(p.getName(), chatColors[k]);
                             hasPlayed.put(p.getName(), chatColors[k]);
@@ -207,49 +198,8 @@ public class OneInTheQuiver extends BasePluginGamemode{
                                 String newName = p.getName().substring(0,13);
                                 p.setPlayerListName(chatColors[k] + newName);
                             }
-                            ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
-                                new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
-                                new ItemStack(Material.IRON_AXE), new ItemStack(Material.BOW)};
-                            for(int i = 0; i <= 5; i++){
-                                if(i<=3){
-                                    LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
-                                
-                                    if(chatColors[k] == ChatColor.AQUA) {
-                                        lam.setColor(DyeColor.LIGHT_BLUE.getColor());
-                                        
-                                    }
-                                    else if(chatColors[k] == ChatColor.BLUE) {lam.setColor(DyeColor.BLUE.getColor());}
-                                    else if(chatColors[k] == ChatColor.DARK_AQUA) {lam.setColor(DyeColor.CYAN.getColor());}
-                                    else if(chatColors[k] == ChatColor.DARK_BLUE) {lam.setColor(DyeColor.BROWN.getColor());}
-                                    else if(chatColors[k] == ChatColor.DARK_GRAY) {lam.setColor(DyeColor.BLACK.getColor());}
-                                    else if(chatColors[k] == ChatColor.DARK_GREEN) {lam.setColor(DyeColor.GREEN.getColor());}
-                                    else if(chatColors[k] == ChatColor.DARK_PURPLE) {lam.setColor(DyeColor.PURPLE.getColor());}
-                                    else if(chatColors[k] == ChatColor.DARK_RED) {lam.setColor(DyeColor.RED.getColor());}
-                                    else if(chatColors[k] == ChatColor.GOLD) {lam.setColor(DyeColor.SILVER.getColor());}
-                                    else if(chatColors[k] == ChatColor.GRAY) {lam.setColor(DyeColor.GRAY.getColor());}
-                                    else if(chatColors[k] == ChatColor.GREEN) {lam.setColor(DyeColor.LIME.getColor());}
-                                    else if(chatColors[k] == ChatColor.LIGHT_PURPLE) {lam.setColor(DyeColor.MAGENTA.getColor());}
-                                    else if(chatColors[k] == ChatColor.RED) {lam.setColor(DyeColor.ORANGE.getColor());}
-                                    else if(chatColors[k] == ChatColor.YELLOW) {lam.setColor(DyeColor.YELLOW.getColor());}
-                
-                                    items[i].setItemMeta(lam);
-                                }else{
-                                    items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
-                                }
-                                items[i].getItemMeta().spigot().setUnbreakable(true);
+                            GearHandler.giveGear(p, chatColors[k], SpecialGear.ONEINTHEQUIVER);
                         
-                                p.getInventory().clear();
-                                p.getInventory().setHelmet(items[0]);
-                                p.getInventory().setChestplate(items[1]);
-                                p.getInventory().setLeggings(items[2]);
-                                p.getInventory().setBoots(items[3]);
-                                p.getInventory().addItem(items[4]);
-                                items[5].addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 12);
-                                p.getInventory().addItem(items[5]);
-                                ItemStack Arrows = new ItemStack(Material.ARROW);
-                                Arrows.setAmount(1);
-                                p.getInventory().addItem(Arrows);
-                            }
                             if(chatColors.length == (k+1)){
                                 k = 0;
                             }else{
@@ -338,6 +288,7 @@ public class OneInTheQuiver extends BasePluginGamemode{
         
         loops = 0;
         for(String playerName : mostKills){
+            PlayerStat.getPlayerStats().get(playerName).addGameWon();
             if(mostKills.size() == 1 && loops == 0){
                 killMessage = ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + " with " + mostKillsNum;
             }else if(loops == (mostKills.size() - 1)){
@@ -367,24 +318,10 @@ public class OneInTheQuiver extends BasePluginGamemode{
             }
         }
         
-        for(Player p : players){
+        for(Player p : Bukkit.getOnlinePlayers()){
             p.sendMessage(ChatColor.GREEN + "Winner: " + killMessage);
             p.sendMessage(ChatColor.GREEN + "Most Deaths: " + deathMessage);
             p.sendMessage(ChatColor.GREEN + "Highest KD: " + kDMessage);
-            
-            p.teleport(PVPCore.getSpawn());
-            p.setDisplayName(ChatColor.WHITE + p.getName());
-            p.setPlayerListName(ChatColor.WHITE + p.getName());
-            p.getInventory().clear();
-            p.setMaxHealth(20);
-            p.setHealth(20);
-            p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
-                new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
-            p.setGameMode(GameMode.ADVENTURE);
-        }
-        for(Player p : players){
-            p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
-            ChatHandler.getPlayerPrefixes().remove(p);
         }
         getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
         m.playerLeaveAll();
@@ -429,45 +366,7 @@ public class OneInTheQuiver extends BasePluginGamemode{
         p.setScoreboard(getScoreboard());
         super.midgamePlayerJoin(p);
         
-        ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
-            new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
-            new ItemStack(Material.IRON_AXE), new ItemStack(Material.BOW)};
-        for(int i = 0; i <= 5; i++){
-            if(i<=3){
-                LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
-                                
-                if(color == ChatColor.AQUA) {lam.setColor(DyeColor.LIGHT_BLUE.getColor());}
-                else if(color == ChatColor.BLUE) {lam.setColor(DyeColor.BLUE.getColor());}
-                else if(color == ChatColor.DARK_AQUA) {lam.setColor(DyeColor.CYAN.getColor());}
-                else if(color == ChatColor.DARK_BLUE) {lam.setColor(DyeColor.BROWN.getColor());}
-                else if(color == ChatColor.DARK_GRAY) {lam.setColor(DyeColor.BLACK.getColor());}
-                else if(color == ChatColor.DARK_GREEN) {lam.setColor(DyeColor.GREEN.getColor());}
-                else if(color == ChatColor.DARK_PURPLE) {lam.setColor(DyeColor.PURPLE.getColor());}
-                else if(color == ChatColor.DARK_RED) {lam.setColor(DyeColor.RED.getColor());}
-                else if(color == ChatColor.GOLD) {lam.setColor(DyeColor.SILVER.getColor());}
-                else if(color == ChatColor.GRAY) {lam.setColor(DyeColor.GRAY.getColor());}
-                else if(color == ChatColor.GREEN) {lam.setColor(DyeColor.LIME.getColor());}
-                else if(color == ChatColor.LIGHT_PURPLE) {lam.setColor(DyeColor.MAGENTA.getColor());}
-                else if(color == ChatColor.RED) {lam.setColor(DyeColor.ORANGE.getColor());}
-                else if(color == ChatColor.YELLOW) {lam.setColor(DyeColor.YELLOW.getColor());}
-                
-                items[i].setItemMeta(lam);
-            }else{
-                items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
-            }
-            items[i].getItemMeta().spigot().setUnbreakable(true);
-                        
-            p.getInventory().clear();
-            p.getInventory().setHelmet(items[0]);
-            p.getInventory().setChestplate(items[1]);
-            p.getInventory().setLeggings(items[2]);
-            p.getInventory().setBoots(items[3]);
-            p.getInventory().addItem(items[4]);
-            items[5].addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 12);
-            p.getInventory().addItem(items[5]);
-            ItemStack Arrows = new ItemStack(Material.ARROW,1);
-            p.getInventory().addItem(Arrows);
-        }
+        GearHandler.giveGear(p, color, SpecialGear.ONEINTHEQUIVER);
         
         return true;
     }
@@ -501,7 +400,7 @@ public class OneInTheQuiver extends BasePluginGamemode{
                 }
                 
                 
-                if(Points.getScore(ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName()).getScore() == 3){
+                if(Points.getScore(ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName()).getScore() == 21){
                     End(map);
                     e.getEntity().teleport(new Location(e.getEntity().getWorld(), 346, 40, 513)); 
                 }
@@ -513,7 +412,6 @@ public class OneInTheQuiver extends BasePluginGamemode{
         
         @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
-            System.out.println("oitq");
             if(state == GameState.RUNNING){
                 
                 Random random = new Random();

@@ -76,45 +76,50 @@ public class JoinLeaveHandler implements Listener{
                     Bukkit.getPlayer(playerName).setDisplayName(ChatHandler.getPlayerColors().get(playerName) + playerName);
                 }
                 
-                if(PVPCommandCore.getStartedGames().isEmpty()){
+                if(PVPCommandCore.getRunningGame() == null){
                     p.teleport(new Location(p.getWorld(), 346, 40, 513));
                     ChatHandler.getPlayerColors().put(p.getName(), org.bukkit.ChatColor.WHITE);
                 }else{
-                    for(Player pl : Bukkit.getServer().getOnlinePlayers()){
-                        if(PVPCommandCore.getStartedGames().containsKey(pl.getName())){
-                            
-                            Map m = Map.maps.get(PVPCore.getPlaying().get(pl.getName()));
-                            
-                            if(m.getGm().getState() != GameState.IDLE){
-                                p.teleport(m.getSpawn().toBukkitLoc().add(0, 2, 0));
-                                p.setScoreboard(BasePluginGamemode.getScoreboard());
-                                p.sendMessage(ChatColor.GREEN + "Current Game: " + ChatColor.BLUE + m.getGmType() + ChatColor.GREEN + " on " + ChatColor.RED + m.getTitle());
-                            
-                                if(m.getGm().isMidgameJoin()){
-                                    p.sendMessage(ChatColor.YELLOW + "Use /pvp join to join the game!");
-                                }else{
-                                    p.sendMessage(ChatColor.YELLOW + "Sorry, you can't join this game midgame");
-                                    p.sendMessage(ChatColor.YELLOW + "You can join the next game, though!");
-                                }
-                                Team.addToTeam(p, Team.Teams.SPECTATORS);
-                            }
-                            else{
-                                p.teleport(new Location(p.getWorld(), 346, 40, 513));
-                                p.sendMessage(ChatColor.GREEN + "Upcoming Game: " + ChatColor.BLUE + m.getGmType() + ChatColor.GREEN + " on " + ChatColor.RED + m.getTitle());
-                                p.sendMessage(ChatColor.YELLOW + "Use " + ChatColor.GREEN + "/pvp join" + ChatColor.YELLOW + " to join!");
-                                ChatHandler.getPlayerColors().put(p.getName(), org.bukkit.ChatColor.WHITE);
-                            }
+                    Map m = null;
+                    if(PVPCommandCore.getQueuedGame() != null){
+                        m = PVPCommandCore.getQueuedGame();
+                    }
+                    else if(PVPCommandCore.getRunningGame() != null){
+                        m = PVPCommandCore.getRunningGame();
+                    }
+                    else{
+                        return;
+                    }
+                          
+                    if(m.getGm().getState() != GameState.IDLE){
+                        p.teleport(m.getSpawn().toBukkitLoc().add(0, 2, 0));
+                        p.setScoreboard(BasePluginGamemode.getScoreboard());
+                        p.sendMessage(ChatColor.GREEN + "Current Game: " + ChatColor.BLUE + m.getGmType() + ChatColor.GREEN + " on " + ChatColor.RED + m.getTitle());
+                          
+                        if(m.getGm().isMidgameJoin()){
+                            p.sendMessage(ChatColor.YELLOW + "Use /pvp join to join the game!");
+                        }else{
+                            p.sendMessage(ChatColor.YELLOW + "Sorry, you can't join this game midgame");
+                            p.sendMessage(ChatColor.YELLOW + "You can join the next game, though!");
                         }
+                        Team.addToTeam(p, Team.Teams.SPECTATORS);
+                    }
+                    else{
+                        p.teleport(new Location(p.getWorld(), 346, 40, 513));
+                        p.sendMessage(ChatColor.GREEN + "Upcoming Game: " + ChatColor.BLUE + m.getGmType() + ChatColor.GREEN + " on " + ChatColor.RED + m.getTitle());
+                        p.sendMessage(ChatColor.YELLOW + "Use " + ChatColor.GREEN + "/pvp join" + ChatColor.YELLOW + " to join!");
+                        ChatHandler.getPlayerColors().put(p.getName(), org.bukkit.ChatColor.WHITE);
                     }
                 }
+                p.sendMessage(ChatColor.GRAY + "Do " + ChatColor.GREEN + "/pvp rules <gamemode>" + ChatColor.GRAY + " if you don't know how a game type works!");
             }
         }, 20);
     }
     
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e){
-        if(PVPCore.getPlaying().containsKey(e.getPlayer().getName())){
-            Map.maps.get(PVPCore.getPlaying().get(e.getPlayer().getName())).playerLeave(e.getPlayer());
+        if(PVPCommandCore.getRunningGame() != null){
+            PVPCommandCore.getRunningGame().playerLeave(e.getPlayer());
         }
         PlayerStat.getPlayerStats().get(e.getPlayer().getName()).saveStat();
         PlayerStat.getPlayerStats().remove(e.getPlayer().getName());

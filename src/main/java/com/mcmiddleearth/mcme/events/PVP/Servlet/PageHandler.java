@@ -82,7 +82,7 @@ public class PageHandler extends AbstractHandler{
                     return;
                 }
             }
-            String resp = "Viewing stats for " + targets[1] + ":<br><br>" +
+            /*String resp = "Viewing stats for " + targets[1] + ":<br><br>" +
                     "Deaths: " + ps.getDeaths() + "<br><ul>" + 
                     "<li>Suicides: " + ps.getSuicides() + "</li></ul>" +
                     "Kills: " + ps.getKills().size() + "<br><ul>";
@@ -93,7 +93,7 @@ public class PageHandler extends AbstractHandler{
             response.getWriter().println(resp);
             response.setContentType("text/html; charset=utf-8");
             response.setStatus(HttpServletResponse.SC_OK);
-            baseRequest.setHandled(true);
+            baseRequest.setHandled(true);*/
         }
     }
     
