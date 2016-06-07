@@ -49,15 +49,6 @@ import org.bukkit.scoreboard.Objective;
  */
 public class TeamSlayer extends BasePluginGamemode{
     
-    @Getter
-    private Team redTeam = new Team();
-    
-    @Getter
-    private Team blueTeam = new Team();
-    
-    @Getter
-    private Team spectatingTeam = new Team();
-    
     private int target;
     
     private static boolean eventsRegistered = false;
@@ -169,18 +160,6 @@ public class TeamSlayer extends BasePluginGamemode{
                             return;
                         }
 
-                        if(Bukkit.getScoreboardManager().getMainScoreboard() != null){
-                            org.bukkit.scoreboard.Team blu = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("blue");
-                            org.bukkit.scoreboard.Team rd =  Bukkit.getScoreboardManager().getMainScoreboard().getTeam("red");
-                            if(blu != null && rd != null){
-                                for(Player p : Team.getRedPlayers()){
-                                    rd.addPlayer(p);
-                                }
-                                for(Player p : Team.getBluePlayers()){
-                                    blu.addPlayer(p);
-                                }
-                            }
-                        }
                         Points = getScoreboard().registerNewObjective("Score", "dummy");
                         Points.setDisplayName("Score");
                         Points.getScore(ChatColor.WHITE + "Goal:").setScore(target);
@@ -215,26 +194,12 @@ public class TeamSlayer extends BasePluginGamemode{
     public void End(Map m){
         state = GameState.IDLE;
         
-        for(Player p : players){
+        for(Player p : Bukkit.getOnlinePlayers()){
             Team.removeFromTeam(p);
         }
         getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
         m.playerLeaveAll();
-        blueTeam = new Team();
-        redTeam = new Team();
-        if(Bukkit.getScoreboardManager().getMainScoreboard() != null){
-            org.bukkit.scoreboard.Team blu = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("blue");
-            org.bukkit.scoreboard.Team rd = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("red");
-            
-            if(blu != null && rd != null){
-                for(OfflinePlayer p : blu.getPlayers()){
-                    blu.removePlayer(p);
-                }
-                for(OfflinePlayer p : rd.getPlayers()){
-                    rd.removePlayer(p);
-                }
-            }
-        }
+        
         super.End(m);
     }
     
@@ -293,6 +258,8 @@ public class TeamSlayer extends BasePluginGamemode{
                         player.sendMessage(ChatColor.RED + "Red Team Wins!");
                     }
                     PlayerStat.addGameWon(Teams.RED);
+                    PlayerStat.addGameLost(Teams.BLUE);
+                    PlayerStat.addGameSpectatedAll();
                     End(map);
                 
                 }
@@ -301,9 +268,10 @@ public class TeamSlayer extends BasePluginGamemode{
                     for(Player player : Bukkit.getOnlinePlayers()){
                         player.sendMessage(ChatColor.BLUE + "Game over!");
                         player.sendMessage(ChatColor.BLUE + "Blue Team Wins!");
-                        PlayerStat.addGameWon(Teams.BLUE);
                     }
                     PlayerStat.addGameWon(Teams.BLUE);
+                    PlayerStat.addGameLost(Teams.RED);
+                    PlayerStat.addGameSpectatedAll();
                     End(map);
                 
                 }
@@ -321,6 +289,8 @@ public class TeamSlayer extends BasePluginGamemode{
                     p.sendMessage(ChatColor.BLUE + "Blue Team Wins!");
                 }
                 PlayerStat.addGameWon(Teams.BLUE);
+                PlayerStat.addGameLost(Teams.RED);
+                PlayerStat.addGameSpectatedAll();
                 End(map);
             }
             if(Team.getBluePlayers().size() <= 0){
@@ -330,6 +300,8 @@ public class TeamSlayer extends BasePluginGamemode{
                     p.sendMessage(ChatColor.RED + "Red Team Wins!");
                 }
                 PlayerStat.addGameWon(Teams.RED);
+                PlayerStat.addGameLost(Teams.BLUE);
+                PlayerStat.addGameSpectatedAll();
                 End(map);
                 
             }

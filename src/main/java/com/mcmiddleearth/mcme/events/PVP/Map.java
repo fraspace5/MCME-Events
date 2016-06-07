@@ -192,9 +192,7 @@ public class Map {
             }
             
             p.getInventory().clear();
-            if(Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").hasPlayer(p)){
-                Bukkit.getScoreboardManager().getMainScoreboard().getTeam("players").removePlayer(p);
-            }
+            
         }
         gm.getPlayers().clear();
     }

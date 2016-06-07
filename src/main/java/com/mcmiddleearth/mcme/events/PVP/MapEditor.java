@@ -33,6 +33,7 @@ import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamDeathmatch;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamSlayer;
 import java.util.Arrays;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -117,7 +118,7 @@ public class MapEditor implements CommandExecutor, Listener{
                                     real = true;
                                 }else if(args[3].equalsIgnoreCase("TeamConquest")){
                                     m.setGm(new TeamConquest());
-                                    m.setGmType("TeamConquest");
+                                    m.setGmType("Team Conquest");
                                     real = true;
                                 }else if(args[3].equalsIgnoreCase("kingofthehill")){
                                     m.setGm(new KingOfTheHill());
@@ -171,6 +172,19 @@ public class MapEditor implements CommandExecutor, Listener{
                                 p.sendMessage(ChatColor.YELLOW + "]");
                             }
                         }
+                    }
+                }else if(args[0].equalsIgnoreCase("pastemap")){
+                    if(p.isOp()){
+                        
+                        if(args.length >= 7){
+                            Location startLoc = new Location(p.getWorld(), Double.valueOf(args[1]), Double.valueOf(args[2]), Double.valueOf(args[3])); 
+                            Location endLoc = new Location(p.getWorld(), Double.valueOf(args[4]), Double.valueOf(args[5]), Double.valueOf(args[6]));
+                        }else{
+                            p.sendMessage(ChatColor.RED + "Incorrect syntax! See DSE's post on pasting maps.");
+                        }                                                           
+                        
+                    }else{
+                        p.sendMessage(ChatColor.RED + "Only staff can paste maps!");
                     }
                 }
             }

@@ -21,11 +21,13 @@ package com.mcmiddleearth.mcme.events.PVP.Gamemode.anticheat;
 import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
 import com.mcmiddleearth.mcme.events.PVP.Team;
 import java.util.HashMap;
+import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -41,61 +43,70 @@ public class AntiCheatListeners implements Listener{
     @EventHandler
     public static void onPlayerCommand(PlayerCommandPreprocessEvent e){
         
-        String command = e.getMessage();
+        String command = truncateAtFirstSpace(e.getMessage());
         Player cs = e.getPlayer();
         
-        if(command.equalsIgnoreCase("deop") ||
-                command.equalsIgnoreCase("gamerule") ||
-                command.equalsIgnoreCase("plugup") ||
-                command.equalsIgnoreCase("reload") ||
-                command.equalsIgnoreCase("restart") ||
-                command.equalsIgnoreCase("say") ||
-                command.equalsIgnoreCase("summon")){
-            if(!cs.getName().equals("Dallen") || !cs.getName().equals("DSESGH") || !cs.getName().equals("q220")){
-                cs.sendMessage(ChatColor.RED + "You are not able to perform this command");
-                e.setCancelled(true);
-            }
-        }
-        if(command.equalsIgnoreCase("stop") && !cs.getName().equals("q220")){
-            e.setCancelled(true);
+        if(e.getPlayer().getName().equals("DSESGH") || 
+                e.getPlayer().getName().equals("Dallen") || 
+                e.getPlayer().getName().equals("q220") || 
+                e.getPlayer().getName().equals("Finrod_Amandil") || 
+                e.getPlayer().getName().equals("DynoDaring")){
+            return;
         }
         
-        if(command.equalsIgnoreCase("effect") || 
-                command.equalsIgnoreCase("enchant") ||
-                command.equalsIgnoreCase("execute")){
+        if(command.equalsIgnoreCase("/deop") ||
+                command.equalsIgnoreCase("/gamerule") ||
+                command.equalsIgnoreCase("/plugup") ||
+                command.equalsIgnoreCase("/reload") ||
+                command.equalsIgnoreCase("/restart") ||
+                command.equalsIgnoreCase("/say") ||
+                command.equalsIgnoreCase("/summon") ||
+                command.equalsIgnoreCase("/op") ||
+                command.equalsIgnoreCase("/stop")){
+            cs.sendMessage(ChatColor.RED + "You are not able to perform this command");
+            e.setCancelled(true);
+            
+        }
+        
+        if(command.equalsIgnoreCase("/effect") || 
+                command.equalsIgnoreCase("/enchant") ||
+                command.equalsIgnoreCase("/execute")){
             cs.sendMessage(ChatColor.RED + "You trying to cheat?!?");
             e.setCancelled(true);
         }
         
         if(PVPCommandCore.getRunningGame() != null){
-            
-            if(command.equalsIgnoreCase("fill") || 
-                    command.equalsIgnoreCase("clone") ||
-                    command.equalsIgnoreCase("blockdata") ||
-                    command.equalsIgnoreCase("clear") ||
-                    command.equalsIgnoreCase("gamemode") ||
-                    command.equalsIgnoreCase("give") ||
-                    command.equalsIgnoreCase("setblock") ||
-                    command.equalsIgnoreCase("xp") ||
-                    command.equalsIgnoreCase("worldjump") ||
-                    command.equalsIgnoreCase("mvtp") ||
-                    command.equalsIgnoreCase("tp")){
+            if(command.equalsIgnoreCase("/fill") || 
+                    command.equalsIgnoreCase("/clone") ||
+                    command.equalsIgnoreCase("/blockdata") ||
+                    command.equalsIgnoreCase("/clear") ||
+                    command.equalsIgnoreCase("/gamemode") ||
+                    command.equalsIgnoreCase("/give") ||
+                    command.equalsIgnoreCase("/setblock") ||
+                    command.equalsIgnoreCase("/xp") ||
+                    command.equalsIgnoreCase("/worldjump") ||
+                    command.equalsIgnoreCase("/mvtp") ||
+                    command.equalsIgnoreCase("/mv")){
                 cs.sendMessage(ChatColor.RED + "You can't do that during a game!");
                 e.setCancelled(true);
             }
             
-            if(command.equalsIgnoreCase("locker")){
+            if(command.equalsIgnoreCase("/tp") && !Team.getSpectators().contains(e.getPlayer())){
+                cs.sendMessage(ChatColor.RED + "You can't do that during a game!");
+                e.setCancelled(true);
+            }
+            
+            if(command.equalsIgnoreCase("/locker")){
                 cs.sendMessage(ChatColor.RED + "End the game or wait for it to end!");
                 e.setCancelled(true);
             }
             
             if(Team.getSpectators().contains(cs)){
-                
-                if(command.equalsIgnoreCase("me") ||
-                        command.equalsIgnoreCase("tell") ||
-                        command.equalsIgnoreCase("msg") ||
-                        command.equalsIgnoreCase("tellraw") ||
-                        command.equalsIgnoreCase("title")){
+                if(command.equalsIgnoreCase("/me") ||
+                        command.equalsIgnoreCase("/tell") ||
+                        command.equalsIgnoreCase("/msg") ||
+                        command.equalsIgnoreCase("/tellraw") ||
+                        command.equalsIgnoreCase("/title")){
                     cs.sendMessage(ChatColor.RED + "You can't do that during a game!");
                     e.setCancelled(true);
                 }
@@ -111,6 +122,14 @@ public class AntiCheatListeners implements Listener{
     public static void onPlayerChat(AsyncPlayerChatEvent e){
         if(PVPCommandCore.getRunningGame() != null && Team.getSpectators().contains(e.getPlayer())){
             
+            if(e.getPlayer().getName().equals("DSESGH") || 
+                    e.getPlayer().getName().equals("Dallen") || 
+                    e.getPlayer().getName().equals("q220") || 
+                    e.getPlayer().getName().equals("Finrod_Amandil") || 
+                    e.getPlayer().getName().equals("DynoDaring")){
+                return;
+            }
+            
             for(Player p : Team.getSpectators()){
                 
                 p.sendMessage(ChatColor.GRAY + "Spectator " + e.getPlayer().getName() + ": " + ChatColor.WHITE + e.getMessage());
@@ -125,47 +144,76 @@ public class AntiCheatListeners implements Listener{
     @EventHandler
     public static void onPlayerMove(PlayerMoveEvent e){
         
+        if(Team.getSpectators().contains(e.getPlayer()) || (e.getPlayer().isOp() && PVPCommandCore.getRunningGame() == null)){
+            return;
+        }
+        
         Location from = e.getFrom();
         Location to = e.getTo();
         
         double xZDistance = Math.sqrt(Math.pow(to.getX() - from.getX(), 2) + Math.pow(to.getZ() - from.getZ(), 2));
         double yDistance = to.getY() - from.getY();
         
-        if(xZDistance >= 0.37 || xZDistance <= -0.37){
+        if(xZDistance >= 0.615 || xZDistance <= -0.615){
             
             if(Team.getInfected().contains(e.getPlayer()) && xZDistance <= 0.39 && xZDistance >= -0.39){
                 return;
             }
             else{
                 e.getPlayer().sendMessage(ChatColor.RED + "You moved too fast!");
-                e.setCancelled(true);
+                e.setTo(from);
             }
             
         }
         
-        if(yDistance >= .4){
+        if(yDistance >= .5){
             e.getPlayer().sendMessage(ChatColor.RED + "You moved too fast!");
-            e.setCancelled(true);
+            e.setTo(from);
         }
         
     }
     
+    @Getter
     private static HashMap<String, Long> lastInteract = new HashMap<>();
     
     @EventHandler
     public static void onPlayerClick(PlayerInteractEvent e){
         
-        if(System.currentTimeMillis() - lastInteract.get(e.getPlayer().getName()) <= 83){
-            e.setCancelled(true);
+        if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)){
+            if(!lastInteract.containsKey(e.getPlayer().getName())){
+                lastInteract.put(e.getPlayer().getName(), (System.currentTimeMillis() - 100));
+            }
+            
+            if(System.currentTimeMillis() - lastInteract.get(e.getPlayer().getName()) <= 85){
+                e.setCancelled(true);
+            }
+        
+            if(lastInteract.keySet().contains(e.getPlayer().getName())){
+                lastInteract.remove(e.getPlayer().getName());
+                lastInteract.put(e.getPlayer().getName(), System.currentTimeMillis());
+            }else{
+                lastInteract.put(e.getPlayer().getName(), System.currentTimeMillis());
+            }
         }
         
-        if(lastInteract.keySet().contains(e.getPlayer().getName())){
-            lastInteract.remove(e.getPlayer().getName());
-            lastInteract.put(e.getPlayer().getName(), System.currentTimeMillis());
-        }else{
-            lastInteract.put(e.getPlayer().getName(), System.currentTimeMillis());
-        }
+    }
+    
+    private static String truncateAtFirstSpace(String s){
         
+        char[] chars = s.toCharArray();
+        String newString = "";
+        
+        for(char c : chars){
+            
+            if(c != ' '){
+                newString += String.valueOf(c);
+            }
+            else{
+                return newString;
+            }
+            
+        }
+        return newString;
     }
 }
 /* 

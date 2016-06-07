@@ -69,15 +69,6 @@ import org.bukkit.scoreboard.ScoreboardManager;
 public class TeamConquest extends BasePluginGamemode {//Handled by plugin, should be done needs testing
     
     @Getter
-    private Team blueTeam = new Team(); 
-    
-    @Getter
-    private Team redTeam = new Team(); 
-    
-    @Getter
-    private Team spectatingTeam = new Team(); 
-    
-    @Getter
     private Objective Points;
     
     @Getter
@@ -89,7 +80,6 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
     private final ArrayList<String> NeededPoints = new ArrayList<String>(Arrays.asList(new String[] {
         "RedSpawn",
         "BlueSpawn",
-        "SpectatorSpawn",
         "CapturePoint1",
         "CapturePoint2",
         "CapturePoint3"
@@ -125,15 +115,26 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
             End(m);
             return;
         }
-        for(Location l : events.points){
-            l.getBlock().setType(Material.BEACON);
-        }
         
         if(!eventsRegistered){
             events = new GameEvents();
             PluginManager pm = Main.getServerInstance().getPluginManager();
             pm.registerEvents(events, Main.getPlugin());
             eventsRegistered = true;
+        }
+        
+        for(Location l : events.points){
+            l.getBlock().setType(Material.BEACON);
+            
+            l.getBlock().getRelative(0, -1, -1).setType(Material.IRON_BLOCK);
+            l.getBlock().getRelative(0, -1, 0).setType(Material.IRON_BLOCK);
+            l.getBlock().getRelative(0, -1, 1).setType(Material.IRON_BLOCK);
+            l.getBlock().getRelative(1, -1, -1).setType(Material.IRON_BLOCK);
+            l.getBlock().getRelative(1, -1, 0).setType(Material.IRON_BLOCK);
+            l.getBlock().getRelative(1, -1, 1).setType(Material.IRON_BLOCK);
+            l.getBlock().getRelative(-1, -1, -1).setType(Material.IRON_BLOCK);
+            l.getBlock().getRelative(-1, -1, 0).setType(Material.IRON_BLOCK);
+            l.getBlock().getRelative(-1, -1, 1).setType(Material.IRON_BLOCK);
         }
         
         for(Player p : Bukkit.getOnlinePlayers()){
@@ -158,22 +159,12 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                         if(state == GameState.RUNNING){
                             return;
                         }
-                        if(Bukkit.getScoreboardManager().getMainScoreboard() != null){
-                            org.bukkit.scoreboard.Team blu = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("blue");
-                            org.bukkit.scoreboard.Team rd =  Bukkit.getScoreboardManager().getMainScoreboard().getTeam("red");
-                            if(blu != null && rd != null){
-                                for(Player p : Team.getRedPlayers()){
-                                    rd.addPlayer(p);
-                                }
-                                for(Player p : Team.getBluePlayers()){
-                                    blu.addPlayer(p);
-                                }
-                            }
-                        }
+                        
                         Points = getScoreboard().registerNewObjective("Score", "dummy");
                         Points.setDisplayName("Score");
                         Points.getScore(ChatColor.BLUE + "Blue:").setScore(0);
                         Points.getScore(ChatColor.RED + "Red:").setScore(0);
+                        Points.getScore(ChatColor.WHITE + "Goal:").setScore(goal);
                         Points.setDisplaySlot(DisplaySlot.SIDEBAR);
                         
                         for(Player p : Bukkit.getServer().getOnlinePlayers()){
@@ -211,25 +202,11 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
             l.getBlock().getRelative(0, 1, 0).setType(Material.AIR);
         }
         getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
-        for(Player p : players){
+        for(Player p : Bukkit.getOnlinePlayers()){
             Team.removeFromTeam(p);
         }
         m.playerLeaveAll();
-        blueTeam = new Team();
-        redTeam = new Team();
-        if(Bukkit.getScoreboardManager().getMainScoreboard() != null){
-            org.bukkit.scoreboard.Team blu = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("blue");
-            org.bukkit.scoreboard.Team rd = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("red");
-            
-            if(blu != null && rd != null){
-                for(OfflinePlayer p : blu.getPlayers()){
-                    blu.removePlayer(p);
-                }
-                for(OfflinePlayer p : rd.getPlayers()){
-                    rd.removePlayer(p);
-                }
-            }
-        }
+        
         Team.getBlueCapturedPoints().clear();
         Team.getRedCapturedPoints().clear();
         super.End(m);
@@ -267,7 +244,19 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                         if(cap < 50){
                             cap++;
                             p.sendMessage(ChatColor.RED + "Cap at " + (cap * 2) + "%");
-                            if(cap >= 50){
+                            
+                            if(cap == 0){
+                                p.sendMessage(ChatColor.GRAY + "Point is neutral!");
+                                
+                                Block b = e.getClickedBlock().getLocation().add(0, 1, 0).getBlock();
+                                b.setType(Material.AIR);
+                                
+                                if(Team.getBlueCapturedPoints().contains(e.getClickedBlock().getLocation())){
+                                    Team.getBlueCapturedPoints().remove(e.getClickedBlock().getLocation());
+                                }
+                            }
+                            
+                            else if(cap >= 50){
                                 p.sendMessage(ChatColor.RED + "Point Captured!");
                                 if(!Team.getRedCapturedPoints().contains(e.getClickedBlock().getLocation())){
                                     Team.getRedCapturedPoints().add(e.getClickedBlock().getLocation());
@@ -275,7 +264,7 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                                     b.setType(Material.STAINED_GLASS);
                                     b.setData((byte) 14);
                                     for(Player pl : players){
-                                        pl.sendMessage("Red Captured ");
+                                        pl.sendMessage(ChatColor.RED + "Red Team captured a point!");
                                     }
                                 }
                                 if(Team.getBlueCapturedPoints().contains(e.getClickedBlock().getLocation())){
@@ -286,6 +275,17 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                             }
                         }
                     }else if(Team.getBluePlayers().contains(p)){
+                        if(cap == 0){
+                            p.sendMessage(ChatColor.GRAY + "Point is neutral!");
+                                
+                            Block b = e.getClickedBlock().getLocation().add(0, 1, 0).getBlock();
+                            b.setType(Material.AIR);
+                              
+                            if(Team.getRedCapturedPoints().contains(e.getClickedBlock().getLocation())){
+                                Team.getRedCapturedPoints().remove(e.getClickedBlock().getLocation());
+                            }
+                        }
+                        
                         if(cap > -50){
                             cap--;
                             p.sendMessage(ChatColor.BLUE + "Cap at " + (cap * -2) + "%");
@@ -296,6 +296,9 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                                     Block b = e.getClickedBlock().getLocation().add(0, 1, 0).getBlock();
                                     b.setType(Material.STAINED_GLASS);
                                     b.setData((byte) 11);
+                                    for(Player pl : players){
+                                        pl.sendMessage(ChatColor.BLUE + "Blue Team captured a point!");
+                                    }
                                 }
                                 if(Team.getRedCapturedPoints().contains(e.getClickedBlock().getLocation())){
                                     Team.getRedCapturedPoints().remove(e.getClickedBlock().getLocation());
@@ -340,6 +343,8 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                         p.sendMessage(ChatColor.BLUE + "Blue Team Wins!");
                     }
                     PlayerStat.addGameWon(Teams.BLUE);
+                    PlayerStat.addGameLost(Teams.RED);
+                    PlayerStat.addGameSpectatedAll();
                     End(map);
                 }
                 else if(Points.getScore(ChatColor.RED + "Red:").getScore() >= goal){
@@ -349,6 +354,8 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                         p.sendMessage(ChatColor.RED + "Red Team Wins!");
                     }
                     PlayerStat.addGameWon(Teams.RED);
+                    PlayerStat.addGameLost(Teams.BLUE);
+                    PlayerStat.addGameSpectatedAll();
                     End(map);
                     
                 }
@@ -361,9 +368,9 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
         public void onPlayerRespawn(PlayerRespawnEvent e){
             
             if(state == GameState.RUNNING && players.contains(e.getPlayer())){
-                if(redTeam.getRedPlayers().contains(e.getPlayer())){
+                if(Team.getRedPlayers().contains(e.getPlayer())){
                     e.setRespawnLocation(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
-                }else if(blueTeam.getBluePlayers().contains(e.getPlayer())){
+                }else if(Team.getBluePlayers().contains(e.getPlayer())){
                     e.setRespawnLocation(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
                 }
             }
@@ -383,6 +390,8 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                         p.sendMessage(ChatColor.BLUE + "Blue Team Wins!");
                     }
                     PlayerStat.addGameWon(Teams.BLUE);
+                    PlayerStat.addGameLost(Teams.RED);
+                    PlayerStat.addGameSpectatedAll();
                     End(map);
                 }
                 else if(Team.getBluePlayers().size() <= 0){
@@ -392,6 +401,8 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                         p.sendMessage(ChatColor.RED + "Red Team Wins!");
                     }
                     PlayerStat.addGameWon(Teams.RED);
+                    PlayerStat.addGameLost(Teams.BLUE);
+                    PlayerStat.addGameSpectatedAll();
                     End(map);
                     
                 }

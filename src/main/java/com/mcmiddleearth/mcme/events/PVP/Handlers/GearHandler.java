@@ -97,7 +97,7 @@ public class GearHandler {
                         lam.setColor(DyeColor.PURPLE.getColor());
                         break;
                     case DARK_RED:
-                        lam.setColor(DyeColor.RED.getColor());
+                        lam.setColor(DyeColor.ORANGE.getColor());
                         break;
                     case GOLD:
                         lam.setColor(DyeColor.SILVER.getColor());
@@ -112,7 +112,7 @@ public class GearHandler {
                         lam.setColor(DyeColor.MAGENTA.getColor());
                         break;
                     case RED:
-                        lam.setColor(DyeColor.ORANGE.getColor());
+                        lam.setColor(DyeColor.RED.getColor());
                         break;
                     case YELLOW:
                         lam.setColor(DyeColor.YELLOW.getColor());
@@ -130,7 +130,7 @@ public class GearHandler {
         
         if(sg == SpecialGear.RINGBEARER){
             p.getInventory().setHelmet(new ItemStack(Material.GLOWSTONE, 1));
-            giveCustomItem(p, CustomItem.RING);
+            
         }
         
         else if(sg != SpecialGear.INFECTED){
@@ -163,6 +163,10 @@ public class GearHandler {
             p.getInventory().addItem(Arrows);
         }
         
+        if(sg == SpecialGear.RINGBEARER){
+            giveCustomItem(p, CustomItem.RING);
+        }
+        
     }
     
     public enum CustomItem{
@@ -177,7 +181,7 @@ public class GearHandler {
                 ItemStack ring = new ItemStack(Material.GOLD_NUGGET);
                 ItemMeta im = ring.getItemMeta();
                 im.setDisplayName("The Ring");
-                im.setLore(Arrays.asList(new String[] {"The one ring of power...", "1 of 2"}));
+                im.setLore(Arrays.asList(new String[] {"The One Ring of power...", "1 of 2"}));
                 ring.setItemMeta(im);
         
                 p.getInventory().addItem(ring);
@@ -188,7 +192,7 @@ public class GearHandler {
         
     }
     
-    private class GearEvents implements Listener{
+    public static class GearEvents implements Listener{
         
         @EventHandler
         public void onPlayerInteract(PlayerInteractEvent e){
@@ -204,6 +208,12 @@ public class GearHandler {
                 }
                 
                 if(PVPCommandCore.getRunningGame() != null){
+                    if(item.getItemMeta() == null){
+                        return;
+                    }
+                    if(item.getItemMeta().getDisplayName() == null){
+                        return;
+                    }
                     
                     if(item.getItemMeta().getDisplayName().equalsIgnoreCase("The Ring") && 
                             PVPCommandCore.getRunningGame().getGm().getPlayers().contains(e.getPlayer()) &&
@@ -211,33 +221,45 @@ public class GearHandler {
                         
                         if(p.getExp() >= 1.00f){
                             p.setExp(0);
-                            p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 600, 1, true, true));
-                            p.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 600, 1, true, true));
+                            p.sendMessage(ChatColor.YELLOW + "You are now invisible!");
+                            
+                            if(Team.getRedPlayers().contains(p)){
+                                for(Player pl : Team.getBluePlayers()){
+                                    pl.hidePlayer(p);
+                                }
+                            }
+                            else if(Team.getBluePlayers().contains(p)){
+                                for(Player pl : Team.getRedPlayers()){
+                                    pl.hidePlayer(p);
+                                }
+                            }
+                            
+                            p.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 600, 1, true, false));
                             p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR), 
                                 new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
                             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
                                 
                                 @Override
                                 public void run() {
-                                    ItemStack[] items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
-                                        new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS)};
-                                    for(int i = 0; i <= 3; i++){
-                                        LeatherArmorMeta lam = (LeatherArmorMeta) items[i].getItemMeta();
-                                        if(Team.getRedPlayers().contains(p)){
-                                            lam.setColor(org.bukkit.Color.fromRGB(153, 51, 51));
-                                        }else{
-                                            lam.setColor(org.bukkit.Color.fromRGB(51, 76, 178));
+                                    p.sendMessage(ChatColor.YELLOW + "You are no longer invisible!");
+                                    p.getInventory().clear();
+                                    if(Team.getBluePlayers().contains(p)){
+                                        giveGear(p, ChatColor.BLUE, SpecialGear.RINGBEARER);
+                                        
+                                        for(Player pl : Team.getRedPlayers()){
+                                            pl.showPlayer(p);
                                         }
-                                        items[i].setItemMeta(lam);
-                                        items[i].getItemMeta().spigot().setUnbreakable(true);
-
+                                    }else{
+                                        giveGear(p, ChatColor.RED, SpecialGear.RINGBEARER);
+                                        
+                                        for(Player pl : Team.getBluePlayers()){
+                                            pl.showPlayer(p);
+                                        }
                                     }
-                                    p.getInventory().setHelmet(items[0]);
-                                    p.getInventory().setChestplate(items[1]);
-                                    p.getInventory().setLeggings(items[2]);
-                                    p.getInventory().setBoots(items[3]);
                                 }
                             }, 600);
+                        }else{
+                            p.sendMessage(ChatColor.GRAY + "You must have at least 1 xp level to use the ring");
                         }
                     }
                 }

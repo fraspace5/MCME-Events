@@ -23,6 +23,7 @@ import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.GameState;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Gamemode;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.anticheat.AntiCheatListeners;
 import com.mcmiddleearth.mcme.events.PVP.Lobby;
 import com.mcmiddleearth.mcme.events.PVP.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
@@ -58,7 +59,12 @@ public class JoinLeaveHandler implements Listener{
             @Override
             public void run(){
                 p.setMaxHealth(20);
-                p.setHealth(20);
+                
+                if(!p.isDead()){
+                    p.setHealth(20);
+                }
+                
+                p.setExp(0.0F);
                 p.setGameMode(GameMode.ADVENTURE);
                 p.getInventory().clear();
                 p.setPlayerListName(ChatColor.WHITE + p.getName());
@@ -76,7 +82,7 @@ public class JoinLeaveHandler implements Listener{
                     Bukkit.getPlayer(playerName).setDisplayName(ChatHandler.getPlayerColors().get(playerName) + playerName);
                 }
                 
-                if(PVPCommandCore.getRunningGame() == null){
+                if(PVPCommandCore.getRunningGame() == null && PVPCommandCore.getQueuedGame() == null){
                     p.teleport(new Location(p.getWorld(), 346, 40, 513));
                     ChatHandler.getPlayerColors().put(p.getName(), org.bukkit.ChatColor.WHITE);
                 }else{
@@ -108,10 +114,9 @@ public class JoinLeaveHandler implements Listener{
                         p.teleport(new Location(p.getWorld(), 346, 40, 513));
                         p.sendMessage(ChatColor.GREEN + "Upcoming Game: " + ChatColor.BLUE + m.getGmType() + ChatColor.GREEN + " on " + ChatColor.RED + m.getTitle());
                         p.sendMessage(ChatColor.YELLOW + "Use " + ChatColor.GREEN + "/pvp join" + ChatColor.YELLOW + " to join!");
-                        ChatHandler.getPlayerColors().put(p.getName(), org.bukkit.ChatColor.WHITE);
+                        p.sendMessage(ChatColor.GREEN + "Do /pvp rules " + PVPCommandCore.removeSpaces(PVPCommandCore.getQueuedGame().getGmType()) + " if you don't know how this gamemode works!");
                     }
                 }
-                p.sendMessage(ChatColor.GRAY + "Do " + ChatColor.GREEN + "/pvp rules <gamemode>" + ChatColor.GRAY + " if you don't know how a game type works!");
             }
         }, 20);
     }
@@ -121,18 +126,22 @@ public class JoinLeaveHandler implements Listener{
         if(PVPCommandCore.getRunningGame() != null){
             PVPCommandCore.getRunningGame().playerLeave(e.getPlayer());
         }
+        
         PlayerStat.getPlayerStats().get(e.getPlayer().getName()).saveStat();
         PlayerStat.getPlayerStats().remove(e.getPlayer().getName());
         Thompson.getInst().farwell(e.getPlayer());
         e.setQuitMessage("");
+        AntiCheatListeners.getLastInteract().remove(e.getPlayer().getName());
         
         e.getPlayer().getInventory().clear();
         e.getPlayer().getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
             new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
         
         e.getPlayer().setDisplayName(ChatColor.WHITE + e.getPlayer().getName());
-        ChatHandler.getPlayerPrefixes().remove(e.getPlayer());
+        ChatHandler.getPlayerPrefixes().remove(e.getPlayer().getName());
+        ChatHandler.getPlayerColors().remove(e.getPlayer().getName());
         Team.removeFromTeam(e.getPlayer());
+        Team.removeFromBukkitTeam(e.getPlayer());
         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "scoreboard teams leave " + e.getPlayer().getName());
     }
 }

@@ -57,15 +57,6 @@ import org.bukkit.scoreboard.ScoreboardManager;
  */
 public class TeamDeathmatch extends BasePluginGamemode{
     
-    @Getter
-    private Team redTeam = new Team();
-    
-    @Getter
-    private Team blueTeam = new Team();
-    
-    @Getter
-    private Team spectatingTeam = new Team();
-    
     private static boolean eventsRegistered = false;
     
     @Getter
@@ -138,18 +129,6 @@ public class TeamDeathmatch extends BasePluginGamemode{
                             return;
                         }
 
-                        if(Bukkit.getScoreboardManager().getMainScoreboard() != null){
-                            org.bukkit.scoreboard.Team blu = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("blue");
-                            org.bukkit.scoreboard.Team rd =  Bukkit.getScoreboardManager().getMainScoreboard().getTeam("red");
-                            if(blu != null && rd != null){
-                                for(Player p : Team.getRedPlayers()){
-                                    rd.addPlayer(p);
-                                }
-                                for(Player p : Team.getBluePlayers()){
-                                    blu.addPlayer(p);
-                                }
-                            }
-                        }
                         Points = getScoreboard().registerNewObjective("Remaining", "dummy");
                         Points.setDisplayName("Remaining");
                         Points.getScore(ChatColor.BLUE + "Blue:").setScore(Team.getBluePlayers().size());
@@ -184,26 +163,12 @@ public class TeamDeathmatch extends BasePluginGamemode{
     public void End(Map m){
         state = GameState.IDLE;
 
-        for(Player p : players){
+        for(Player p : Bukkit.getOnlinePlayers()){
             Team.removeFromTeam(p);
         }
         getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
         m.playerLeaveAll();
-        blueTeam = new Team();
-        redTeam = new Team();
-        if(Bukkit.getScoreboardManager().getMainScoreboard() != null){
-            org.bukkit.scoreboard.Team blu = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("blue");
-            org.bukkit.scoreboard.Team rd = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("red");
-            
-            if(blu != null && rd != null){
-                for(OfflinePlayer p : blu.getPlayers()){
-                    blu.removePlayer(p);
-                }
-                for(OfflinePlayer p : rd.getPlayers()){
-                    rd.removePlayer(p);
-                }
-            }
-        }
+        
         super.End(m);
     }
     
@@ -245,6 +210,8 @@ public class TeamDeathmatch extends BasePluginGamemode{
                     
                 }
                 PlayerStat.addGameWon(Teams.BLUE);
+                PlayerStat.addGameLost(Teams.RED);
+                PlayerStat.addGameSpectatedAll();
                 End(map);
                 }
                 else if(Points.getScore(ChatColor.BLUE + "Blue:").getScore() <= 0){
@@ -254,6 +221,8 @@ public class TeamDeathmatch extends BasePluginGamemode{
                     
                     }
                     PlayerStat.addGameWon(Teams.RED);
+                    PlayerStat.addGameLost(Teams.BLUE);
+                    PlayerStat.addGameSpectatedAll();
                     End(map);
                     e.getEntity().teleport(new Location(p.getWorld(), 346, 40, 513));
                 }
@@ -290,6 +259,8 @@ public class TeamDeathmatch extends BasePluginGamemode{
                     
                     }
                     PlayerStat.addGameWon(Teams.BLUE);
+                    PlayerStat.addGameLost(Teams.RED);
+                    PlayerStat.addGameSpectatedAll();
                     End(map);
                 }
                 else if(Team.getBluePlayers().size() <= 0){
@@ -299,6 +270,8 @@ public class TeamDeathmatch extends BasePluginGamemode{
                     
                     }
                     PlayerStat.addGameWon(Teams.RED);
+                    PlayerStat.addGameLost(Teams.BLUE);
+                    PlayerStat.addGameSpectatedAll();
                     End(map);
                 }
             }
@@ -314,6 +287,8 @@ public class TeamDeathmatch extends BasePluginGamemode{
                         player.sendMessage(ChatColor.BLUE + "Blue Team Wins!");
                     }
                     PlayerStat.addGameWon(Teams.BLUE);
+                    PlayerStat.addGameLost(Teams.RED);
+                    PlayerStat.addGameSpectatedAll();
                     End(map);
                 }
                 else if(Team.getBluePlayers().size() == 0){
@@ -322,6 +297,8 @@ public class TeamDeathmatch extends BasePluginGamemode{
                         player.sendMessage(ChatColor.RED + "Red Team Wins!");
                     }
                     PlayerStat.addGameWon(Teams.RED);
+                    PlayerStat.addGameLost(Teams.BLUE);
+                    PlayerStat.addGameSpectatedAll();
                     End(map);
                 }
             }

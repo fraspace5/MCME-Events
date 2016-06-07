@@ -86,6 +86,7 @@ public abstract class BasePluginGamemode implements Gamemode{
             p.setPlayerListName(ChatColor.WHITE + p.getName());
             p.getInventory().clear();
             p.setMaxHealth(20);
+            p.setExp(0.0F);
             p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
             new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
             p.setGameMode(GameMode.ADVENTURE);
@@ -100,7 +101,7 @@ public abstract class BasePluginGamemode implements Gamemode{
     
     
     public boolean midgamePlayerJoin(Player p){
-        PVPCommandCore.getRunningGame().getGm().getPlayers().add(p);
+        PlayerStat.getPlayerStats().get(p.getName()).addPlayedGame();
         return true;
     };
     

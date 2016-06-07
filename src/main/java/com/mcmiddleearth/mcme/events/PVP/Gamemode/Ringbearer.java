@@ -88,12 +88,14 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
     boolean hasTeams = false;
     
     @Getter
-    private Player redBearer;
+    private Player redBearer = null;
     private boolean redCanRespawn;
+    private boolean redBearerHasRespawned;
     
     @Getter
-    private Player blueBearer;
+    private Player blueBearer = null;
     private boolean blueCanRespawn;
+    private boolean blueBearerHasRespawned;
     
     private GameEvents events;
     
@@ -106,20 +108,20 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
             @Override
             public void run() {
                 if(state == GameState.RUNNING){
-                    if(redBearer.getExp() < 7f){
-                        redBearer.setExp(redBearer.getExp() + 0.004f);
+                    if(redBearer != null){
+                        if(redBearer.getExp() < 1f && !redBearer.hasPotionEffect(PotionEffectType.INVISIBILITY)){
+                            redBearer.setExp(redBearer.getExp() + 0.006f);
+                        }
                     }
-                    if(blueBearer.getExp() < 7f){
-                        blueBearer.setExp(blueBearer.getExp() + 0.004f);
+                    if(blueBearer != null){
+                        if(blueBearer.getExp() < 1f && !blueBearer.hasPotionEffect(PotionEffectType.INVISIBILITY)){
+                            blueBearer.setExp(blueBearer.getExp() + 0.006f); 
+                        }
                     }
                 }
             }
             
         };
-    
-    public Ringbearer(){
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(), exp, 20, 20);
-    }
     
     @Override
     public void Start(Map m,int parameter) {
@@ -141,6 +143,11 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
             pm.registerEvents(events, Main.getPlugin());
             eventsRegistered = true;
         }
+        
+        blueCanRespawn = true;
+        blueBearerHasRespawned = false;
+        redCanRespawn = true;
+        redBearerHasRespawned = false;
         
         for(Player p : Bukkit.getOnlinePlayers()){
             if(players.contains(p)){
@@ -176,20 +183,14 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                         
                         Random r = new Random();
                         
-                        if(Team.getRedPlayers().size() == 0 || Team.getBluePlayers().size() == 0){
-                            for(Player p : players){
-                                p.sendMessage(ChatColor.YELLOW + "There must be at least one player on each team!");
-                            }
-                            End(map);
-                        }
                         if(Team.getRedPlayers().size() == 1){
                             setRingbearer(Teams.RED, Team.getRedPlayers().get(0));
-                        }else{
+                        }else if(Team.getRedPlayers().size() > 0){
                             setRingbearer(Teams.RED, Team.getRedPlayers().get(r.nextInt(Team.getRedPlayers().size())));
                         }
                         if(Team.getBluePlayers().size() == 1){
                             setRingbearer(Teams.BLUE, Team.getBluePlayers().get(0));
-                        }else{
+                        }else if(Team.getBluePlayers().size() > 0){
                             setRingbearer(Teams.BLUE, Team.getBluePlayers().get(r.nextInt(Team.getBluePlayers().size())));
                         }
                         
@@ -211,6 +212,7 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                         
                         Points.getScore(ChatColor.BLUE + "Blue:").setScore(Team.getBluePlayers().size());
                         Points.getScore(ChatColor.RED + "Red:").setScore(Team.getRedPlayers().size());
+                        Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(), exp, 0, 20);
                         
                         state = GameState.RUNNING;
                         count = -1;
@@ -229,8 +231,6 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
         
         if(t == Teams.BLUE){
             blueBearer = p;
-            blueBearer.setMaxHealth(40);
-            blueBearer.setHealth(40);
             GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.RINGBEARER);
             
             blueBearer.sendMessage(ChatColor.BLUE + "You are Blue Team's Bearer!");
@@ -247,8 +247,6 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
         }
         else if(t == Teams.RED){
             redBearer = p;
-            redBearer.setMaxHealth(40);
-            redBearer.setHealth(40);
             GearHandler.giveGear(p, ChatColor.RED, SpecialGear.RINGBEARER);
             
             redBearer.sendMessage(ChatColor.RED + "You are Red Team's Bearer!");
@@ -270,25 +268,12 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
 
         redBearer = null;
         blueBearer = null;
-        for(Player p : players){
+        for(Player p : Bukkit.getOnlinePlayers()){
             Team.removeFromTeam(p);
         }
         
         m.playerLeaveAll();
         
-        if(Bukkit.getScoreboardManager().getMainScoreboard() != null){
-            org.bukkit.scoreboard.Team blu = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("blue");
-            org.bukkit.scoreboard.Team rd = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("red");
-            
-            if(blu != null && rd != null){
-                for(OfflinePlayer p : blu.getPlayers()){
-                    blu.removePlayer(p);
-                }
-                for(OfflinePlayer p : rd.getPlayers()){
-                    rd.removePlayer(p);
-                }
-            }
-        }
         super.End(m);
     }
         
@@ -305,12 +290,14 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
         if(redCanRespawn && !blueCanRespawn){
             Team.addToTeam(p, Teams.RED);
             p.teleport(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
+            Points.getScore(ChatColor.RED + "Red:").setScore(Points.getScore(ChatColor.RED + "Red:").getScore() + 1);
             
             GearHandler.giveGear(p, ChatColor.RED, SpecialGear.NONE);
         }
         else if(blueCanRespawn && !redCanRespawn){
             Team.addToTeam(p, Teams.BLUE);
             p.teleport(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
+            Points.getScore(ChatColor.BLUE + "Blue:").setScore(Points.getScore(ChatColor.BLUE + "Blue:").getScore() + 1);
             
             GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
         }
@@ -318,13 +305,13 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
             
             if(Team.getRedPlayers().size() >= Team.getBluePlayers().size()){
                 Team.addToTeam(p, Teams.BLUE);
-                p.teleport(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
-            
                 GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
+                Points.getScore(ChatColor.BLUE + "Blue:").setScore(Points.getScore(ChatColor.BLUE + "Blue:").getScore() + 1);
             }
             else if(Team.getRedPlayers().size() < Team.getBluePlayers().size()){
                 Team.addToTeam(p, Teams.RED);
                 p.teleport(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
+                Points.getScore(ChatColor.RED + "Red:").setScore(Points.getScore(ChatColor.RED + "Red:").getScore() + 1);
             
                 GearHandler.giveGear(p, ChatColor.RED, SpecialGear.NONE);
             }
@@ -349,7 +336,8 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                     
                     if(redBearer.equals(p) && redCanRespawn){
                         redCanRespawn = false;
-                        p.setMaxHealth(20);
+                        redBearer.getInventory().clear();
+                        GearHandler.giveGear(p, ChatColor.RED, SpecialGear.NONE);
                         
                         for(Player pl : Bukkit.getOnlinePlayers()){
                             pl.sendMessage(ChatColor.RED + "Red Team's Ringbearer has been killed!");
@@ -367,7 +355,8 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                     
                     if(blueBearer.equals(p) && blueCanRespawn){
                         blueCanRespawn = false;
-                        p.setMaxHealth(20);
+                        blueBearer.getInventory().clear();
+                        GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
                         
                         for(Player pl : Bukkit.getOnlinePlayers()){
                             pl.sendMessage(ChatColor.BLUE + "Blue Team's Ringbearer has been killed!");
@@ -377,7 +366,6 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                     
                     else if(!blueCanRespawn){
                         Team.removeFromTeam(p);
-                        Team.addToTeam(p, Teams.SPECTATORS);
                     }
                     
                 }
@@ -392,6 +380,8 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                         pl.sendMessage(ChatColor.BLUE + "Blue Team Wins!");
                     }
                     PlayerStat.addGameWon(Teams.BLUE);
+                    PlayerStat.addGameLost(Teams.RED);
+                    PlayerStat.addGameSpectatedAll();
                     End(map);
                 }
                 else if(Team.getBluePlayers().size() <= 0){
@@ -401,7 +391,28 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                         pl.sendMessage(ChatColor.RED + "Red Team Wins!");
                     }
                     PlayerStat.addGameWon(Teams.RED);
+                    PlayerStat.addGameLost(Teams.BLUE);
+                    PlayerStat.addGameSpectatedAll();
                     End(map);
+                }
+                
+                if(state == GameState.RUNNING){
+                    if(Team.getRedPlayers().contains(p)){
+                        
+                        if(p.equals(redBearer) && redBearerHasRespawned){
+                            Team.addToTeam(p, Teams.SPECTATORS);
+                        }else if(!p.equals(redBearer) && !redCanRespawn){
+                            Team.addToTeam(p, Teams.SPECTATORS);
+                        }
+                        
+                    }else if(Team.getBluePlayers().contains(p)){
+                        if(p.equals(blueBearer) && blueBearerHasRespawned){
+                            Team.addToTeam(p, Teams.SPECTATORS);
+                        }else if(!p.equals(blueBearer) && !blueCanRespawn){
+                            Team.addToTeam(p, Teams.SPECTATORS);
+                        }
+                    }
+                    
                 }
             }
             
@@ -414,12 +425,16 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                 if(Team.getRedPlayers().contains(e.getPlayer())){
                     if(redCanRespawn){
                         e.setRespawnLocation(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
+                    }else if(e.getPlayer().equals(redBearer) && !redBearerHasRespawned){
+                        e.setRespawnLocation(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
                     }else{
                         e.setRespawnLocation(map.getSpawn().toBukkitLoc().add(0, 2, 0));
                     }
                     
                 }else if(Team.getBluePlayers().contains(e.getPlayer())){
                     if(blueCanRespawn){
+                        e.setRespawnLocation(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
+                    }else if(e.getPlayer().equals(blueBearer) && !blueBearerHasRespawned){
                         e.setRespawnLocation(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
                     }else{
                         e.setRespawnLocation(map.getSpawn().toBukkitLoc().add(0, 2, 0));
@@ -441,10 +456,14 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                     
                     for(Player p : Team.getRedPlayers()){
                         if(loop == bearerNum){
-                            p.getInventory().clear();
-                            setRingbearer(Teams.RED, p);
+                            if(!p.equals(e.getPlayer())){
+                                p.getInventory().clear();
+                                setRingbearer(Teams.RED, p);
+                                break;
+                            }else{
+                                bearerNum++;
+                            }
                             
-                            break;
                         }
                         loop++;
                     }
@@ -456,10 +475,13 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                     
                     for(Player p : Team.getBluePlayers()){
                         if(loop == bearerNum){
-                            p.getInventory().clear();
-                            setRingbearer(Teams.BLUE, p);
-                            
-                            break;
+                            if(!p.equals(e.getPlayer())){
+                                p.getInventory().clear();
+                                setRingbearer(Teams.BLUE, p);
+                                break;
+                            }else{
+                                bearerNum++;
+                            }
                         }
                         loop++;
                     }
@@ -475,6 +497,8 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                         pl.sendMessage(ChatColor.RED + "Red Team Wins!");
                     }
                     PlayerStat.addGameWon(Teams.RED);
+                    PlayerStat.addGameLost(Teams.BLUE);
+                    PlayerStat.addGameSpectatedAll();
                     End(map);
                     
                 }
@@ -485,6 +509,8 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                         pl.sendMessage(ChatColor.BLUE + "Blue Team Wins!");
                     }
                     PlayerStat.addGameWon(Teams.BLUE);
+                    PlayerStat.addGameLost(Teams.RED);
+                    PlayerStat.addGameSpectatedAll();
                     End(map);
                     
                 }

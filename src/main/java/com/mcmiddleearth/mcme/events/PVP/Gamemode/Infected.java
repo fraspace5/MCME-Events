@@ -58,15 +58,6 @@ import org.bukkit.scoreboard.ScoreboardManager;
  */
 public class Infected extends BasePluginGamemode{
     
-    @Getter
-    private Team infected = new Team();
-    
-    @Getter
-    private Team survivors = new Team();
-    
-    @Getter
-    private Team spectatingTeam = new Team();
-    
     private static boolean eventsRegistered = false;
     
     @Getter
@@ -125,6 +116,8 @@ public class Infected extends BasePluginGamemode{
                 }
                 
                 PlayerStat.addGameWon(Teams.SURVIVORS);
+                PlayerStat.addGameLost(Teams.INFECTED);
+                PlayerStat.addGameSpectatedAll();
                 End(map);
             }
         }
@@ -187,18 +180,6 @@ public class Infected extends BasePluginGamemode{
                         
                         Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(), tick, 0, 20);
                         
-                        if(Bukkit.getScoreboardManager().getMainScoreboard() != null){
-                            org.bukkit.scoreboard.Team blu = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("blue");
-                            org.bukkit.scoreboard.Team rd =  Bukkit.getScoreboardManager().getMainScoreboard().getTeam("red");
-                            if(blu != null && rd != null){
-                                for(Player p : Team.getRedPlayers()){
-                                    rd.addPlayer(p);
-                                }
-                                for(Player p : Team.getSurvivors()){
-                                    blu.addPlayer(p);
-                                }
-                            }
-                        }
                         Points = getScoreboard().registerNewObjective("Remaining", "dummy");
                         Points.setDisplayName("Time: " + time + "m");
                         time *= 60;
@@ -218,7 +199,6 @@ public class Infected extends BasePluginGamemode{
 
                             p.setScoreboard(getScoreboard());
                             GearHandler.giveGear(p, ChatColor.DARK_RED, SpecialGear.INFECTED);
-                            p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 1, 1000000, true, false));
                         }
                         state = GameState.RUNNING;
                         count = -1;
@@ -240,26 +220,13 @@ public class Infected extends BasePluginGamemode{
     public void End(Map m){
         state = GameState.IDLE;
 
-        for(Player p : players){
+        for(Player p : Bukkit.getOnlinePlayers()){
             Team.removeFromTeam(p);
         }
         getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
         m.playerLeaveAll();
-        survivors = new Team();
-        infected = new Team();
-        if(Bukkit.getScoreboardManager().getMainScoreboard() != null){
-            org.bukkit.scoreboard.Team blu = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("blue");
-            org.bukkit.scoreboard.Team rd = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("red");
-            
-            if(blu != null && rd != null){
-                for(OfflinePlayer p : blu.getPlayers()){
-                    blu.removePlayer(p);
-                }
-                for(OfflinePlayer p : rd.getPlayers()){
-                    rd.removePlayer(p);
-                }
-            }
-        }
+        
+        
         super.End(m);
     }
     
@@ -301,6 +268,8 @@ public class Infected extends BasePluginGamemode{
                     
                     }
                     PlayerStat.addGameWon(Teams.INFECTED);
+                    PlayerStat.addGameLost(Teams.SURVIVORS);
+                    PlayerStat.addGameSpectatedAll();
                     End(map);
                 }
             }
@@ -317,15 +286,15 @@ public class Infected extends BasePluginGamemode{
         @EventHandler
         public void onPlayerLeave(PlayerQuitEvent e){
             
-            System.out.println("Event called!");
+            
             if(state == GameState.RUNNING || state == GameState.COUNTDOWN){
-                System.out.println("Entered 1st if!!");
+                
                 if(Team.getInfected().contains(e.getPlayer())){
                     Points.getScore(ChatColor.DARK_RED + "Infected:").setScore(Points.getScore(ChatColor.DARK_RED + "Infected:").getScore() - 1);
                 }
                 else if(Team.getSurvivors().contains(e.getPlayer())){
                     Points.getScore(ChatColor.BLUE + "Survivors:").setScore(Points.getScore(ChatColor.BLUE + "Survivors:").getScore() - 1);
-                    System.out.println("Entered 2nd if!!");
+                    
                 }
                 Team.removeFromTeam(e.getPlayer());
                 e.getPlayer().getInventory().clear();
@@ -340,6 +309,8 @@ public class Infected extends BasePluginGamemode{
                     
                     }
                     PlayerStat.addGameWon(Teams.INFECTED);
+                    PlayerStat.addGameLost(Teams.SURVIVORS);
+                    PlayerStat.addGameSpectatedAll();
                     End(map);
                 }
                 else if(Team.getInfected().size() <= 0){
@@ -367,6 +338,8 @@ public class Infected extends BasePluginGamemode{
                         player.sendMessage(ChatColor.BLUE + "Remaining:" + ChatColor.AQUA + remainingPlayers);
                     }
                     PlayerStat.addGameWon(Teams.SURVIVORS);
+                    PlayerStat.addGameLost(Teams.INFECTED);
+                    PlayerStat.addGameSpectatedAll();
                     End(map);
                 }
             }

@@ -47,15 +47,13 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
+import org.bukkit.Achievement;
 
 /**
  *
  * @author Eric
  */
 public class OneInTheQuiver extends BasePluginGamemode{
-    
-    @Getter
-    private Team spectatingTeam = new Team();
     
     private static boolean eventsRegistered = false;
     
@@ -157,6 +155,7 @@ public class OneInTheQuiver extends BasePluginGamemode{
                 }
             }else{
                 Team.addToTeam(p, Team.Teams.SPECTATORS);
+                Team.addToBukkitTeam(p, ChatColor.GRAY);
                 p.teleport(map.getSpawn().toBukkitLoc());
             }
             
@@ -199,6 +198,7 @@ public class OneInTheQuiver extends BasePluginGamemode{
                                 p.setPlayerListName(chatColors[k] + newName);
                             }
                             GearHandler.giveGear(p, chatColors[k], SpecialGear.ONEINTHEQUIVER);
+                            Team.addToBukkitTeam(p, chatColors[k]);
                         
                             if(chatColors.length == (k+1)){
                                 k = 0;
@@ -220,6 +220,7 @@ public class OneInTheQuiver extends BasePluginGamemode{
     }
     
     public void End(Map m){
+        PlayerStat.addGameSpectatedAll();
         state = GameState.IDLE;
         hasPlayed.clear();
         
@@ -323,6 +324,12 @@ public class OneInTheQuiver extends BasePluginGamemode{
             p.sendMessage(ChatColor.GREEN + "Most Deaths: " + deathMessage);
             p.sendMessage(ChatColor.GREEN + "Highest KD: " + kDMessage);
         }
+        
+        Team.getSpectators().clear();
+        for(Player p : Bukkit.getOnlinePlayers()){
+            Team.removeFromBukkitTeam(p);
+        }
+        
         getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
         m.playerLeaveAll();
         playerDeaths.clear();

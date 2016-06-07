@@ -20,8 +20,10 @@ package com.mcmiddleearth.mcme.events.PVP;
 
 import com.mcmiddleearth.mcme.events.Event;
 import com.mcmiddleearth.mcme.events.Main;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.anticheat.AntiCheatListeners;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.AllGameHandlers;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.GearEvents;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.JoinLeaveHandler;
 import com.mcmiddleearth.mcme.events.PVP.Servlet.PVPServer;
 import com.mcmiddleearth.mcme.events.Util.CLog;
@@ -90,6 +92,9 @@ public class PVPCore implements Event{
         pm.registerEvents(new JoinLeaveHandler(), Main.getPlugin());
         pm.registerEvents(new AllGameHandlers(), Main.getPlugin());
         pm.registerEvents(new PlayerStat.StatListener(), Main.getPlugin());
+        pm.registerEvents(new GearEvents(), Main.getPlugin());
+        pm.registerEvents(new AntiCheatListeners(), Main.getPlugin());
+        
         try {
             server = new PVPServer(3333);
             server.getServ().start();

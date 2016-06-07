@@ -19,15 +19,23 @@
 package com.mcmiddleearth.mcme.events.PVP.Handlers;
 
 import com.mcmiddleearth.mcme.events.Main;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.GameState;
 import com.mcmiddleearth.mcme.events.PVP.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
+import com.mcmiddleearth.mcme.events.PVP.Team;
 import com.mcmiddleearth.mcme.events.Util.DBmanager;
 import java.io.File;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -59,9 +67,7 @@ public class AllGameHandlers implements Listener{
                     }
                 }
             }
-        }
-        if(PVPCommandCore.getRunningGame() == null){
-            
+        }else{   
             e.setRespawnLocation(PVPCore.getSpawn());
         }
     }
@@ -71,6 +77,73 @@ public class AllGameHandlers implements Listener{
         for(String mn : Map.maps.keySet()){
             Map m = Map.maps.get(mn);
             DBmanager.saveObj(m, new File(PVPCore.getSaveLoc() + Main.getFileSep() + "Maps"), mn);
+        }
+    }
+    
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent e){
+        Location from = e.getFrom();
+        Location to = e.getTo();
+
+        if(PVPCommandCore.getRunningGame() != null){
+            if(PVPCommandCore.getRunningGame().getGm().getState() == GameState.COUNTDOWN && !Team.getSpectators().contains(e.getPlayer())){
+                if(from.getX() != to.getX() || from.getZ() != to.getZ()){
+                    e.setTo(from);
+                }
+            }
+        }
+        
+    }
+    
+    @EventHandler
+    public void onPlayerDamageByEntity(EntityDamageByEntityEvent e){
+        Player damagee = null;
+        Player damager = null;
+        
+        if(PVPCommandCore.getRunningGame() == null){
+            e.setCancelled(true);
+            return;
+        }
+        else{
+            if(PVPCommandCore.getRunningGame().getGm().getState() != GameState.RUNNING){
+                e.setCancelled(true);
+                return;
+            }
+        }
+        
+        if(e.getEntity() instanceof Player){
+            damagee = (Player) e.getEntity();
+        }
+        else{
+            return;
+        }
+        
+        if(e.getDamager() instanceof Player){
+            damager = (Player) e.getDamager();
+        }
+        else if(e.getDamager() instanceof Arrow){
+            if(((Arrow) e.getDamager()).getShooter() instanceof Player){
+                damager =  (Player) ((Arrow) e.getDamager()).getShooter();
+            }
+        }
+        else{
+            return;
+        }
+        
+        if(Team.areTeamMates(damagee, damager)){
+            e.setCancelled(true);
+        }
+        
+    }
+    
+    @EventHandler
+    public void onPlayerDamage(EntityDamageEvent e){
+        if(e.getEntity() instanceof Player){
+            if(PVPCommandCore.getRunningGame() == null){
+                e.setCancelled(true);
+            }else if(PVPCommandCore.getRunningGame().getGm().getState() != GameState.RUNNING){
+                e.setCancelled(true);
+            }
         }
     }
 }

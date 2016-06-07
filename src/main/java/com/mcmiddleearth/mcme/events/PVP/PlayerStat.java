@@ -60,6 +60,12 @@ public class PlayerStat {
     @Getter
     private int gamesWon = 0;
     
+    @Getter
+    private int gamesLost = 0;
+    
+    @Getter
+    private int gamesSpectated = 0;
+    
     @Getter @Setter @JsonIgnore
     private ArrayList<Achivement> chives = new ArrayList<>();
     
@@ -107,6 +113,8 @@ public class PlayerStat {
     public void addKill(){Kills++;}
     public void addPlayedGame(){gamesPlayed++;}
     public void addGameWon(){gamesWon++;}
+    public void addGameLost(){gamesLost++;};
+    public void addGameSpectated(){gamesSpectated++;};
     
     public static class Achivement{
         @Getter @Setter
@@ -142,6 +150,38 @@ public class PlayerStat {
                 break;
         }
         
+    }
+    
+    public static void addGameLost(Teams t){
+        switch(t){
+            case RED:
+                for(Player p : Team.getRedPlayers()){
+                    PlayerStat.getPlayerStats().get(p.getName()).addGameLost();
+                }
+                break;
+                
+            case BLUE:
+                for(Player p : Team.getBluePlayers()){
+                    PlayerStat.getPlayerStats().get(p.getName()).addGameLost();
+                }
+                break;
+            case INFECTED:
+                for(Player p : Team.getInfected()){
+                    PlayerStat.getPlayerStats().get(p.getName()).addGameLost();
+                }
+                break;
+            case SURVIVORS:
+                for(Player p : Team.getSurvivors()){
+                    PlayerStat.getPlayerStats().get(p.getName()).addGameLost();
+                }
+                break;
+        }
+        
+    }
+    public static void addGameSpectatedAll(){
+        for(Player p : Team.getSpectators()){
+            PlayerStat.getPlayerStats().get(p.getName()).addGameSpectated();
+        }
     }
     
     public static class StatListener implements Listener{
