@@ -20,6 +20,7 @@ package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
 import com.mcmiddleearth.mcme.events.Main;
 import static com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.getScoreboard;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.BukkitTeamHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.SpecialGear;
@@ -164,7 +165,7 @@ public class FreeForAll extends BasePluginGamemode{
                 }
             }else{
                 Team.addToTeam(p, Team.Teams.SPECTATORS);
-                Team.addToBukkitTeam(p, ChatColor.GRAY);
+                BukkitTeamHandler.addToBukkitTeam(p, ChatColor.GRAY);
                 p.teleport(map.getSpawn().toBukkitLoc());
             }
             
@@ -208,7 +209,7 @@ public class FreeForAll extends BasePluginGamemode{
                                 p.setPlayerListName(chatColors[k] + newName);
                             }
                             GearHandler.giveGear(p, chatColors[k], SpecialGear.NONE);
-                            Team.addToBukkitTeam(p, chatColors[k]);
+                            BukkitTeamHandler.addToBukkitTeam(p, chatColors[k]);
                   
                             if(chatColors.length == (k+1)){
                                 k = 0;
@@ -338,7 +339,7 @@ public class FreeForAll extends BasePluginGamemode{
         Team.getSpectators().clear();
         
         for(Player p : Bukkit.getOnlinePlayers()){
-            Team.removeFromBukkitTeam(p);
+            BukkitTeamHandler.removeFromBukkitTeam(p);
         }
         
         getScoreboard().clearSlot(DisplaySlot.SIDEBAR);

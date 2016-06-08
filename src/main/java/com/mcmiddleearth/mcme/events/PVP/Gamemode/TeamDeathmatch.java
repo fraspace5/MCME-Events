@@ -200,7 +200,6 @@ public class TeamDeathmatch extends BasePluginGamemode{
                 }
                 
                 Team.removeFromTeam(p);
-                Team.addToTeam(p, Team.Teams.SPECTATORS);
                 
                 if(Points.getScore(ChatColor.RED + "Red:").getScore() <= 0){
                 
@@ -225,6 +224,10 @@ public class TeamDeathmatch extends BasePluginGamemode{
                     PlayerStat.addGameSpectatedAll();
                     End(map);
                     e.getEntity().teleport(new Location(p.getWorld(), 346, 40, 513));
+                }
+                
+                if(state == GameState.RUNNING){
+                    Team.addToTeam(p, Teams.SPECTATORS);
                 }
             }
         }

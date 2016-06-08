@@ -54,7 +54,7 @@ public abstract class BasePluginGamemode implements Gamemode{
     }
     
     @Getter
-    private static Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+    private static Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
     
     public void playerLeave(Player p){
         players.remove(p);

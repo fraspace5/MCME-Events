@@ -21,6 +21,7 @@ package com.mcmiddleearth.mcme.events.PVP;
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.GameState;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.BukkitTeamHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.CommandBlockHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler;
@@ -201,7 +202,7 @@ public class PVPCommandCore implements CommandExecutor{
                                 p.setDisplayName(ChatColor.GREEN + p.getName());
                                 ChatHandler.getPlayerColors().put(p.getName(), ChatColor.GREEN);
                                 ChatHandler.getPlayerPrefixes().put(p.getName(), ChatColor.GREEN + "Participant");
-                                Team.addToBukkitTeam(p, ChatColor.GREEN);
+                                BukkitTeamHandler.addToBukkitTeam(p, ChatColor.GREEN);
                             }
                                
                         }else{
@@ -238,7 +239,8 @@ public class PVPCommandCore implements CommandExecutor{
                         return true;
                     }
                     giveRules(p,gm);
-                }else if(args[0].equalsIgnoreCase("cleargames") && p.getName().equalsIgnoreCase("Dallen")){
+                }
+                else if(args[0].equalsIgnoreCase("cleargames") && p.getName().equalsIgnoreCase("Dallen")){
                     for(File f : new File(PVPCore.getSaveLoc() + Main.getFileSep() + "Maps").listFiles()){
                         f.delete();
                     }

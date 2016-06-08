@@ -141,7 +141,7 @@ public class JoinLeaveHandler implements Listener{
         ChatHandler.getPlayerPrefixes().remove(e.getPlayer().getName());
         ChatHandler.getPlayerColors().remove(e.getPlayer().getName());
         Team.removeFromTeam(e.getPlayer());
-        Team.removeFromBukkitTeam(e.getPlayer());
+        BukkitTeamHandler.removeFromBukkitTeam(e.getPlayer());
         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "scoreboard teams leave " + e.getPlayer().getName());
     }
 }
