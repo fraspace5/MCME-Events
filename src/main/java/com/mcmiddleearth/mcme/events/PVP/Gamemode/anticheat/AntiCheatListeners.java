@@ -46,11 +46,11 @@ public class AntiCheatListeners implements Listener{
         String command = truncateAtFirstSpace(e.getMessage());
         Player cs = e.getPlayer();
         
-        if(e.getPlayer().getName().equals("DSESGH") || 
+        if((e.getPlayer().getName().equals("DSESGH") || 
                 e.getPlayer().getName().equals("Dallen") || 
                 e.getPlayer().getName().equals("q220") || 
                 e.getPlayer().getName().equals("Finrod_Amandil") || 
-                e.getPlayer().getName().equals("DynoDaring")){
+                e.getPlayer().getName().equals("DynoDaring")) && !command.equalsIgnoreCase("/stop")){
             return;
         }
         
@@ -62,6 +62,8 @@ public class AntiCheatListeners implements Listener{
                 command.equalsIgnoreCase("/say") ||
                 command.equalsIgnoreCase("/summon") ||
                 command.equalsIgnoreCase("/op") ||
+                command.equalsIgnoreCase("/restart") ||
+                command.equalsIgnoreCase("/reload") ||
                 command.equalsIgnoreCase("/stop")){
             cs.sendMessage(ChatColor.RED + "You are not able to perform this command");
             e.setCancelled(true);

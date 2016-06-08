@@ -246,7 +246,7 @@ public class PVPCommandCore implements CommandExecutor{
                     }
                     Map.maps.clear();
                     p.sendMessage(ChatColor.RED + "Done!");
-                }else if(args[0].equalsIgnoreCase("removegame") && p.getName().equalsIgnoreCase("Dallen")){
+                }else if(args[0].equalsIgnoreCase("removegame") && (p.getName().equals("Dallen") || p.getName().equals("DSESGH"))){
                     Map.maps.remove(args[1]);
                     File f = new File(PVPCore.getSaveLoc() + Main.getFileSep() + "Maps" + Main.getFileSep() + args[1]);
                     f.delete();
