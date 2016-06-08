@@ -239,22 +239,11 @@ public class PVPCommandCore implements CommandExecutor{
                         return true;
                     }
                     giveRules(p,gm);
-                }
-                else if(args[0].equalsIgnoreCase("cleargames") && p.getName().equalsIgnoreCase("Dallen")){
-                    for(File f : new File(PVPCore.getSaveLoc() + Main.getFileSep() + "Maps").listFiles()){
-                        f.delete();
-                    }
-                    Map.maps.clear();
-                    p.sendMessage(ChatColor.RED + "Done!");
                 }else if(args[0].equalsIgnoreCase("removegame") && (p.getName().equals("Dallen") || p.getName().equals("DSESGH"))){
                     Map.maps.remove(args[1]);
                     File f = new File(PVPCore.getSaveLoc() + Main.getFileSep() + "Maps" + Main.getFileSep() + args[1]);
                     f.delete();
                     p.sendMessage(ChatColor.RED + "Deleted " + args[1]);
-                }else if(args[0].equalsIgnoreCase("clearstats")){
-                    for(File f : new File(PVPCore.getSaveLoc() + Main.getFileSep() + "stats").listFiles()){
-                        f.delete();
-                    }
                 }
                  
             return new MapEditor().onCommand(cs, cmnd, label, args);

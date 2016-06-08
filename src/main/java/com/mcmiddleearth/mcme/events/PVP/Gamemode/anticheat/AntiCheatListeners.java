@@ -156,9 +156,9 @@ public class AntiCheatListeners implements Listener{
         double xZDistance = Math.sqrt(Math.pow(to.getX() - from.getX(), 2) + Math.pow(to.getZ() - from.getZ(), 2));
         double yDistance = to.getY() - from.getY();
         
-        if(xZDistance >= 0.615 || xZDistance <= -0.615){
-            
-            if(Team.getInfected().contains(e.getPlayer()) && xZDistance <= 0.39 && xZDistance >= -0.39){
+        if(xZDistance >= 0.6 || xZDistance <= -0.6){
+            System.out.println(xZDistance + " xz");
+            if(Team.getInfected().contains(e.getPlayer()) && xZDistance <= 0.68 && xZDistance >= -0.68){
                 return;
             }
             else{
@@ -168,7 +168,8 @@ public class AntiCheatListeners implements Listener{
             
         }
         
-        if(yDistance >= .5){
+        if(yDistance >= .51){
+            System.out.println(yDistance + " y");
             e.getPlayer().sendMessage(ChatColor.RED + "You moved too fast!");
             e.setTo(from);
         }

@@ -58,9 +58,7 @@ public class JoinLeaveHandler implements Listener{
         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
             @Override
             public void run(){
-                if(p.getName().equals("DSESGH")){
-                    p.sendMessage("HERE");
-                }
+                
                 p.setMaxHealth(20);
                 
                 if(!p.isDead()){
