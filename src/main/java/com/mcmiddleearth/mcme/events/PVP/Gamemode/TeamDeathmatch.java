@@ -63,7 +63,6 @@ public class TeamDeathmatch extends BasePluginGamemode{
     private final ArrayList<String> NeededPoints = new ArrayList<String>(Arrays.asList(new String[] {
         "RedSpawn",
         "BlueSpawn",
-        "SpectatorSpawn"
     }));
     
     @Getter

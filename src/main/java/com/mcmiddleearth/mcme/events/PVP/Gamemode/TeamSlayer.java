@@ -61,7 +61,6 @@ public class TeamSlayer extends BasePluginGamemode{
         "BlueSpawn1",
         "BlueSpawn2",
         "BlueSpawn3",
-        "SpectatorSpawn",
     }));
     
     @Getter

@@ -251,6 +251,10 @@ public class PVPCommandCore implements CommandExecutor{
                     File f = new File(PVPCore.getSaveLoc() + Main.getFileSep() + "Maps" + Main.getFileSep() + args[1]);
                     f.delete();
                     p.sendMessage(ChatColor.RED + "Deleted " + args[1]);
+                }else if(args[0].equalsIgnoreCase("clearstats")){
+                    for(File f : new File(PVPCore.getSaveLoc() + Main.getFileSep() + "stats").listFiles()){
+                        f.delete();
+                    }
                 }
                  
             return new MapEditor().onCommand(cs, cmnd, label, args);
