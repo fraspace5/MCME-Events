@@ -26,6 +26,7 @@ import com.mcmiddleearth.mcme.events.PVP.Handlers.BukkitTeamHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.GearEvents;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.JoinLeaveHandler;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.WeatherHandler;
 import com.mcmiddleearth.mcme.events.PVP.Servlet.PVPServer;
 import com.mcmiddleearth.mcme.events.Util.CLog;
 import com.mcmiddleearth.mcme.events.Util.DBmanager;
@@ -95,6 +96,7 @@ public class PVPCore implements Event{
         pm.registerEvents(new PlayerStat.StatListener(), Main.getPlugin());
         pm.registerEvents(new GearEvents(), Main.getPlugin());
         pm.registerEvents(new AntiCheatListeners(), Main.getPlugin());
+        pm.registerEvents(new WeatherHandler(), Main.getPlugin());
         
         BukkitTeamHandler.configureBukkitTeams();
         

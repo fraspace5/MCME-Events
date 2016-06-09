@@ -46,6 +46,11 @@ public class AntiCheatListeners implements Listener{
         String command = truncateAtFirstSpace(e.getMessage());
         Player cs = e.getPlayer();
         
+        if(command.equalsIgnoreCase("/toggledownfall")){
+            cs.sendMessage(ChatColor.GRAY + "Rain has been disabled, as it causes lag for some players");
+            e.setCancelled(true);
+        }
+        
         if((e.getPlayer().getName().equals("DSESGH") || 
                 e.getPlayer().getName().equals("Dallen") || 
                 e.getPlayer().getName().equals("q220") || 
@@ -156,12 +161,12 @@ public class AntiCheatListeners implements Listener{
         double xZDistance = Math.sqrt(Math.pow(to.getX() - from.getX(), 2) + Math.pow(to.getZ() - from.getZ(), 2));
         double yDistance = to.getY() - from.getY();
         
-        if(xZDistance >= 0.6 || xZDistance <= -0.6){
-            System.out.println(xZDistance + " xz");
+        if(xZDistance >= 0.61 || xZDistance <= -0.61){
             if(Team.getInfected().contains(e.getPlayer()) && xZDistance <= 0.68 && xZDistance >= -0.68){
                 return;
             }
             else{
+                System.out.println(e.getPlayer().getName() + " moved too fast, with an xz distance of " + xZDistance);
                 e.getPlayer().sendMessage(ChatColor.RED + "You moved too fast!");
                 e.setTo(from);
             }
@@ -169,7 +174,7 @@ public class AntiCheatListeners implements Listener{
         }
         
         if(yDistance >= .51){
-            System.out.println(yDistance + " y");
+            System.out.println(e.getPlayer().getName() + " moved too fast, with a y distance of " + yDistance);
             e.getPlayer().sendMessage(ChatColor.RED + "You moved too fast!");
             e.setTo(from);
         }

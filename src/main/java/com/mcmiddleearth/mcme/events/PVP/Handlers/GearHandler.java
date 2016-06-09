@@ -144,13 +144,14 @@ public class GearHandler {
             p.getInventory().setChestplate(items[1]);
             p.getInventory().setLeggings(items[2]);
             p.getInventory().setBoots(items[3]);
-            p.getInventory().addItem(items[4]);
+            
         }
         
         if(sg == SpecialGear.ONEINTHEQUIVER){
             items[5].addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 12);
         }
         
+        p.getInventory().addItem(items[4]);
         p.getInventory().addItem(items[5]);
         
         if(sg == SpecialGear.ONEINTHEQUIVER){

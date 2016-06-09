@@ -73,6 +73,7 @@ public abstract class BasePluginGamemode implements Gamemode{
     @Override
     public void End(Map m){
         PVPCommandCore.setRunningGame(null);
+        PVPCommandCore.toggleVoxel(false);
         
         Bukkit.getScheduler().cancelAllTasks();
         for(Objective o : scoreboard.getObjectives()){
