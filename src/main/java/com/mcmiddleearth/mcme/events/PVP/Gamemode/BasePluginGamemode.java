@@ -86,8 +86,8 @@ public abstract class BasePluginGamemode implements Gamemode{
             p.setDisplayName(ChatColor.WHITE + p.getName());
             p.setPlayerListName(ChatColor.WHITE + p.getName());
             p.getInventory().clear();
-            p.setMaxHealth(20);
-            p.setExp(0.0F);
+            p.setTotalExperience(0);
+            p.setExp(0);
             p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
             new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
             p.setGameMode(GameMode.ADVENTURE);

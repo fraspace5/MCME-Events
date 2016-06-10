@@ -59,13 +59,12 @@ public class JoinLeaveHandler implements Listener{
             @Override
             public void run(){
                 
-                p.setMaxHealth(20);
-                
                 if(!p.isDead()){
                     p.setHealth(20);
                 }
                 
-                p.setExp(0.0F);
+                p.setTotalExperience(0);
+                p.setExp(0);
                 p.setGameMode(GameMode.ADVENTURE);
                 p.getInventory().clear();
                 p.setPlayerListName(ChatColor.WHITE + p.getName());

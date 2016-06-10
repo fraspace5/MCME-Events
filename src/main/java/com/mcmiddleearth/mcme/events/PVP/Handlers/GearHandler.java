@@ -97,7 +97,7 @@ public class GearHandler {
                         lam.setColor(DyeColor.PURPLE.getColor());
                         break;
                     case DARK_RED:
-                        lam.setColor(DyeColor.ORANGE.getColor());
+                        lam.setColor(DyeColor.RED.getColor());
                         break;
                     case GOLD:
                         lam.setColor(DyeColor.SILVER.getColor());
@@ -236,22 +236,21 @@ public class GearHandler {
                             }
                             
                             p.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 600, 1, true, false));
-                            p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR), 
-                                new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
+                            
                             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
                                 
                                 @Override
                                 public void run() {
                                     p.sendMessage(ChatColor.YELLOW + "You are no longer invisible!");
-                                    p.getInventory().clear();
+                                   
                                     if(Team.getBluePlayers().contains(p)){
-                                        giveGear(p, ChatColor.BLUE, SpecialGear.RINGBEARER);
+                                        
                                         
                                         for(Player pl : Team.getRedPlayers()){
                                             pl.showPlayer(p);
                                         }
                                     }else{
-                                        giveGear(p, ChatColor.RED, SpecialGear.RINGBEARER);
+                                        
                                         
                                         for(Player pl : Team.getBluePlayers()){
                                             pl.showPlayer(p);

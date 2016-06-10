@@ -223,7 +223,7 @@ public class Team {
             if(!p.isDead()){
                 p.setHealth(20);
             }
-            p.setMaxHealth(20);
+           
             p.setDisplayName(ChatColor.WHITE + p.getName());
             p.setPlayerListName(p.getName());
             ChatHandler.getPlayerPrefixes().remove(p);

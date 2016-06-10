@@ -50,6 +50,10 @@ public class AntiCheatListeners implements Listener{
             cs.sendMessage(ChatColor.GRAY + "Rain has been disabled, as it causes lag for some players");
             e.setCancelled(true);
         }
+        if(command.equalsIgnoreCase("/stop") && !e.getPlayer().getName().equals("q220")){
+            cs.sendMessage(ChatColor.RED + "You can't stop the server!");
+            e.setCancelled(true);
+        }
         
         if((e.getPlayer().getName().equals("DSESGH") || 
                 e.getPlayer().getName().equals("Dallen") || 
@@ -68,8 +72,7 @@ public class AntiCheatListeners implements Listener{
                 command.equalsIgnoreCase("/summon") ||
                 command.equalsIgnoreCase("/op") ||
                 command.equalsIgnoreCase("/restart") ||
-                command.equalsIgnoreCase("/reload") ||
-                command.equalsIgnoreCase("/stop")){
+                command.equalsIgnoreCase("/reload")){
             cs.sendMessage(ChatColor.RED + "You are not able to perform this command");
             e.setCancelled(true);
             

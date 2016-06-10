@@ -109,13 +109,31 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
             public void run() {
                 if(state == GameState.RUNNING){
                     if(redBearer != null){
-                        if(redBearer.getExp() < 1f && !redBearer.hasPotionEffect(PotionEffectType.INVISIBILITY)){
-                            redBearer.setExp(redBearer.getExp() + 0.006f);
+                        
+                        if(blueBearer != null){
+                            if(redBearer.getExp() < 1f && blueBearer.canSee(redBearer)){
+                                redBearer.setExp(redBearer.getExp() + 0.006f);
+                            }
+                        }else{
+                            Player[] blue = (Player[]) Team.getBluePlayers().toArray();
+                            
+                            if(redBearer.getExp() < 1f && blue[0].canSee(redBearer)){
+                                redBearer.setExp(redBearer.getExp() + 0.006f);
+                            }
                         }
                     }
                     if(blueBearer != null){
-                        if(blueBearer.getExp() < 1f && !blueBearer.hasPotionEffect(PotionEffectType.INVISIBILITY)){
-                            blueBearer.setExp(blueBearer.getExp() + 0.006f); 
+                        
+                        if(redBearer != null){
+                            if(blueBearer.getExp() < 1f && redBearer.canSee(blueBearer)){
+                                blueBearer.setExp(blueBearer.getExp() + 0.006f);
+                            }
+                        }else{
+                            Player[] red = (Player[]) Team.getRedPlayers().toArray();
+                            
+                            if(blueBearer.getExp() < 1f && red[0].canSee(blueBearer)){
+                                blueBearer.setExp(blueBearer.getExp() + 0.006f);
+                            }
                         }
                     }
                 }
