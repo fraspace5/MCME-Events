@@ -19,8 +19,6 @@
 package com.mcmiddleearth.mcme.events.PVP.Handlers;
 
 import com.mcmiddleearth.mcme.events.Main;
-import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.GameState;
-import com.mcmiddleearth.mcme.events.PVP.Gamemode.Gamemode;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Ringbearer;
 import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
 import com.mcmiddleearth.mcme.events.PVP.Team;
@@ -36,7 +34,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.inventory.InventoryInteractEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -196,84 +194,6 @@ public class GearHandler {
         }
         
     }
-    
-    private static boolean areArmorContentsCorrect(SpecialGear sg, Player p){
-        
-        PlayerInventory inv = p.getInventory();
-        
-        if(sg.equals(SpecialGear.INFECTED)){
-            
-            if(inv.getHelmet() != null){
-                if(!inv.getHelmet().getType().equals(Material.AIR)){
-                    return false;
-                }
-            }
-            
-            if(inv.getChestplate() == null){
-                return false;
-            }
-            else if(!inv.getChestplate().getType().equals(Material.LEATHER_CHESTPLATE)){
-                return false;
-            }
-            
-            if(inv.getLeggings() != null){
-                if(!inv.getLeggings().getType().equals(Material.LEATHER_LEGGINGS)){
-                    return false;
-                }
-            }
-            
-            if(inv.getBoots() != null){
-                if(!inv.getBoots().getType().equals(Material.LEATHER_BOOTS)){
-                    return false;
-                }
-            }
-            
-            return true;
-        }else if(sg.equals(SpecialGear.RINGBEARER)){
-            
-            if(inv.getHelmet() == null){
-                return false;
-            }
-            else if(!inv.getHelmet().getType().equals(Material.GLOWSTONE)){
-                return false;
-            }
-            
-        }
-        else{
-            
-            if(inv.getHelmet() == null){
-                return false;
-            }
-            else if(!inv.getHelmet().getType().equals(Material.LEATHER_HELMET)){
-                return false;
-            }
-            
-        }
-        
-        if(inv.getChestplate() == null){
-            return false;
-        }
-        else if(!inv.getChestplate().getType().equals(Material.LEATHER_CHESTPLATE)){
-            return false;
-        }
-        
-        if(inv.getLeggings() == null){
-            return false;
-        }
-        else if(!inv.getLeggings().getType().equals(Material.LEATHER_LEGGINGS)){
-            return false;
-        }
-        
-        if(inv.getBoots() == null){
-            return false;
-        }
-        else if(!inv.getBoots().getType().equals(Material.LEATHER_BOOTS)){
-            return false;
-        }
-        
-        return true;
-    }
-    
     public static class GearEvents implements Listener{
         
         @EventHandler
@@ -290,7 +210,7 @@ public class GearHandler {
                 }
                 
                 if(item.getType().equals(Material.GHAST_TEAR)){
-                    p.getWorld().playEffect((p.getLocation().add(0, 1, 0)), Effect.SMOKE, 4);
+                    p.getWorld().playEffect((p.getLocation().add(0.0, 1.0, 0.0)), Effect.SMOKE, 4);
                     return;
                 }
                 
@@ -354,60 +274,6 @@ public class GearHandler {
         public void returnDroppedItems(PlayerDropItemEvent e){
             if(PVPCommandCore.getRunningGame() != null){
                 e.setCancelled(true);
-            }
-        }
-        
-        //prevent players from switching out armor
-        @EventHandler
-        public void onInventoryInteract(InventoryInteractEvent e){
-            
-            Player p = (Player) e.getWhoClicked();
-            PlayerInventory inv = e.getWhoClicked().getInventory();
-            
-            if(PVPCommandCore.getRunningGame() != null){
-                
-                if(PVPCommandCore.getRunningGame().getGmType().equalsIgnoreCase("ringbearer")){
-                    
-                    Ringbearer gm = (Ringbearer) PVPCommandCore.getRunningGame().getGm();
-                    
-                    if(p.equals(gm.getRedBearer()) || p.equals(gm.getBlueBearer())){
-                        
-                        if(!areArmorContentsCorrect(SpecialGear.RINGBEARER, p)){
-                            e.setCancelled(true);
-                        }
-                        
-                    }
-                    else{
-                        if(!areArmorContentsCorrect(SpecialGear.NONE, p)){
-                            e.setCancelled(true);
-                        }
-                    }
-                    
-                }
-                
-                else if(PVPCommandCore.getRunningGame().getGmType().equalsIgnoreCase("infected")){
-                    
-                    if(Team.getInfected().contains(p)){
-                        
-                        if(!areArmorContentsCorrect(SpecialGear.INFECTED, p)){
-                            e.setCancelled(true);
-                        }
-                        
-                    }
-                    else{
-                        
-                        if(!areArmorContentsCorrect(SpecialGear.NONE, p)){
-                            e.setCancelled(true);
-                        }
-                        
-                    }
-                }
-                else{
-                    
-                    if(!areArmorContentsCorrect(SpecialGear.NONE, p)){
-                        e.setCancelled(true);
-                    }
-                }
             }
         }
     }
