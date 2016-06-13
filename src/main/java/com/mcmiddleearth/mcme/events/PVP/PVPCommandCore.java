@@ -238,6 +238,18 @@ public class PVPCommandCore implements CommandExecutor{
                             f.delete();
                         }
                         
+                        for(PlayerStat ps : PlayerStat.getPlayerStats().values()){
+                            
+                            ps.setKills(0);
+                            ps.setDeaths(0);
+                            ps.setGamesLost(0);
+                            ps.setGamesWon(0);
+                            ps.setGamesSpectated(0);
+                            ps.setGamesPlayed(0);
+                            ps.getPlayersKilled().clear();
+                            
+                        }
+                        
                     }
                      
                 }else if(args[0].equalsIgnoreCase("rules")){

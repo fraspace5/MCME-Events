@@ -45,7 +45,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
  */
 public class PlayerStat {
     
-    @Getter @Setter
+    @Getter
     private ArrayList<String> playersKilled = new ArrayList<String>();
     
     @Getter @Setter
@@ -54,16 +54,16 @@ public class PlayerStat {
     @Getter @Setter
     private int Deaths = 0;
     
-    @Getter
+    @Getter @Setter
     private int gamesPlayed = 0;
     
-    @Getter
+    @Getter @Setter
     private int gamesWon = 0;
     
-    @Getter
+    @Getter @Setter
     private int gamesLost = 0;
     
-    @Getter
+    @Getter @Setter
     private int gamesSpectated = 0;
     
     @Getter @Setter
@@ -112,13 +112,6 @@ public class PlayerStat {
     public void addGameWon(){gamesWon++;}
     public void addGameLost(){gamesLost++;};
     public void addGameSpectated(){gamesSpectated++;};
-    
-    public void removeDeath(int num){Deaths-=num;}
-    public void removeKill(int num){Kills-=num;}
-    public void removePlayedGame(int num){gamesPlayed-=num;}
-    public void removeGameWon(int num){gamesWon-=num;}
-    public void removeGameLost(int num){gamesLost-=num;};
-    public void removeGameSpectated(int num){gamesSpectated-=num;};
     
     public static void addGameWon(Teams t){
         
