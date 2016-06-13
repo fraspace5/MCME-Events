@@ -21,7 +21,7 @@ package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.SpecialGear;
-import com.mcmiddleearth.mcme.events.PVP.Map;
+import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import com.mcmiddleearth.mcme.events.PVP.Team;

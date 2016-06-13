@@ -16,7 +16,7 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.PVP;
+package com.mcmiddleearth.mcme.events.PVP.maps;
 
 import java.util.ArrayList;
 import java.util.List;

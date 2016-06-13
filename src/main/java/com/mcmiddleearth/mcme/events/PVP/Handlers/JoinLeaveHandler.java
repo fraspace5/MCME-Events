@@ -25,7 +25,7 @@ import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.GameState;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Gamemode;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.anticheat.AntiCheatListeners;
 import com.mcmiddleearth.mcme.events.PVP.Lobby;
-import com.mcmiddleearth.mcme.events.PVP.Map;
+import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
@@ -151,5 +151,7 @@ public class JoinLeaveHandler implements Listener{
             new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
         
         Team.removeFromTeam(e.getPlayer());
+        ChatHandler.getPlayerColors().remove(e.getPlayer().getName());
+        ChatHandler.getPlayerPrefixes().remove(e.getPlayer().getName());
     }
 }

@@ -18,6 +18,7 @@
  */
 package com.mcmiddleearth.mcme.events.PVP;
 
+import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;

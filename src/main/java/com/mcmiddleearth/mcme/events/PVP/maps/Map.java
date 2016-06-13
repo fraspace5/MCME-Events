@@ -16,7 +16,7 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.PVP;
+package com.mcmiddleearth.mcme.events.PVP.maps;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode;

@@ -18,6 +18,8 @@
  */
 package com.mcmiddleearth.mcme.events.PVP;
 
+import com.mcmiddleearth.mcme.events.PVP.maps.MapEditor;
+import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.GameState;
@@ -230,39 +232,13 @@ public class PVPCommandCore implements CommandExecutor{
                         p.sendMessage(ChatColor.GRAY + "    Lost: " + ps.getGamesLost());
                         p.sendMessage(ChatColor.GRAY + "Games Spectated: " + ps.getGamesSpectated());
                         
-                    }/*else{
-                        if(p.getName().equals("DSESGH") || p.getName().equals("Dallen")){
-                            
-                            if(args.length >= 2){
-                                
-                                Player editing = Bukkit.getPlayer(args[1]);
-                                
-                                if(args[1].equalsIgnoreCase("remove")){
-                                    
-                                    if(!PlayerStat.getPlayerStats().containsKey(editing.getName())){
-                                        PlayerStat.loadStat(editing);
-                                    }
-                                    
-                                    PlayerStat ps = PlayerStat.getPlayerStats().get(editing.getName());
-                                    
-                                    try{
-                                        
-                                    }catch(NumberFormatException e){
-                                        p.sendMessage(ChatColor.RED + "Number must be an integer!");
-                                    }
-                                    
-                                }else if(args[1].equalsIgnoreCase("add")){
-                                    
-                                }
-                                
-                            }else{
-                                p.sendMessage(ChatColor.RED + "Incorrect syntax!");
-                            }
-                            
-                        }else{
-                            p.sendMessage(ChatColor.RED + "You don't have the permissions to edit stats!");
+                    }else if(args[1].equalsIgnoreCase("clear") && (p.getName().equals("DSESGH") || p.getName().equals("Dallen"))){
+                        
+                        for(File f : new File(PVPCore.getSaveLoc() + Main.getFileSep() + "stats").listFiles()){
+                            f.delete();
                         }
-                    }*/
+                        
+                    }
                      
                 }else if(args[0].equalsIgnoreCase("rules")){
                     String gm;

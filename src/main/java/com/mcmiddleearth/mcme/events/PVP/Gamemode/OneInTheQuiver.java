@@ -24,7 +24,7 @@ import com.mcmiddleearth.mcme.events.PVP.Handlers.BukkitTeamHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.SpecialGear;
-import com.mcmiddleearth.mcme.events.PVP.Map;
+import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import com.mcmiddleearth.mcme.events.PVP.Team;
 import com.mcmiddleearth.mcme.events.Util.EventLocation;

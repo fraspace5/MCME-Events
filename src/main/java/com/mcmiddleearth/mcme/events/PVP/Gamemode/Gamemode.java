@@ -19,7 +19,7 @@
 package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.GameState;
-import com.mcmiddleearth.mcme.events.PVP.Map;
+import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import java.util.ArrayList;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Objective;

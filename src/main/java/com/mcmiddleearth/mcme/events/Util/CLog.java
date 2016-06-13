@@ -20,7 +20,7 @@ package com.mcmiddleearth.mcme.events.Util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mcmiddleearth.mcme.events.Main;
-import com.mcmiddleearth.mcme.events.PVP.MapEditor;
+import com.mcmiddleearth.mcme.events.PVP.maps.MapEditor;
 import java.util.logging.Level;
 
 /**

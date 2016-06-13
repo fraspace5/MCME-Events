@@ -16,8 +16,9 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.PVP;
+package com.mcmiddleearth.mcme.events.PVP.maps;
 
+import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.FreeForAll;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Infected;
 import com.mcmiddleearth.mcme.events.Util.EventLocation;

@@ -20,7 +20,7 @@ package com.mcmiddleearth.mcme.events.PVP.Handlers;
 
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.GameState;
-import com.mcmiddleearth.mcme.events.PVP.Map;
+import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import java.util.Arrays;
 import java.util.Random;
 import org.bukkit.ChatColor;

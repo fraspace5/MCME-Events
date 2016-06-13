@@ -18,6 +18,8 @@
  */
 package com.mcmiddleearth.mcme.events.PVP;
 
+import com.mcmiddleearth.mcme.events.PVP.maps.MapEditor;
+import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import com.mcmiddleearth.mcme.events.Event;
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.anticheat.AntiCheatListeners;

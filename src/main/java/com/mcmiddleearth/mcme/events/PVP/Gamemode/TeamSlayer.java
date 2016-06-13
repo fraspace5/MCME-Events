@@ -22,7 +22,7 @@ import com.mcmiddleearth.mcme.events.Main;
 import static com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.getScoreboard;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.SpecialGear;
-import com.mcmiddleearth.mcme.events.PVP.Map;
+import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import com.mcmiddleearth.mcme.events.PVP.Team;
 import com.mcmiddleearth.mcme.events.PVP.Team.Teams;
