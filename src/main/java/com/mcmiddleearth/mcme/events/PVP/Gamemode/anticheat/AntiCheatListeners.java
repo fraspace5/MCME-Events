@@ -151,7 +151,7 @@ public class AntiCheatListeners implements Listener{
     }
     
     //Prevent speedhacks
-    @EventHandler
+    /*@EventHandler
     public static void onPlayerMove(PlayerMoveEvent e){
         
         if(Team.getSpectators().contains(e.getPlayer()) || (e.getPlayer().isOp() && PVPCommandCore.getRunningGame() == null)){
@@ -182,7 +182,7 @@ public class AntiCheatListeners implements Listener{
             e.setTo(from);
         }
         
-    }
+    }*/
     
     @Getter
     private static HashMap<String, Long> lastInteract = new HashMap<>();

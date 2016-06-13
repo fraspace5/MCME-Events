@@ -256,7 +256,7 @@ public class Infected extends BasePluginGamemode{
                     Points.getScore(ChatColor.BLUE + "Survivors:").setScore(Points.getScore(ChatColor.BLUE + "Survivors:").getScore() - 1);
                     Team.removeFromTeam(p);
                     Team.addToTeam(p, Team.Teams.INFECTED);
-                    
+                    p.getInventory().clear();
                     GearHandler.giveGear(p, ChatColor.DARK_RED, SpecialGear.INFECTED);
                 }
                 

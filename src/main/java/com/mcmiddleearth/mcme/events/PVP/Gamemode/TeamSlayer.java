@@ -32,7 +32,6 @@ import java.util.Random;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -148,7 +147,7 @@ public class TeamSlayer extends BasePluginGamemode{
         for(Player player : Bukkit.getServer().getOnlinePlayers()){
             if(!Team.getBluePlayers().contains(player) && !Team.getRedPlayers().contains(player)){
                 Team.addToTeam(player, Teams.SPECTATORS);
-                player.teleport(m.getImportantPoints().get("SpectatorSpawn").toBukkitLoc().add(0, 2, 0));
+                player.teleport(m.getSpawn().toBukkitLoc().add(0, 2, 0));
             }
         }
             Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(), new Runnable(){

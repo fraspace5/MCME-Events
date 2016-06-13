@@ -66,9 +66,6 @@ public class PlayerStat {
     @Getter
     private int gamesSpectated = 0;
     
-    @Getter @Setter @JsonIgnore
-    private ArrayList<Achivement> chives = new ArrayList<>();
-    
     @Getter @Setter
     private static HashMap<String, PlayerStat> playerStats = new HashMap<>();
     
@@ -116,13 +113,12 @@ public class PlayerStat {
     public void addGameLost(){gamesLost++;};
     public void addGameSpectated(){gamesSpectated++;};
     
-    public static class Achivement{
-        @Getter @Setter
-        private String name;
-        
-        @Getter @Setter
-        private int Points;
-    }
+    public void removeDeath(int num){Deaths-=num;}
+    public void removeKill(int num){Kills-=num;}
+    public void removePlayedGame(int num){gamesPlayed-=num;}
+    public void removeGameWon(int num){gamesWon-=num;}
+    public void removeGameLost(int num){gamesLost-=num;};
+    public void removeGameSpectated(int num){gamesSpectated-=num;};
     
     public static void addGameWon(Teams t){
         

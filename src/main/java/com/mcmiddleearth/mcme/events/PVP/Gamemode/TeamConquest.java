@@ -201,10 +201,13 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
             l.getBlock().setType(Material.AIR);
             l.getBlock().getRelative(0, 1, 0).setType(Material.AIR);
         }
+        
         getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
+        
         for(Player p : Bukkit.getOnlinePlayers()){
             Team.removeFromTeam(p);
         }
+        
         m.playerLeaveAll();
         
         Team.getBlueCapturedPoints().clear();
@@ -241,22 +244,22 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                     int cap = capAmount.get(e.getClickedBlock().getLocation());
                     Player p = e.getPlayer();
                     if(Team.getRedPlayers().contains(p)){
+                        if(cap == 0){
+                            p.sendMessage(ChatColor.GRAY + "Point is neutral!");
+                                
+                            Block b = e.getClickedBlock().getLocation().add(0, 1, 0).getBlock();
+                            b.setType(Material.AIR);
+                             
+                            if(Team.getBlueCapturedPoints().contains(e.getClickedBlock().getLocation())){
+                                Team.getBlueCapturedPoints().remove(e.getClickedBlock().getLocation());
+                            }
+                        }
+                        
                         if(cap < 50){
                             cap++;
                             p.sendMessage(ChatColor.RED + "Cap at " + (cap * 2) + "%");
                             
-                            if(cap == 0){
-                                p.sendMessage(ChatColor.GRAY + "Point is neutral!");
-                                
-                                Block b = e.getClickedBlock().getLocation().add(0, 1, 0).getBlock();
-                                b.setType(Material.AIR);
-                                
-                                if(Team.getBlueCapturedPoints().contains(e.getClickedBlock().getLocation())){
-                                    Team.getBlueCapturedPoints().remove(e.getClickedBlock().getLocation());
-                                }
-                            }
-                            
-                            else if(cap >= 50){
+                            if(cap >= 50){
                                 p.sendMessage(ChatColor.RED + "Point Captured!");
                                 if(!Team.getRedCapturedPoints().contains(e.getClickedBlock().getLocation())){
                                     Team.getRedCapturedPoints().add(e.getClickedBlock().getLocation());

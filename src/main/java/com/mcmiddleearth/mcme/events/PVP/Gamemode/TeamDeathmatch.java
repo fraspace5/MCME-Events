@@ -115,7 +115,7 @@ public class TeamDeathmatch extends BasePluginGamemode{
         for(Player player : Bukkit.getServer().getOnlinePlayers()){
             if(!Team.getBluePlayers().contains(player) && !Team.getRedPlayers().contains(player)){
                 Team.addToTeam(player, Team.Teams.SPECTATORS);
-                player.teleport(m.getImportantPoints().get("SpectatorSpawn").toBukkitLoc().add(0, 2, 0));
+                player.teleport(m.getSpawn().toBukkitLoc().add(0, 2, 0));
             }
         }
         startingRedNum = Team.getRedPlayers().size();
@@ -234,7 +234,7 @@ public class TeamDeathmatch extends BasePluginGamemode{
         @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
             if(state == GameState.RUNNING){
-                e.setRespawnLocation(map.getImportantPoints().get("SpectatorSpawn").toBukkitLoc().add(0, 2, 0));
+                e.setRespawnLocation(map.getSpawn().toBukkitLoc().add(0, 2, 0));
             
                 e.getPlayer().getInventory().clear();
                 e.getPlayer().getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),

@@ -123,6 +123,11 @@ public class Map {
         gm.getPlayers().add(p);
         if(gm.getState() == GameState.IDLE){
             Curr++;
+            
+            for(Player pl : Bukkit.getOnlinePlayers()){
+                pl.sendMessage(ChatColor.GREEN + p.getName() + " Joined!");
+            }
+            
             try{
                 Sign s = (Sign) LobbySign.toBukkitLoc().getBlock().getState();
                 s.setLine(2, ChatColor.GREEN + "" + ChatColor.BOLD + "" + Curr+"/"+Max);
@@ -135,7 +140,6 @@ public class Map {
         else if(gm.getState() == GameState.RUNNING && gm.midgamePlayerJoin(p)){}
         else{
             p.sendMessage(ChatColor.YELLOW + "Can't join " + gmType + " midgame!");
-            return false;
         }
         return true;
     }

@@ -108,6 +108,9 @@ public class BukkitTeamHandler {
     public static void addToBukkitTeam(Player p, ChatColor c){
         
         switch(c){
+            case AQUA:
+                aqua.addPlayer(p);
+                break;
             case BLUE:
                 blue.addPlayer(p);
                 break;
@@ -151,67 +154,72 @@ public class BukkitTeamHandler {
     }
     
     public static void removeFromBukkitTeam(Player p){
+        if(aqua != null){
+            if(aqua.hasPlayer(p)){
+                aqua.removePlayer(p);
+            }
+        }
         if(blue != null){
             if(blue.hasPlayer(p)){
                 blue.removePlayer(p);
             }
         }
-        else if(darkAqua != null){
+        if(darkAqua != null){
             if(darkAqua.hasPlayer(p)){
                 darkAqua.removePlayer(p);
             }
         }
-        else if(darkBlue != null){
+        if(darkBlue != null){
             if(darkBlue.hasPlayer(p)){
                 darkBlue.removePlayer(p);
             }
         }
-        else if(darkGray != null){
+        if(darkGray != null){
             if(darkGray.hasPlayer(p)){
                 darkGray.removePlayer(p);
             }
         }
-        else if(darkGreen != null){
+        if(darkGreen != null){
             if(darkGreen.hasPlayer(p)){
                 darkGreen.removePlayer(p);
             }
         }
-        else if(darkPurple != null){
+        if(darkPurple != null){
             if(darkPurple.hasPlayer(p)){
                 darkPurple.removePlayer(p);
             }
         }
-        else if(darkRed != null){
+        if(darkRed != null){
             if(darkRed.hasPlayer(p)){
                 darkRed.removePlayer(p);
             }
         }
-        else if(gold != null){
+        if(gold != null){
             if(gold.hasPlayer(p)){
                 gold.removePlayer(p);
             }
         }
-        else if(gray != null){
+        if(gray != null){
             if(gray.hasPlayer(p)){
                 gray.removePlayer(p);
             }
         }
-        else if(green != null){
+        if(green != null){
             if(green.hasPlayer(p)){
                 green.removePlayer(p);
             }
         }
-        else if(lightPurple != null){
+        if(lightPurple != null){
             if(lightPurple.hasPlayer(p)){
                 lightPurple.removePlayer(p);
             }
         }
-        else if(red != null){
+        if(red != null){
             if(red.hasPlayer(p)){
                 red.removePlayer(p);
             }
         }
-        else if(yellow != null){
+        if(yellow != null){
             if(yellow.hasPlayer(p)){
                 yellow.removePlayer(p);
             }

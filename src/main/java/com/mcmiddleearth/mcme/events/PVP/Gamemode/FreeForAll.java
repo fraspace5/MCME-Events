@@ -28,6 +28,7 @@ import com.mcmiddleearth.mcme.events.PVP.Map;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import com.mcmiddleearth.mcme.events.PVP.Team;
 import com.mcmiddleearth.mcme.events.Util.EventLocation;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -268,7 +269,7 @@ public class FreeForAll extends BasePluginGamemode{
             try{
                 if(Double.valueOf(Points.getScore(ChatHandler.getPlayerColors().get(p.getName()) + p.getName()).getScore()) / Double.parseDouble(playerDeaths.get(p.getName())) > highestKdNum && highestKdNum != -1){
                     highestKd.clear();
-                    highestKdNum =  Double.valueOf(Math.floor((Points.getScore(ChatHandler.getPlayerColors().get(p.getName()) + p.getName()).getScore()) / Double.parseDouble(playerDeaths.get(p.getName()))) / 100 * 100);
+                    highestKdNum =  Points.getScore(ChatHandler.getPlayerColors().get(p.getName()) + p.getName()).getScore() / Double.parseDouble(playerDeaths.get(p.getName()));
                     highestKd.add(p.getName());
                 }else if(Double.valueOf(Points.getScore(ChatHandler.getPlayerColors().get(p.getName()) + p.getName()).getScore()) / Double.parseDouble(playerDeaths.get(p.getName())) == highestKdNum){
                     highestKd.add(p.getName());
@@ -313,11 +314,12 @@ public class FreeForAll extends BasePluginGamemode{
         
         loops = 0;
         String highestKdNumString;
+        DecimalFormat df = new DecimalFormat("#0.00");
         if(highestKdNum == -1){
             highestKdNumString = "infinity";
         }
         else{
-            highestKdNumString = Double.toString(highestKdNum);
+            highestKdNumString = df.format(highestKdNum);
         }
         for(String playerName : highestKd){
             if(highestKd.size() == 1 && loops == 0){
@@ -381,6 +383,7 @@ public class FreeForAll extends BasePluginGamemode{
         p.setGameMode(GameMode.ADVENTURE);
         p.setScoreboard(getScoreboard());
         GearHandler.giveGear(p, color, SpecialGear.NONE);
+        
         super.midgamePlayerJoin(p);
         
         return true;

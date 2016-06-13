@@ -20,6 +20,7 @@ package com.mcmiddleearth.mcme.events.PVP.Handlers;
 
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.GameState;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.Gamemode;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Ringbearer;
 import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
 import com.mcmiddleearth.mcme.events.PVP.Team;
@@ -35,8 +36,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryInteractEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffect;
@@ -193,6 +197,83 @@ public class GearHandler {
         
     }
     
+    private static boolean areArmorContentsCorrect(SpecialGear sg, Player p){
+        
+        PlayerInventory inv = p.getInventory();
+        
+        if(sg.equals(SpecialGear.INFECTED)){
+            
+            if(inv.getHelmet() != null){
+                if(!inv.getHelmet().getType().equals(Material.AIR)){
+                    return false;
+                }
+            }
+            
+            if(inv.getChestplate() == null){
+                return false;
+            }
+            else if(!inv.getChestplate().getType().equals(Material.LEATHER_CHESTPLATE)){
+                return false;
+            }
+            
+            if(inv.getLeggings() != null){
+                if(!inv.getLeggings().getType().equals(Material.LEATHER_LEGGINGS)){
+                    return false;
+                }
+            }
+            
+            if(inv.getBoots() != null){
+                if(!inv.getBoots().getType().equals(Material.LEATHER_BOOTS)){
+                    return false;
+                }
+            }
+            
+            return true;
+        }else if(sg.equals(SpecialGear.RINGBEARER)){
+            
+            if(inv.getHelmet() == null){
+                return false;
+            }
+            else if(!inv.getHelmet().getType().equals(Material.GLOWSTONE)){
+                return false;
+            }
+            
+        }
+        else{
+            
+            if(inv.getHelmet() == null){
+                return false;
+            }
+            else if(!inv.getHelmet().getType().equals(Material.LEATHER_HELMET)){
+                return false;
+            }
+            
+        }
+        
+        if(inv.getChestplate() == null){
+            return false;
+        }
+        else if(!inv.getChestplate().getType().equals(Material.LEATHER_CHESTPLATE)){
+            return false;
+        }
+        
+        if(inv.getLeggings() == null){
+            return false;
+        }
+        else if(!inv.getLeggings().getType().equals(Material.LEATHER_LEGGINGS)){
+            return false;
+        }
+        
+        if(inv.getBoots() == null){
+            return false;
+        }
+        else if(!inv.getBoots().getType().equals(Material.LEATHER_BOOTS)){
+            return false;
+        }
+        
+        return true;
+    }
+    
     public static class GearEvents implements Listener{
         
         @EventHandler
@@ -205,6 +286,11 @@ public class GearHandler {
                 if(p.getItemInHand() != null){
                     item = p.getItemInHand();
                 }else{
+                    return;
+                }
+                
+                if(item.getType().equals(Material.GHAST_TEAR)){
+                    p.getWorld().playEffect((p.getLocation().add(0, 1, 0)), Effect.SMOKE, 4);
                     return;
                 }
                 
@@ -223,19 +309,18 @@ public class GearHandler {
                         if(p.getExp() >= 1.00f){
                             p.setExp(0);
                             p.sendMessage(ChatColor.YELLOW + "You are now invisible!");
+                            p.sendMessage(ChatColor.GRAY + "Don't hold anything in your hand, or you'll be seen!");
+                            p.getInventory().setHeldItemSlot(5);
                             
-                            if(Team.getRedPlayers().contains(p)){
-                                for(Player pl : Team.getBluePlayers()){
-                                    pl.hidePlayer(p);
-                                }
-                            }
-                            else if(Team.getBluePlayers().contains(p)){
-                                for(Player pl : Team.getRedPlayers()){
-                                    pl.hidePlayer(p);
-                                }
-                            }
+                            p.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 500, 0, true, false));
+                            p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 500, 0, true, true));
                             
-                            p.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 600, 1, true, false));
+                            p.getInventory().setHelmet(new ItemStack(Material.AIR));
+                            p.getInventory().setChestplate(new ItemStack(Material.AIR));
+                            p.getInventory().setLeggings(new ItemStack(Material.AIR));
+                            p.getInventory().setBoots(new ItemStack(Material.AIR));
+                            
+                            BukkitTeamHandler.removeFromBukkitTeam(p);
                             
                             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
                                 
@@ -243,32 +328,87 @@ public class GearHandler {
                                 public void run() {
                                     p.sendMessage(ChatColor.YELLOW + "You are no longer invisible!");
                                    
-                                    if(Team.getBluePlayers().contains(p)){
-                                        
-                                        
-                                        for(Player pl : Team.getRedPlayers()){
-                                            pl.showPlayer(p);
-                                        }
-                                    }else{
-                                        
-                                        
-                                        for(Player pl : Team.getBluePlayers()){
-                                            pl.showPlayer(p);
-                                        }
+                                    p.getInventory().clear();
+                                    
+                                    if(Team.getRedPlayers().contains(p)){
+                                        GearHandler.giveGear(p, ChatColor.RED, SpecialGear.RINGBEARER);
+                                        BukkitTeamHandler.addToBukkitTeam(p, ChatColor.RED);
                                     }
+                                    else{
+                                        GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.RINGBEARER);
+                                        BukkitTeamHandler.addToBukkitTeam(p, ChatColor.BLUE);
+                                    }
+                                    p.getInventory().setHeldItemSlot(0);
                                 }
-                            }, 600);
+                            }, 500);
                         }else{
                             p.sendMessage(ChatColor.GRAY + "You must have at least 1 xp level to use the ring");
                         }
                     }
                 }
-                
-                if(item.getType().equals(Material.GHAST_TEAR)){
-                    p.getWorld().playEffect((p.getLocation().add(0, 1, 0)), Effect.SMOKE, 4);
-                }
             }
         }
         
+        //return accidentally-dropped items
+        @EventHandler
+        public void returnDroppedItems(PlayerDropItemEvent e){
+            if(PVPCommandCore.getRunningGame() != null){
+                e.setCancelled(true);
+            }
+        }
+        
+        //prevent players from switching out armor
+        @EventHandler
+        public void onInventoryInteract(InventoryInteractEvent e){
+            
+            Player p = (Player) e.getWhoClicked();
+            PlayerInventory inv = e.getWhoClicked().getInventory();
+            
+            if(PVPCommandCore.getRunningGame() != null){
+                
+                if(PVPCommandCore.getRunningGame().getGmType().equalsIgnoreCase("ringbearer")){
+                    
+                    Ringbearer gm = (Ringbearer) PVPCommandCore.getRunningGame().getGm();
+                    
+                    if(p.equals(gm.getRedBearer()) || p.equals(gm.getBlueBearer())){
+                        
+                        if(!areArmorContentsCorrect(SpecialGear.RINGBEARER, p)){
+                            e.setCancelled(true);
+                        }
+                        
+                    }
+                    else{
+                        if(!areArmorContentsCorrect(SpecialGear.NONE, p)){
+                            e.setCancelled(true);
+                        }
+                    }
+                    
+                }
+                
+                else if(PVPCommandCore.getRunningGame().getGmType().equalsIgnoreCase("infected")){
+                    
+                    if(Team.getInfected().contains(p)){
+                        
+                        if(!areArmorContentsCorrect(SpecialGear.INFECTED, p)){
+                            e.setCancelled(true);
+                        }
+                        
+                    }
+                    else{
+                        
+                        if(!areArmorContentsCorrect(SpecialGear.NONE, p)){
+                            e.setCancelled(true);
+                        }
+                        
+                    }
+                }
+                else{
+                    
+                    if(!areArmorContentsCorrect(SpecialGear.NONE, p)){
+                        e.setCancelled(true);
+                    }
+                }
+            }
+        }
     }
 }

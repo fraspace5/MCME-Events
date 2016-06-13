@@ -55,6 +55,11 @@ public class JoinLeaveHandler implements Listener{
     public void onPlayerJoin(PlayerJoinEvent e){
         final Player p = e.getPlayer();
         PlayerStat.loadStat(p);
+        
+        if(PVPCommandCore.getRunningGame() != null){
+            e.setJoinMessage(ChatColor.GRAY + e.getPlayer().getName() + " has joined as a spectator!");
+        }
+        
         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
             @Override
             public void run(){
@@ -123,14 +128,22 @@ public class JoinLeaveHandler implements Listener{
     
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e){
-        if(PVPCommandCore.getRunningGame() != null){
-            PVPCommandCore.getRunningGame().playerLeave(e.getPlayer());
+        
+        if(PVPCommandCore.getQueuedGame() != null){
+            PVPCommandCore.getQueuedGame().getGm().getPlayers().remove(e.getPlayer());
+        }
+        else if(PVPCommandCore.getRunningGame() != null){
+            PVPCommandCore.getRunningGame().getGm().getPlayers().remove(e.getPlayer());
         }
         
         PlayerStat.getPlayerStats().get(e.getPlayer().getName()).saveStat();
         PlayerStat.getPlayerStats().remove(e.getPlayer().getName());
         Thompson.getInst().farwell(e.getPlayer());
-        e.setQuitMessage("");
+        
+        if(PVPCommandCore.getRunningGame() != null){
+            e.setQuitMessage(ChatHandler.getPlayerColors().get(e.getPlayer().getName()) + e.getPlayer().getName() + ChatColor.GRAY + " left the fight!");
+        }
+        
         AntiCheatListeners.getLastInteract().remove(e.getPlayer().getName());
         
         e.getPlayer().getInventory().clear();

@@ -107,7 +107,7 @@ public class PVPCommandCore implements CommandExecutor{
                                                     
                                                     pl.sendMessage(ChatColor.GRAY + p.getName() + " has started a game");
                                                     pl.sendMessage(ChatColor.GRAY + "Map: " + ChatColor.GREEN + m.getTitle() + ChatColor.GRAY + ", Gamemode: " + ChatColor.GREEN + m.getGmType());
-                                                    pl.sendMessage(ChatColor.GRAY + "Use /pvp join to join their game");
+                                                    pl.sendMessage(ChatColor.GRAY + "Use " + ChatColor.GREEN + "/pvp join" + ChatColor.GRAY + " to join the game");
                                                     pl.sendMessage(ChatColor.GRAY + "There are only " + m.getMax() + " slots left");
                                                     pl.sendMessage(ChatColor.GREEN + "Do /pvp rules " + removeSpaces(m.getGmType()) + " if you don't know how this gamemode works!");
                                                     
@@ -126,7 +126,7 @@ public class PVPCommandCore implements CommandExecutor{
                                                 
                                                 pl.sendMessage(ChatColor.GRAY + p.getName() + " has started a game");
                                                 pl.sendMessage(ChatColor.GRAY + "Map: " + ChatColor.GREEN + m.getTitle() + ChatColor.GRAY + ", Gamemode: " + ChatColor.GREEN + m.getGmType());
-                                                pl.sendMessage(ChatColor.GRAY + "Use /pvp join " + p.getName() + " to join their game");
+                                                pl.sendMessage(ChatColor.GRAY + "Use " + ChatColor.GREEN + "/pvp join" + ChatColor.GRAY + " to join the game");
                                                 pl.sendMessage(ChatColor.GRAY + "There are only " + m.getMax() + " slots left");
                                                 pl.sendMessage(ChatColor.GREEN + "Do /pvp rules " + removeSpaces(m.getGmType()) + " if you don't know how this gamemode works!");
                                                 
@@ -195,7 +195,6 @@ public class PVPCommandCore implements CommandExecutor{
                    
                     if(!m.getGm().getPlayers().contains(p) && m.getGm().getState() != GameState.COUNTDOWN){
                         if(m.playerJoin(p)){
-                            Bukkit.broadcastMessage(ChatColor.GREEN + p.getName() + " Joined!");
                                 
                             if(m.getGm().getState() == GameState.IDLE){
                                 p.setPlayerListName(ChatColor.GREEN + p.getName());
@@ -219,16 +218,52 @@ public class PVPCommandCore implements CommandExecutor{
                 }else if(args[0].equalsIgnoreCase("pipe")){
                     GearHandler.giveCustomItem(p, GearHandler.CustomItem.PIPE);
                 }else if(args[0].equalsIgnoreCase("stat") || args[0].equalsIgnoreCase("stats") || args[0].equalsIgnoreCase("statistics")){
-                    PlayerStat ps = PlayerStat.getPlayerStats().get(p.getName());
                     
-                    p.sendMessage(ChatColor.GREEN + "Showing stats for " + p.getName());
-                    p.sendMessage(ChatColor.GRAY + "Kills: " + ps.getKills());
-                    p.sendMessage(ChatColor.GRAY + "Deaths: " + ps.getDeaths());
-                    p.sendMessage(ChatColor.GRAY + "Games Played: " + ps.getGamesPlayed());
-                    p.sendMessage(ChatColor.GRAY + "    Won: " + ps.getGamesWon());
-                    p.sendMessage(ChatColor.GRAY + "    Lost: " + ps.getGamesLost());
-                    p.sendMessage(ChatColor.GRAY + "Games Spectated: " + ps.getGamesSpectated());
+                    if(args.length == 1){
+                        PlayerStat ps = PlayerStat.getPlayerStats().get(p.getName());
                     
+                        p.sendMessage(ChatColor.GREEN + "Showing stats for " + p.getName());
+                        p.sendMessage(ChatColor.GRAY + "Kills: " + ps.getKills());
+                        p.sendMessage(ChatColor.GRAY + "Deaths: " + ps.getDeaths());
+                        p.sendMessage(ChatColor.GRAY + "Games Played: " + ps.getGamesPlayed());
+                        p.sendMessage(ChatColor.GRAY + "    Won: " + ps.getGamesWon());
+                        p.sendMessage(ChatColor.GRAY + "    Lost: " + ps.getGamesLost());
+                        p.sendMessage(ChatColor.GRAY + "Games Spectated: " + ps.getGamesSpectated());
+                        
+                    }/*else{
+                        if(p.getName().equals("DSESGH") || p.getName().equals("Dallen")){
+                            
+                            if(args.length >= 2){
+                                
+                                Player editing = Bukkit.getPlayer(args[1]);
+                                
+                                if(args[1].equalsIgnoreCase("remove")){
+                                    
+                                    if(!PlayerStat.getPlayerStats().containsKey(editing.getName())){
+                                        PlayerStat.loadStat(editing);
+                                    }
+                                    
+                                    PlayerStat ps = PlayerStat.getPlayerStats().get(editing.getName());
+                                    
+                                    try{
+                                        
+                                    }catch(NumberFormatException e){
+                                        p.sendMessage(ChatColor.RED + "Number must be an integer!");
+                                    }
+                                    
+                                }else if(args[1].equalsIgnoreCase("add")){
+                                    
+                                }
+                                
+                            }else{
+                                p.sendMessage(ChatColor.RED + "Incorrect syntax!");
+                            }
+                            
+                        }else{
+                            p.sendMessage(ChatColor.RED + "You don't have the permissions to edit stats!");
+                        }
+                    }*/
+                     
                 }else if(args[0].equalsIgnoreCase("rules")){
                     String gm;
                     try{

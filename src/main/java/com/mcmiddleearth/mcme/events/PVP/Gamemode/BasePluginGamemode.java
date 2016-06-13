@@ -25,6 +25,7 @@ import com.mcmiddleearth.mcme.events.PVP.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
+import com.mcmiddleearth.mcme.events.PVP.Team;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -37,7 +38,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
@@ -103,6 +103,42 @@ public abstract class BasePluginGamemode implements Gamemode{
     
     public boolean midgamePlayerJoin(Player p){
         PlayerStat.getPlayerStats().get(p.getName()).addPlayedGame();
+        String message = "";
+        
+        if(PVPCommandCore.getRunningGame() == null){
+            return false;
+        }
+        
+        if(PVPCommandCore.getRunningGame().getGm() instanceof FreeForAll || 
+                PVPCommandCore.getRunningGame().getGm() instanceof OneInTheQuiver){
+            
+            message = ChatHandler.getPlayerColors().get(p.getName()) + p.getName() + ChatColor.GRAY + " has joined the fight!";
+            
+        }
+        
+        else if(PVPCommandCore.getRunningGame().getGm() instanceof Ringbearer || 
+                PVPCommandCore.getRunningGame().getGm() instanceof TeamConquest ||
+                PVPCommandCore.getRunningGame().getGm() instanceof TeamDeathmatch ||
+                PVPCommandCore.getRunningGame().getGm() instanceof TeamSlayer){
+            
+             if(Team.getRedPlayers().contains(p)){
+                 message = ChatColor.RED + p.getName() + " has joined the fight on Red Team!";
+             }
+             else if(Team.getBluePlayers().contains(p)){
+                 message = ChatColor.BLUE + p.getName() + " has joined the fight on Blue Team!";
+             }
+            
+        }
+        
+        else if(PVPCommandCore.getRunningGame().getGm() instanceof Infected){
+            
+            message = ChatColor.BLUE + p.getName() + " has joined the fight as a Survivor!";
+            
+        }
+        for(Player pl : Bukkit.getOnlinePlayers()){
+            pl.sendMessage(message);
+        }
+        
         return true;
     };
     
