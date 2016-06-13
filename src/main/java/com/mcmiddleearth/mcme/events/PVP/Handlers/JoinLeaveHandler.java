@@ -150,11 +150,6 @@ public class JoinLeaveHandler implements Listener{
         e.getPlayer().getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
             new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
         
-        e.getPlayer().setDisplayName(ChatColor.WHITE + e.getPlayer().getName());
-        ChatHandler.getPlayerPrefixes().remove(e.getPlayer().getName());
-        ChatHandler.getPlayerColors().remove(e.getPlayer().getName());
         Team.removeFromTeam(e.getPlayer());
-        BukkitTeamHandler.removeFromBukkitTeam(e.getPlayer());
-        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "scoreboard teams leave " + e.getPlayer().getName());
     }
 }

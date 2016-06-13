@@ -200,23 +200,18 @@ public class Team {
         public static void removeFromTeam(Player p){
             if(redPlayers.contains(p)){
                 redPlayers.remove(p);
-                BukkitTeamHandler.removeFromBukkitTeam(p);
             }
             if(bluePlayers.contains(p)){
                 bluePlayers.remove(p);
-                BukkitTeamHandler.removeFromBukkitTeam(p);
             }
             if(spectators.contains(p)){
                 spectators.remove(p);
-                BukkitTeamHandler.removeFromBukkitTeam(p);
             }
             if(survivors.contains(p)){
                 survivors.remove(p);
-                BukkitTeamHandler.removeFromBukkitTeam(p);
             }
             if(infected.contains(p)){
                 infected.remove(p);
-                BukkitTeamHandler.removeFromBukkitTeam(p);
                 p.removePotionEffect(PotionEffectType.SPEED);
             }
             
@@ -224,14 +219,12 @@ public class Team {
                 p.setHealth(20);
             }
            
+            BukkitTeamHandler.removeFromBukkitTeam(p);
             p.setDisplayName(ChatColor.WHITE + p.getName());
             p.setPlayerListName(p.getName());
             ChatHandler.getPlayerColors().put(p.getName(), ChatColor.WHITE);
-            ChatHandler.getPlayerPrefixes().remove(p);
+            ChatHandler.getPlayerPrefixes().remove(p.getName());
             
-            for(String s : ChatHandler.getPlayerPrefixes().keySet()){
-                System.out.println(s);
-            }
         }
     public static boolean areTeamMates(Player p1, Player p2){
         

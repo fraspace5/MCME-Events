@@ -92,7 +92,7 @@ public abstract class BasePluginGamemode implements Gamemode{
             new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
             p.setGameMode(GameMode.ADVENTURE);
             p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
-            ChatHandler.getPlayerPrefixes().remove(p);
+            ChatHandler.getPlayerPrefixes().remove(p.getName());
             
             if(!p.isDead()){
                 p.setHealth(20);
