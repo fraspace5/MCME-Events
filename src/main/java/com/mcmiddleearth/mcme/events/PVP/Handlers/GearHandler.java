@@ -64,12 +64,12 @@ public class GearHandler {
         if(sg == SpecialGear.ONEINTHEQUIVER){
             items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
                 new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
-                new ItemStack(Material.IRON_AXE), new ItemStack(Material.BOW)};
+                new ItemStack(Material.IRON_AXE), new ItemStack(Material.BOW), new ItemStack(Material.SHIELD)};
         }
         else{
             items = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
                 new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS),
-                new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW)};
+                new ItemStack(Material.IRON_SWORD), new ItemStack(Material.BOW), new ItemStack(Material.SHIELD)};
         }
         
         for(int i = 0; i <= 5; i++){
@@ -153,8 +153,10 @@ public class GearHandler {
             items[5].addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 12);
         }
         
+        
         p.getInventory().addItem(items[4]);
         p.getInventory().addItem(items[5]);
+        p.getInventory().setItemInOffHand(items[6]);
         
         if(sg == SpecialGear.ONEINTHEQUIVER){
             ItemStack Arrows = new ItemStack(Material.ARROW, 1);
@@ -177,7 +179,6 @@ public class GearHandler {
     }
     
     public static void giveCustomItem(Player p, CustomItem i){
-        
         switch(i){
             
             case RING:
@@ -203,8 +204,8 @@ public class GearHandler {
                 final Player p = e.getPlayer();
                 ItemStack item = null;
                 
-                if(p.getItemInHand() != null){
-                    item = p.getItemInHand();
+                if(p.getInventory().getItemInMainHand() != null){
+                    item = p.getInventory().getItemInMainHand();
                 }else{
                     return;
                 }

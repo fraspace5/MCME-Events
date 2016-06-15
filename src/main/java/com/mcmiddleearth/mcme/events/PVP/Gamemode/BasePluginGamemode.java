@@ -20,6 +20,7 @@ package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcmiddleearth.mcme.events.Main;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.ArrowHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
 import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
@@ -63,6 +64,8 @@ public abstract class BasePluginGamemode implements Gamemode{
     @Override
     public void Start(Map m, int parameter){
         PVPCommandCore.toggleVoxel(true);
+        
+        ArrowHandler.initializeArrowHandling();
         
         for(Player p : players){
             PlayerStat.getPlayerStats().get(p.getName()).addPlayedGame();

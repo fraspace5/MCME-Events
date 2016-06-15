@@ -80,7 +80,7 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
     
     Map map;
     
-    int count = 10;
+    private int count;
     
     @Getter
     private GameState state = GameState.IDLE;
@@ -132,7 +132,7 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
     @Override
     public void Start(Map m,int parameter) {
         super.Start(m,parameter);
-        count = 10;
+        count = PVPCore.getCountdownTime();
         state = GameState.COUNTDOWN;
         this.map = m;
         if(!m.getImportantPoints().keySet().containsAll(NeededPoints)){
@@ -225,7 +225,12 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                         
                         state = GameState.RUNNING;
                         count = -1;
-                    }else if(count != -1){
+                        
+                        for(Player p : players){
+                            p.sendMessage(ChatColor.GRAY + "Use " + ChatColor.GREEN + "/unstuck" + ChatColor.GRAY + " if you're stuck in a block!");
+                        }
+                    }
+                    else if(count != -1){
                         for(Player p : Bukkit.getServer().getOnlinePlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game begins in " + count);
                         }
@@ -233,7 +238,7 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                     }
                 }
 
-            }, 40, 11);
+            }, 40, 20);
     }
     
     private void setRingbearer(Teams t, Player p){
@@ -356,7 +361,6 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                     }
                     
                     else if(!redCanRespawn){
-                        Team.removeFromTeam(p);
                         Team.addToTeam(p, Teams.SPECTATORS);
                     }
                     
@@ -375,7 +379,7 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                     }
                     
                     else if(!blueCanRespawn){
-                        Team.removeFromTeam(p);
+                        Team.addToTeam(p, Teams.SPECTATORS);
                     }
                     
                 }

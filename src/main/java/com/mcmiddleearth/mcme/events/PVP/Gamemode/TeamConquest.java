@@ -74,6 +74,8 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
     @Getter
     private final int target = 100;
     
+    private final int midgameJoinPointThreshold = 30;
+    
     private static boolean eventsRegistered = false;
     
     @Getter
@@ -87,7 +89,7 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
     
     Map map;
     
-    int count = 10;
+    private int count;
     
     @Getter
     private boolean midgameJoin = true;
@@ -105,7 +107,7 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
     public void Start(Map m, int parameter) {
         super.Start(m, parameter);
         goal = parameter;
-        count = 10;
+        count = PVPCore.getCountdownTime();
         state = GameState.COUNTDOWN;
         this.map = m;
         if(!m.getImportantPoints().keySet().containsAll(NeededPoints)){
@@ -180,7 +182,12 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                         }
                         state = GameState.RUNNING;
                         count = -1;
-                    }else if(count != -1){
+                        
+                        for(Player p : players){
+                            p.sendMessage(ChatColor.GRAY + "Use " + ChatColor.GREEN + "/unstuck" + ChatColor.GRAY + " if you're stuck in a block!");
+                        }
+                    }
+                    else if(count != -1){
                         for(Player p : Bukkit.getServer().getOnlinePlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game begins in " + count);
                         }
@@ -188,7 +195,7 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                     }
                 }
 
-            }, 40, 11);
+            }, 40, 20);
     }
     
     
@@ -419,21 +426,43 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
         
         if(state == GameState.RUNNING){
             
-            if(Points.getScore(ChatColor.RED + "Red:").getScore() >= Points.getScore(ChatColor.BLUE + "Blue:").getScore()){
+            if(Points.getScore(ChatColor.RED + "Red:").getScore() - Points.getScore(ChatColor.BLUE + "Blue:").getScore() >= midgameJoinPointThreshold){
                 
                 Team.addToTeam(p, Teams.BLUE);
                 p.setGameMode(GameMode.ADVENTURE);
                 
                 p.teleport(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
                 GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
+                
             }
-            if(Points.getScore(ChatColor.RED + "Red:").getScore() < Points.getScore(ChatColor.BLUE + "Blue:").getScore()){
+            else if(Points.getScore(ChatColor.RED + "Red:").getScore() - Points.getScore(ChatColor.BLUE + "Blue:").getScore() <= (-1 * midgameJoinPointThreshold)){
                 
                 Team.addToTeam(p, Teams.RED);
                 p.setGameMode(GameMode.ADVENTURE);
                 
                 p.teleport(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
                 GearHandler.giveGear(p, ChatColor.RED, SpecialGear.NONE);
+                
+            }
+            else{
+                if(Team.getRedPlayers().size() >= Team.getBluePlayers().size()){
+                    
+                    Team.addToTeam(p, Teams.BLUE);
+                    p.setGameMode(GameMode.ADVENTURE);
+                
+                    p.teleport(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
+                    GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
+                    
+                }
+                else{
+                    
+                    Team.addToTeam(p, Teams.RED);
+                    p.setGameMode(GameMode.ADVENTURE);
+                
+                    p.teleport(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
+                    GearHandler.giveGear(p, ChatColor.RED, SpecialGear.NONE);
+                
+                }
             }
             super.midgamePlayerJoin(p);
             return true;

@@ -59,6 +59,9 @@ public class PVPCore implements Event{
     @Getter
     private static Location Spawn;
     
+    @Getter
+    private static int countdownTime = 5;
+    
     @Override
     public void onEnable(){
         File loc = new File(saveLoc + Main.getFileSep() + "Maps");

@@ -70,7 +70,7 @@ public class TeamDeathmatch extends BasePluginGamemode{
     
     Map map;
     
-    private int count = 10;
+    private int count;
     
     @Getter
     private Objective Points;
@@ -83,7 +83,7 @@ public class TeamDeathmatch extends BasePluginGamemode{
     
     @Override
     public void Start(Map m, int parameter){
-        count = 10;
+        count = PVPCore.getCountdownTime();
         state = GameState.COUNTDOWN;
         super.Start(m, parameter);
         this.map = m;
@@ -147,7 +147,12 @@ public class TeamDeathmatch extends BasePluginGamemode{
                         }
                         state = GameState.RUNNING;
                         count = -1;
-                    }else if(count != -1){
+                        
+                        for(Player p : players){
+                            p.sendMessage(ChatColor.GRAY + "Use " + ChatColor.GREEN + "/unstuck" + ChatColor.GRAY + " if you're stuck in a block!");
+                        }
+                    }
+                    else if(count != -1){
                         for(Player p : Bukkit.getServer().getOnlinePlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game begins in " + count);
                         }
@@ -155,7 +160,7 @@ public class TeamDeathmatch extends BasePluginGamemode{
                     }
                 }
 
-            }, 40, 11);
+            }, 40, 20);
     }
     
     @Override

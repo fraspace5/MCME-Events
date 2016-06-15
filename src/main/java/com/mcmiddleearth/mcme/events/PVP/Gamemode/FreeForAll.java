@@ -23,6 +23,7 @@ import com.mcmiddleearth.mcme.events.PVP.Handlers.BukkitTeamHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.SpecialGear;
+import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import com.mcmiddleearth.mcme.events.PVP.Team;
@@ -63,7 +64,7 @@ public class FreeForAll extends BasePluginGamemode{
     
     Map map;
     
-    private int count = 10;
+    private int count;
     
     @Getter
     private Objective Points;
@@ -112,6 +113,28 @@ public class FreeForAll extends BasePluginGamemode{
                 Points.setDisplayName("Time: " + time + "s");
             }
             
+            if(time == 30){
+                
+                for(Player p : Bukkit.getOnlinePlayers()){
+                    p.sendMessage(ChatColor.GREEN + "30 seconds remaining!");
+                }
+                
+            }
+            else if(time <= 10 && time > 1){
+                
+                for(Player p : Bukkit.getOnlinePlayers()){
+                    p.sendMessage(ChatColor.GREEN + String.valueOf(time) + " seconds remaining!");
+                }
+                
+            }
+            else if(time == 1){
+                
+                for(Player p : Bukkit.getOnlinePlayers()){
+                    p.sendMessage(ChatColor.GREEN + String.valueOf(time) + " second remaining!");
+                }
+                
+            }
+            
             if(time <= 0){
                 End(map);
             }
@@ -136,7 +159,7 @@ public class FreeForAll extends BasePluginGamemode{
     public void Start(Map m, int parameter){
         super.Start(m, parameter);
         map = m;
-        count = 10;
+        count = PVPCore.getCountdownTime();
         time = parameter;
         state = GameState.COUNTDOWN;
         spawns = map.getImportantPoints().values().toArray(new EventLocation[0]);
@@ -219,15 +242,20 @@ public class FreeForAll extends BasePluginGamemode{
                         }
                         state = GameState.RUNNING;
                         count = -1;
+                        
+                        for(Player p : players){
+                            p.sendMessage(ChatColor.GRAY + "Use " + ChatColor.GREEN + "/unstuck" + ChatColor.GRAY + " if you're stuck in a block!");
+                        }
 
-                    }else if(count != -1){
+                    }
+                    else if(count != -1){
                         for(Player p : Bukkit.getServer().getOnlinePlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game begins in " + count);
                         }
                         count--;
                     }
                 }
-            }, 40, 11);
+            }, 40, 20);
     }
     
     public void End(Map m){
@@ -398,16 +426,19 @@ public class FreeForAll extends BasePluginGamemode{
         public void onPlayerDeath(PlayerDeathEvent e){
             int tempDeaths;
             
-            if(e.getEntity() instanceof Player && state == GameState.RUNNING){
+            if(e.getEntity() instanceof Player && e.getEntity().getKiller() != null && state == GameState.RUNNING){
                 
-                Points.getScore(ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName()).setScore(Points.getScore(ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName()).getScore() + 1);
-                
-                if(playerDeaths.containsKey(e.getEntity().getName())){
-                    tempDeaths = Integer.parseInt(playerDeaths.get(e.getEntity().getName()));
-                    playerDeaths.remove(e.getEntity().getName());
-                    playerDeaths.put(e.getEntity().getName(), String.valueOf(tempDeaths + 1));
-                }else{
-                    playerDeaths.put(e.getEntity().getName(), "1");
+                    if(e.getEntity().getKiller() instanceof Player){
+
+                    Points.getScore(ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName()).setScore(Points.getScore(ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName()).getScore() + 1);
+
+                    if(playerDeaths.containsKey(e.getEntity().getName())){
+                        tempDeaths = Integer.parseInt(playerDeaths.get(e.getEntity().getName()));
+                        playerDeaths.remove(e.getEntity().getName());
+                        playerDeaths.put(e.getEntity().getName(), String.valueOf(tempDeaths + 1));
+                    }else{
+                        playerDeaths.put(e.getEntity().getName(), "1");
+                    }
                 }
             }
         }

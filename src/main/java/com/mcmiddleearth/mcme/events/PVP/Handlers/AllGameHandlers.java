@@ -27,6 +27,8 @@ import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.PVP.Team;
 import com.mcmiddleearth.mcme.events.Util.DBmanager;
 import java.io.File;
+import java.util.HashMap;
+import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -50,6 +52,10 @@ public class AllGameHandlers implements Listener{
     
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e){
+        if(e.getEntity().getKiller() == null){
+            return;
+        }
+        
         e.setDeathMessage(ChatHandler.getPlayerColors().get(e.getEntity().getName()) + e.getEntity().getName() + ChatColor.GRAY + " was killed by " + ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName());
     }
     
@@ -84,15 +90,15 @@ public class AllGameHandlers implements Listener{
     public void onPlayerMove(PlayerMoveEvent e){
         Location from = e.getFrom();
         Location to = e.getTo();
-
+        
         if(PVPCommandCore.getRunningGame() != null){
             if(PVPCommandCore.getRunningGame().getGm().getState() == GameState.COUNTDOWN && !Team.getSpectators().contains(e.getPlayer())){
                 if(from.getX() != to.getX() || from.getZ() != to.getZ()){
                     e.setTo(from);
+                    return;
                 }
             }
         }
-        
     }
     
     @EventHandler

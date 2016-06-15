@@ -23,6 +23,7 @@ import com.mcmiddleearth.mcme.events.PVP.Handlers.BukkitTeamHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.SpecialGear;
+import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import com.mcmiddleearth.mcme.events.PVP.Team;
@@ -67,7 +68,7 @@ public class OneInTheQuiver extends BasePluginGamemode{
     
     Map map;
     
-    private int count = 10;
+    private int count;
     
     @Getter
     private Objective Points;
@@ -127,7 +128,7 @@ public class OneInTheQuiver extends BasePluginGamemode{
     public void Start(Map m, int parameter){
         super.Start(m, parameter);
         map = m;
-        count = 10;
+        count = PVPCore.getCountdownTime();
         state = GameState.COUNTDOWN;
         spawns = map.getImportantPoints().values().toArray(new EventLocation[0]);
         if(!map.getImportantPoints().keySet().containsAll(NeededPoints)){
@@ -208,15 +209,20 @@ public class OneInTheQuiver extends BasePluginGamemode{
                         }
                         state = GameState.RUNNING;
                         count = -1;
+                        
+                        for(Player p : players){
+                            p.sendMessage(ChatColor.GRAY + "Use " + ChatColor.GREEN + "/unstuck" + ChatColor.GRAY + " if you're stuck in a block!");
+                        }
 
-                    }else if(count != -1){
+                    }
+                    else if(count != -1){
                         for(Player p : Bukkit.getServer().getOnlinePlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game begins in " + count);
                         }
                         count--;
                     }
                 }
-            }, 40, 11);
+            }, 40, 20);
     }
     
     public void End(Map m){
@@ -389,33 +395,33 @@ public class OneInTheQuiver extends BasePluginGamemode{
         public void onPlayerDeath(PlayerDeathEvent e){
             int tempDeaths;
             
-            if(e.getEntity() instanceof Player && state == GameState.RUNNING){
+            if(e.getEntity() instanceof Player && e.getEntity().getKiller() != null && state == GameState.RUNNING){
                 
-                Points.getScore(ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName()).setScore(Points.getScore(ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName()).getScore() + 1);
+                if(e.getEntity().getKiller() instanceof Player){
                 
-                PlayerInventory killerInv = e.getEntity().getKiller().getInventory();
-                
-                if(!killerInv.contains(new ItemStack(Material.ARROW,5))){
-                     killerInv.addItem(new ItemStack(Material.ARROW,1));
+                    Points.getScore(ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName()).setScore(Points.getScore(ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName()).getScore() + 1);
+
+                    PlayerInventory killerInv = e.getEntity().getKiller().getInventory();
+
+                    if(!killerInv.contains(new ItemStack(Material.ARROW,5))){
+                         killerInv.addItem(new ItemStack(Material.ARROW,1));
+                    }
+
+                    if(playerDeaths.containsKey(e.getEntity().getName())){
+                        tempDeaths = Integer.parseInt(playerDeaths.get(e.getEntity().getName()));
+                        playerDeaths.remove(e.getEntity().getName());
+                        playerDeaths.put(e.getEntity().getName(), String.valueOf(tempDeaths + 1));
+                    }else{
+                        playerDeaths.put(e.getEntity().getName(), "1");
+                    }
+
+
+                    if(Points.getScore(ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName()).getScore() == 21){
+                        End(map);
+                        e.getEntity().teleport(new Location(e.getEntity().getWorld(), 346, 40, 513)); 
+                    }
                 }
-                
-                if(playerDeaths.containsKey(e.getEntity().getName())){
-                    tempDeaths = Integer.parseInt(playerDeaths.get(e.getEntity().getName()));
-                    playerDeaths.remove(e.getEntity().getName());
-                    playerDeaths.put(e.getEntity().getName(), String.valueOf(tempDeaths + 1));
-                }else{
-                    playerDeaths.put(e.getEntity().getName(), "1");
-                }
-                
-                
-                if(Points.getScore(ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName()).getScore() == 21){
-                    End(map);
-                    e.getEntity().teleport(new Location(e.getEntity().getWorld(), 346, 40, 513)); 
-                }
-                
-                
             }
-            
         }
         
         @EventHandler

@@ -78,8 +78,8 @@ public class Lobby {
         
         @EventHandler
         public void onSignChange(SignChangeEvent e){
-            if(e.getPlayer().getItemInHand().hasItemMeta()){
-                ItemMeta im = e.getPlayer().getItemInHand().getItemMeta();
+            if(e.getPlayer().getInventory().getItemInMainHand().hasItemMeta()){
+                ItemMeta im = e.getPlayer().getInventory().getItemInMainHand().getItemMeta();
                 if(im.hasLore()){
                     if(Map.findMap(im.getLore().get(0), im.getLore().get(1)) != null){
                         final Map m = Map.findMap(im.getLore().get(0), im.getLore().get(1));

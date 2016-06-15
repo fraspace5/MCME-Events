@@ -71,7 +71,7 @@ public class Infected extends BasePluginGamemode{
     
     Map map;
     
-    private int count = 10;
+    private int count;
     
     @Getter
     private Objective Points;
@@ -89,6 +89,28 @@ public class Infected extends BasePluginGamemode{
                 Points.setDisplayName("Time: " + (time / 60) + "m");
             }else if(time < 60){
                 Points.setDisplayName("Time: " + time + "s");
+            }
+            
+            if(time == 30){
+                
+                for(Player p : Bukkit.getOnlinePlayers()){
+                    p.sendMessage(ChatColor.GREEN + "30 seconds remaining!");
+                }
+                
+            }
+            else if(time <= 10 && time > 1){
+                
+                for(Player p : Bukkit.getOnlinePlayers()){
+                    p.sendMessage(ChatColor.GREEN + String.valueOf(time) + " seconds remaining!");
+                }
+                
+            }
+            else if(time == 1){
+                
+                for(Player p : Bukkit.getOnlinePlayers()){
+                    p.sendMessage(ChatColor.GREEN + String.valueOf(time) + " second remaining!");
+                }
+                
             }
             
             if(time == 0){
@@ -125,7 +147,7 @@ public class Infected extends BasePluginGamemode{
     
     @Override
     public void Start(Map m, int parameter){
-        count = 10;
+        count = PVPCore.getCountdownTime();
         state = GameState.COUNTDOWN;
         super.Start(m, parameter);
         this.map = m;
@@ -203,9 +225,12 @@ public class Infected extends BasePluginGamemode{
                         state = GameState.RUNNING;
                         count = -1;
                         
+                        for(Player p : players){
+                            p.sendMessage(ChatColor.GRAY + "Use " + ChatColor.GREEN + "/unstuck" + ChatColor.GRAY + " if you're stuck in a block!");
+                        }
                         
-                        
-                    }else if(count != -1){
+                    }
+                    else if(count != -1){
                         for(Player p : Bukkit.getServer().getOnlinePlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game begins in " + count);
                         }
@@ -213,7 +238,7 @@ public class Infected extends BasePluginGamemode{
                     }
                 }
 
-            }, 40, 11);
+            }, 40, 20);
     }
     
     @Override

@@ -138,7 +138,7 @@ public class JoinLeaveHandler implements Listener{
         
         PlayerStat.getPlayerStats().get(e.getPlayer().getName()).saveStat();
         PlayerStat.getPlayerStats().remove(e.getPlayer().getName());
-        Thompson.getInst().farwell(e.getPlayer());
+        //Thompson.getInst().farwell(e.getPlayer());
         
         if(PVPCommandCore.getRunningGame() != null){
             e.setQuitMessage(ChatHandler.getPlayerColors().get(e.getPlayer().getName()) + e.getPlayer().getName() + ChatColor.GRAY + " left the fight!");
@@ -153,5 +153,6 @@ public class JoinLeaveHandler implements Listener{
         Team.removeFromTeam(e.getPlayer());
         ChatHandler.getPlayerColors().remove(e.getPlayer().getName());
         ChatHandler.getPlayerPrefixes().remove(e.getPlayer().getName());
+        
     }
 }

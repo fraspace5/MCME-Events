@@ -21,6 +21,7 @@ package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.SpecialGear;
+import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import com.mcmiddleearth.mcme.events.PVP.Team;
@@ -64,9 +65,11 @@ public class TeamSlayer extends BasePluginGamemode{
     @Getter
     private GameState state = GameState.IDLE;
     
+    private final int midgameJoinPointThreshold = 15;
+    
     Map map;
     
-    private int count = 10;
+    private int count;
     
     @Getter
     private Objective Points;
@@ -78,7 +81,7 @@ public class TeamSlayer extends BasePluginGamemode{
     
     @Override
     public void Start(Map m, int parameter){
-        count = 10;
+        count = PVPCore.getCountdownTime();
         state = GameState.COUNTDOWN;
         int lastRedSpawn = 3;
         int lastBlueSpawn = 3;
@@ -177,7 +180,13 @@ public class TeamSlayer extends BasePluginGamemode{
                         }
                         state = GameState.RUNNING;
                         count = -1;
-                    }else if(count != -1){
+                        
+                        for(Player p : players){
+                            p.sendMessage(ChatColor.GRAY + "Use " + ChatColor.GREEN + "/unstuck" + ChatColor.GRAY + " if you're stuck in a block!");
+                        }
+                        
+                    }
+                    else if(count != -1){
                         for(Player p : Bukkit.getServer().getOnlinePlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game begins in " + count);
                         }
@@ -185,7 +194,7 @@ public class TeamSlayer extends BasePluginGamemode{
                     }
                 }
 
-            }, 40, 11);
+            }, 40, 20);
     }
     
     public void End(Map m){
@@ -207,19 +216,43 @@ public class TeamSlayer extends BasePluginGamemode{
     
     public boolean midgamePlayerJoin(Player p){
         
-        if(Points.getScore(ChatColor.RED + "Red:").getScore() > Points.getScore(ChatColor.BLUE + "Blue:").getScore()){
+        if(Points.getScore(ChatColor.RED + "Red:").getScore() - Points.getScore(ChatColor.BLUE + "Blue:").getScore() >= midgameJoinPointThreshold){
+            
             Team.addToTeam(p, Teams.BLUE);
             p.teleport(map.getImportantPoints().get("BlueSpawn1").toBukkitLoc().add(0, 2, 0));
             super.midgamePlayerJoin(p);
             
             GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
+            
         }
-        else if(Points.getScore(ChatColor.BLUE + "Blue:").getScore() >= Points.getScore(ChatColor.RED + "Red:").getScore()){
+        else if(Points.getScore(ChatColor.BLUE + "Blue:").getScore() - Points.getScore(ChatColor.RED + "Red:").getScore() >= midgameJoinPointThreshold){
+            
             Team.addToTeam(p, Teams.RED);
             p.teleport(map.getImportantPoints().get("RedSpawn1").toBukkitLoc().add(0, 2, 0));
             super.midgamePlayerJoin(p);
             
             GearHandler.giveGear(p, ChatColor.RED, SpecialGear.NONE);
+            
+        }
+        else{
+            if(Team.getRedPlayers().size() >= Team.getBluePlayers().size()){
+                
+                Team.addToTeam(p, Teams.BLUE);
+                p.teleport(map.getImportantPoints().get("BlueSpawn1").toBukkitLoc().add(0, 2, 0));
+                super.midgamePlayerJoin(p);
+            
+                GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
+                
+            }
+            else{
+                
+                Team.addToTeam(p, Teams.RED);
+                p.teleport(map.getImportantPoints().get("RedSpawn1").toBukkitLoc().add(0, 2, 0));
+                super.midgamePlayerJoin(p);
+            
+                GearHandler.giveGear(p, ChatColor.RED, SpecialGear.NONE);
+            
+            }
         }
         return true;
     }
