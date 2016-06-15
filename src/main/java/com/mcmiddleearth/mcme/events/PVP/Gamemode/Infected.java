@@ -254,8 +254,11 @@ public class Infected extends BasePluginGamemode{
                 if(Team.getSurvivors().contains(p)){
                     e.setDeathMessage(ChatColor.BLUE + p.getName() + ChatColor.YELLOW + " was infected by " + ChatColor.DARK_RED + p.getKiller().getName());
                     Points.getScore(ChatColor.BLUE + "Survivors:").setScore(Points.getScore(ChatColor.BLUE + "Survivors:").getScore() - 1);
-                    Team.removeFromTeam(p);
-                    Team.addToTeam(p, Team.Teams.INFECTED);
+                    Points.getScore(ChatColor.DARK_RED + "Infected:").setScore(Points.getScore(ChatColor.DARK_RED + "Infected:").getScore() + 1);
+                    
+                    Team.addToTeam(p, Teams.INFECTED);
+                    p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
+                        new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
                     p.getInventory().clear();
                     GearHandler.giveGear(p, ChatColor.DARK_RED, SpecialGear.INFECTED);
                 }
@@ -280,6 +283,9 @@ public class Infected extends BasePluginGamemode{
 
             if(state == GameState.RUNNING){
                 e.setRespawnLocation(map.getImportantPoints().get("InfectedSpawn").toBukkitLoc().add(0, 2, 0));
+                
+                e.getPlayer().removePotionEffect(PotionEffectType.SPEED);
+                e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 1000000, 1));
             }
         }
         

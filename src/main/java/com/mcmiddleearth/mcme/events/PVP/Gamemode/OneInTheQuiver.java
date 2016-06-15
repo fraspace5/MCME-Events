@@ -312,9 +312,9 @@ public class OneInTheQuiver extends BasePluginGamemode{
         }
         for(String playerName : highestKd){
             if(highestKd.size() == 1 && loops == 0){
-                kDMessage = ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + " with " + highestKdNumString;
+                kDMessage = ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN;
             }else if(loops == (highestKd.size() - 1)){
-                kDMessage += ChatColor.GREEN + "and " + ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + " with " + highestKdNumString;
+                kDMessage += ChatColor.GREEN + "and " + ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN;
             }else{
                 kDMessage += ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + ", ";
                 loops++;
