@@ -19,7 +19,6 @@
 package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
 import com.mcmiddleearth.mcme.events.Main;
-import static com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.getScoreboard;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.SpecialGear;
 import com.mcmiddleearth.mcme.events.PVP.maps.Map;

@@ -97,7 +97,7 @@ import org.bukkit.util.Vector;
  * 
  * The great one file butler
  */
-public class Thompson implements Player{
+public abstract class Thompson implements Player{
     
     @Getter
     private static Thompson Inst;
@@ -928,20 +928,20 @@ public class Thompson implements Player{
         return Arrays.asList(new Block[] {this.getLocation().getBlock(), this.getLocation().getBlock()});
     }
 
-    @Override
-    public Egg throwEgg() {
-        return ((Player) Bukkit.getOnlinePlayers().toArray()[rng.nextInt(Bukkit.getOnlinePlayers().size()-1)]).throwEgg();
-    }
-
-    @Override
-    public Snowball throwSnowball() {
-        return ((Player) Bukkit.getOnlinePlayers().toArray()[rng.nextInt(Bukkit.getOnlinePlayers().size()-1)]).throwSnowball();
-    }
-
-    @Override
-    public Arrow shootArrow() {
-        return ((Player) Bukkit.getOnlinePlayers().toArray()[rng.nextInt(Bukkit.getOnlinePlayers().size()-1)]).shootArrow();
-    }
+//    @Override
+//    public Egg throwEgg() {
+//        return ((Player) Bukkit.getOnlinePlayers().toArray()[rng.nextInt(Bukkit.getOnlinePlayers().size()-1)]).throwEgg();
+//    }
+//
+//    @Override
+//    public Snowball throwSnowball() {
+//        return ((Player) Bukkit.getOnlinePlayers().toArray()[rng.nextInt(Bukkit.getOnlinePlayers().size()-1)]).throwSnowball();
+//    }
+//
+//    @Override
+//    public Arrow shootArrow() {
+//        return ((Player) Bukkit.getOnlinePlayers().toArray()[rng.nextInt(Bukkit.getOnlinePlayers().size()-1)]).shootArrow();
+//    }
 
     @Override
     public int getRemainingAir() {

@@ -108,7 +108,7 @@ public class Main extends JavaPlugin{
         if (!playerDirectory.exists()){
             playerDirectory.mkdir();
         }
-        Thompson t = new Thompson(this);
+//        Thompson t = new Thompson(this);
         this.getCommand("WorldJump").setExecutor(new CommandCore());
         this.getCommand("World").setExecutor(new CommandCore());
         this.getCommand("PlugUp").setExecutor(new CommandCore());
