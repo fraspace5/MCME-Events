@@ -21,6 +21,7 @@ package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.SpecialGear;
+import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
@@ -67,6 +68,8 @@ public class TeamSlayer extends BasePluginGamemode{
     
     private final int midgameJoinPointThreshold = 15;
     
+    private final int giveTntKillCount = 1;
+    
     Map map;
     
     private int count;
@@ -78,6 +81,8 @@ public class TeamSlayer extends BasePluginGamemode{
     
     @Getter
     private boolean midgameJoin = true;
+    
+    private boolean givenTnt = false;
     
     @Override
     public void Start(Map m, int parameter){
@@ -280,7 +285,15 @@ public class TeamSlayer extends BasePluginGamemode{
                         Points.getScore(ChatColor.RED + "Red:").setScore(redScore + 1);
                     }
                 }
-            
+                
+                if(PVPCommandCore.getRunningGame().getTitle().equals("Helms_Deep") && 
+                        Points.getScore(ChatColor.RED + "Red:").getScore() >= giveTntKillCount && !givenTnt){
+                    Random r = new Random();
+                    Player tntHolder = (Player) Team.getRedPlayers().toArray()[r.nextInt(Team.getRedPlayers().size())];
+                    givenTnt = true;
+                    GearHandler.giveCustomItem(tntHolder, GearHandler.CustomItem.TNT);
+                }
+                
                 if(Points.getScore(ChatColor.RED + "Red:").getScore() >= target){
                                 
                     for(Player player : Bukkit.getOnlinePlayers()){
@@ -323,7 +336,7 @@ public class TeamSlayer extends BasePluginGamemode{
                 PlayerStat.addGameSpectatedAll();
                 End(map);
             }
-            if(Team.getBluePlayers().size() <= 0){
+            else if(Team.getBluePlayers().size() <= 0){
                 
                 for(Player p : Bukkit.getOnlinePlayers()){
                     p.sendMessage(ChatColor.RED + "Game over!");

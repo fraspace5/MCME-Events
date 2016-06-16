@@ -297,9 +297,9 @@ public class OneInTheQuiver extends BasePluginGamemode{
         for(String playerName : mostKills){
             PlayerStat.getPlayerStats().get(playerName).addGameWon();
             if(mostKills.size() == 1 && loops == 0){
-                killMessage = ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + " with " + mostKillsNum;
+                killMessage = ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN;
             }else if(loops == (mostKills.size() - 1)){
-                killMessage += ChatColor.GREEN + "and " + ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN +  " with " + mostKillsNum;
+                killMessage += ChatColor.GREEN + "and " + ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN;
             }else{
                 killMessage += ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + ", ";
                 loops++;
@@ -317,9 +317,9 @@ public class OneInTheQuiver extends BasePluginGamemode{
         }
         for(String playerName : highestKd){
             if(highestKd.size() == 1 && loops == 0){
-                kDMessage = ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN;
+                kDMessage = ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + " with " + highestKdNum;
             }else if(loops == (highestKd.size() - 1)){
-                kDMessage += ChatColor.GREEN + "and " + ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN;
+                kDMessage += ChatColor.GREEN + "and " + ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + " with " + highestKdNum;
             }else{
                 kDMessage += ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + ", ";
                 loops++;

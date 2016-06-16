@@ -20,9 +20,12 @@ package com.mcmiddleearth.mcme.events.PVP.Handlers;
 
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Ringbearer;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamConquest;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamSlayer;
 import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
 import com.mcmiddleearth.mcme.events.PVP.Team;
 import java.util.Arrays;
+import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -34,6 +37,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -175,7 +179,7 @@ public class GearHandler {
     }
     
     public enum CustomItem{
-        RING, PIPE
+        RING, PIPE, TNT
     }
     
     public static void giveCustomItem(Player p, CustomItem i){
@@ -192,6 +196,11 @@ public class GearHandler {
                 break;
             case PIPE:
                 p.getInventory().addItem(new ItemStack(Material.GHAST_TEAR, 1));
+                break;
+            case TNT:
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), ("give " + (p.getName()) + " tnt 1 0 {CanPlaceOn:[\"minecraft:mycelium\"]}"));
+                p.sendMessage(ChatColor.RED + "You have the Bomb! Place it on the mycelium by the river gate to blow the wall!");
+                
         }
         
     }
@@ -276,6 +285,31 @@ public class GearHandler {
             if(PVPCommandCore.getRunningGame() != null){
                 e.setCancelled(true);
             }
+        }
+        
+        private Random r = new Random();
+        
+        @EventHandler
+        public void tntDeathHandler(PlayerDeathEvent e){
+            
+            if(PVPCommandCore.getRunningGame() != null && e.getEntity() instanceof Player){
+                
+                if(PVPCommandCore.getRunningGame().getTitle().equals("Helms_Deep") && 
+                        (PVPCommandCore.getRunningGame().getGm() instanceof TeamConquest || PVPCommandCore.getRunningGame().getGm() instanceof TeamSlayer)){
+                    Player p = (Player) e.getEntity();
+                    
+                    if(p.getInventory().contains(new ItemStack(Material.TNT))){
+                        
+                        p.getInventory().remove(Material.TNT);
+                        p.sendMessage(ChatColor.RED + "You no longer have the Bomb");
+                        
+                        Player newTntHolder = (Player) Team.getRedPlayers().toArray()[r.nextInt(Team.getRedPlayers().size())];
+                        giveCustomItem(newTntHolder, CustomItem.TNT);
+                    }
+                    
+                }
+            }
+            
         }
     }
 }
