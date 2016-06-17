@@ -23,7 +23,6 @@ import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.SpecialGear;
-import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
 import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
@@ -34,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.Random;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -77,10 +75,6 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
     private final int target = 100;
     
     private final int midgameJoinPointThreshold = 30;
-    
-    private final int giveTntKillCount = 5;
-    
-    private boolean givenTnt = false;
     
     private static boolean eventsRegistered = false;
     
@@ -350,13 +344,6 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                         Points.getScore(ChatColor.RED + "Red:").setScore(Points.getScore(ChatColor.RED + "Red:").getScore() + pointModifier);
                     }
                     
-                }
-                
-                if(PVPCommandCore.getRunningGame().getTitle().equals("Helms_Deep") && Points.getScore(ChatColor.RED + "Red:").getScore() >= giveTntKillCount && !givenTnt){
-                    Random r = new Random();
-                    Player tntHolder = (Player) Team.getRedPlayers().toArray()[r.nextInt(Team.getRedPlayers().size())];
-                    givenTnt = true;
-                    GearHandler.giveCustomItem(tntHolder, GearHandler.CustomItem.TNT);
                 }
                 
                 if(Points.getScore(ChatColor.BLUE + "Blue:").getScore() >= goal){
