@@ -174,6 +174,9 @@ public class Map {
         catch(NullPointerException e){
             System.out.println("Couldn't find game signs!");
         }
+        catch(ClassCastException e){
+            System.err.println("Signs aren't working! Ignoring!");
+        }
     }
     
     public void playerLeaveAll(){
@@ -195,6 +198,9 @@ public class Map {
             }
             catch(NullPointerException e){
                 System.err.println("Couldn't find game sign!");
+            }
+            catch(ClassCastException e){
+                System.err.println("Signs aren't working! Ignoring!");
             }
             
             p.getInventory().clear();
