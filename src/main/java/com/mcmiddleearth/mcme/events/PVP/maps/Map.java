@@ -135,6 +135,8 @@ public class Map {
                 LobbySign.toBukkitLoc().getBlock().getState().update();
             }catch(NullPointerException e){
                 System.err.println("Couldn't find game signs!");
+            }catch(ClassCastException e){
+                System.err.println("Signs aren't working! Ignoring!");
             }
         }    
         else if(gm.getState() == GameState.RUNNING && gm.midgamePlayerJoin(p)){}
