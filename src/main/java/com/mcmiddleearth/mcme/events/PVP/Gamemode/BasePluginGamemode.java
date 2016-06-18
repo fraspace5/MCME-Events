@@ -82,7 +82,7 @@ public abstract class BasePluginGamemode implements Gamemode{
         for(Objective o : scoreboard.getObjectives()){
             o.unregister();
         }
-      
+        
         for(Player p : Bukkit.getServer().getOnlinePlayers()){
             ChatHandler.getPlayerColors().put(p.getName(), ChatColor.WHITE);
             p.teleport(PVPCore.getSpawn());

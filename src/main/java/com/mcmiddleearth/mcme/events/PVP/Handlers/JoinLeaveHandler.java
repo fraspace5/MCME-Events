@@ -88,7 +88,7 @@ public class JoinLeaveHandler implements Listener{
                 }
                 
                 if(PVPCommandCore.getRunningGame() == null && PVPCommandCore.getQueuedGame() == null){
-                    p.teleport(new Location(p.getWorld(), 346, 40, 513));
+                    p.teleport(PVPCore.getSpawn());
                     ChatHandler.getPlayerColors().put(p.getName(), org.bukkit.ChatColor.WHITE);
                 }else{
                     Map m = null;
@@ -116,7 +116,7 @@ public class JoinLeaveHandler implements Listener{
                         Team.addToTeam(p, Team.Teams.SPECTATORS);
                     }
                     else{
-                        p.teleport(new Location(p.getWorld(), 346, 40, 513));
+                        p.teleport(PVPCore.getSpawn());
                         p.sendMessage(ChatColor.GREEN + "Upcoming Game: " + ChatColor.BLUE + m.getGmType() + ChatColor.GREEN + " on " + ChatColor.RED + m.getTitle());
                         p.sendMessage(ChatColor.YELLOW + "Use " + ChatColor.GREEN + "/pvp join" + ChatColor.YELLOW + " to join!");
                         p.sendMessage(ChatColor.GREEN + "Do /pvp rules " + PVPCommandCore.removeSpaces(PVPCommandCore.getQueuedGame().getGmType()) + " if you don't know how this gamemode works!");

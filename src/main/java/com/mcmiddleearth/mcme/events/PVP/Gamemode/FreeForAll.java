@@ -342,7 +342,7 @@ public class FreeForAll extends BasePluginGamemode{
         loops = 0;
         String highestKdNumString;
         DecimalFormat df = new DecimalFormat("#0.00");
-        if(highestKdNum == -1){
+        if(highestKdNum == -1.0){
             highestKdNumString = "infinity";
         }
         else{

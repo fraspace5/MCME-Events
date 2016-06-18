@@ -23,6 +23,7 @@ import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.SpecialGear;
+import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
 import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.Random;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -76,6 +78,10 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
     
     private final int midgameJoinPointThreshold = 30;
     
+    private final int giveTntPointThreshold = 60;
+    
+    private boolean givenTnt = false;
+    
     private static boolean eventsRegistered = false;
     
     @Getter
@@ -107,6 +113,7 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
     public void Start(Map m, int parameter) {
         super.Start(m, parameter);
         goal = parameter;
+        givenTnt = false;
         count = PVPCore.getCountdownTime();
         state = GameState.COUNTDOWN;
         this.map = m;
@@ -343,6 +350,18 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
                     if(pointModifier > 0){
                         Points.getScore(ChatColor.RED + "Red:").setScore(Points.getScore(ChatColor.RED + "Red:").getScore() + pointModifier);
                     }
+                    
+                }
+                
+                if(PVPCommandCore.getRunningGame().getTitle().equals("Helms_Deep") &&
+                        Points.getScore(ChatColor.RED + "Red:").getScore() >= giveTntPointThreshold &&
+                        !givenTnt){
+                    Random r = new Random();
+                    
+                    Player randomPlayer = (Player) Team.getRedPlayers().toArray()[r.nextInt(Team.getRedPlayers().size())];
+                    
+                    GearHandler.giveCustomItem(randomPlayer, GearHandler.CustomItem.TNT);
+                    givenTnt = true;
                     
                 }
                 

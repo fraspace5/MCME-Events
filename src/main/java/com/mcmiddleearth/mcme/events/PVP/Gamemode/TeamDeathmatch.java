@@ -227,7 +227,7 @@ public class TeamDeathmatch extends BasePluginGamemode{
                     PlayerStat.addGameLost(Teams.BLUE);
                     PlayerStat.addGameSpectatedAll();
                     End(map);
-                    e.getEntity().teleport(new Location(p.getWorld(), 346, 40, 513));
+                    e.getEntity().teleport(PVPCore.getSpawn());
                 }
                 
                 if(state == GameState.RUNNING){

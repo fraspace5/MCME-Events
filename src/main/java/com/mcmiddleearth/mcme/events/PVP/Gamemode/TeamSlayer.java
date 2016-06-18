@@ -21,6 +21,7 @@ package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.SpecialGear;
+import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
@@ -67,6 +68,10 @@ public class TeamSlayer extends BasePluginGamemode{
     
     private final int midgameJoinPointThreshold = 15;
     
+    private final int giveTntPointThreshold = 1;//30
+    
+    private boolean givenTnt = false;
+    
     Map map;
     
     private int count;
@@ -83,6 +88,7 @@ public class TeamSlayer extends BasePluginGamemode{
     public void Start(Map m, int parameter){
         count = PVPCore.getCountdownTime();
         state = GameState.COUNTDOWN;
+        givenTnt = false;
         int lastRedSpawn = 3;
         int lastBlueSpawn = 3;
         super.Start(m, parameter);
@@ -281,6 +287,18 @@ public class TeamSlayer extends BasePluginGamemode{
                     }
                 }
             
+                if(PVPCommandCore.getRunningGame().getTitle().equals("Helms_Deep") &&
+                        Points.getScore(ChatColor.RED + "Red:").getScore() >= giveTntPointThreshold &&
+                        !givenTnt){
+                    Random r = new Random();
+                    
+                    Player randomPlayer = (Player) Team.getRedPlayers().toArray()[r.nextInt(Team.getRedPlayers().size())];
+                    
+                    GearHandler.giveCustomItem(randomPlayer, GearHandler.CustomItem.TNT);
+                    givenTnt = true;
+                    
+                }
+                
                 if(Points.getScore(ChatColor.RED + "Red:").getScore() >= target){
                                 
                     for(Player player : Bukkit.getOnlinePlayers()){

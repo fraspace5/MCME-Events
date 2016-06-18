@@ -115,7 +115,7 @@ public class PVPCore implements Event{
 
                     @Override
                     public void run() {
-                        Spawn = new Location(Bukkit.getWorld("world"), 346, 40, 513);
+                        Spawn = new Location(Bukkit.getWorld("world"), 344.47, 39, 521.58, 0.3F, -24.15F);
                         
                     }
                 }, 20);

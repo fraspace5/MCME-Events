@@ -88,7 +88,6 @@ public class AntiCheatListeners implements Listener{
         
         if(PVPCommandCore.getRunningGame() != null){
             if(command.equalsIgnoreCase("/fill") || 
-                    command.equalsIgnoreCase("/clone") ||
                     command.equalsIgnoreCase("/blockdata") ||
                     command.equalsIgnoreCase("/clear") ||
                     command.equalsIgnoreCase("/gamemode") ||

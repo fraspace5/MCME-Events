@@ -20,20 +20,25 @@ package com.mcmiddleearth.mcme.events.PVP.Handlers;
 
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Gamemode.Ringbearer;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamConquest;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.TeamSlayer;
 import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
 import com.mcmiddleearth.mcme.events.PVP.Team;
 import java.util.Arrays;
+import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -52,10 +57,6 @@ public class GearHandler {
     
     public enum SpecialGear{
         ONEINTHEQUIVER, INFECTED, RINGBEARER, NONE
-    }
-    
-    public GearHandler(){
-        Bukkit.getPluginManager().registerEvents(new GearEvents(), Main.getPlugin());
     }
     
     public static void giveGear(Player p, ChatColor c, SpecialGear sg){
@@ -175,15 +176,16 @@ public class GearHandler {
     }
     
     public enum CustomItem{
-        RING, PIPE
+        RING, PIPE, TNT
     }
     
     public static void giveCustomItem(Player p, CustomItem i){
+        ItemMeta im;
         switch(i){
             
             case RING:
                 ItemStack ring = new ItemStack(Material.GOLD_NUGGET);
-                ItemMeta im = ring.getItemMeta();
+                im = ring.getItemMeta();
                 im.setDisplayName("The Ring");
                 im.setLore(Arrays.asList(new String[] {"The One Ring of power...", "1 of 2"}));
                 ring.setItemMeta(im);
@@ -192,6 +194,14 @@ public class GearHandler {
                 break;
             case PIPE:
                 p.getInventory().addItem(new ItemStack(Material.GHAST_TEAR, 1));
+            case TNT:
+                /*ItemStack tnt = new ItemStack(Material.TNT);
+                im = tnt.getItemMeta();
+                im.setDisplayName("BOMB");
+                tnt.setItemMeta(im);
+                p.getInventory().addItem(tnt);
+                p.sendMessage(ChatColor.RED + "You have the BOMB!");
+                p.sendMessage(ChatColor.RED + "Place it on the mycelium by the river gate to blow the wall!");*/
         }
         
     }
@@ -200,7 +210,6 @@ public class GearHandler {
         @EventHandler
         public void onPlayerInteract(PlayerInteractEvent e){
             if(e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
-                
                 final Player p = e.getPlayer();
                 ItemStack item = null;
                 
@@ -266,6 +275,26 @@ public class GearHandler {
                             p.sendMessage(ChatColor.GRAY + "You must have at least 1 xp level to use the ring");
                         }
                     }
+                    if(item.getType().equals(Material.TNT) &&
+                            PVPCommandCore.getRunningGame().getTitle().equals("Helms_Deep") &&
+                            PVPCommandCore.getRunningGame().getGm().getPlayers().contains(p) &&
+                            (PVPCommandCore.getRunningGame().getGm() instanceof TeamSlayer ||
+                            PVPCommandCore.getRunningGame().getGm() instanceof TeamConquest)){
+                        
+                        if(e.getClickedBlock().getType().equals(Material.MYCEL)){
+                            Block toTnt = p.getWorld().getBlockAt(e.getClickedBlock().getLocation().add(0, 1, 0));
+                            
+                            toTnt.setType(Material.TNT);
+                            
+                            for(ItemStack i : p.getInventory().getContents()){
+                                if(i != null && i.getType().equals(Material.TNT)){
+                                    p.getInventory().remove(i);
+                                }
+                            }
+                            
+                        }
+                        
+                    }
                 }
             }
         }
@@ -275,6 +304,37 @@ public class GearHandler {
         public void returnDroppedItems(PlayerDropItemEvent e){
             if(PVPCommandCore.getRunningGame() != null){
                 e.setCancelled(true);
+            }
+        }
+        
+        //handle tnt on death
+        @EventHandler
+        public void onPlayerDeath(PlayerDeathEvent e){
+            if(PVPCommandCore.getRunningGame() != null && e.getEntity() instanceof Player){
+                
+                if(PVPCommandCore.getRunningGame().getTitle().equals("Helms_Deep") &&
+                        (PVPCommandCore.getRunningGame().getGm() instanceof TeamSlayer ||
+                        PVPCommandCore.getRunningGame().getGm() instanceof TeamConquest)){
+                    
+                    Player p = e.getEntity();
+                    PlayerInventory inv = p.getInventory();
+                    
+                    if(inv.contains(Material.TNT)){
+                        p.sendMessage(ChatColor.RED + "You no longer have the BOMB");
+                        
+                        for(ItemStack i : inv.getContents()){
+                            if(i!= null && i.getType().equals(Material.TNT)){
+                                inv.remove(i);
+                            }
+                        }
+                        
+                        Random r = new Random();
+                        Player newTntHolder = (Player) Team.getRedPlayers().toArray()[r.nextInt(Team.getRedPlayers().size())];
+                        
+                        giveCustomItem(newTntHolder, CustomItem.TNT);
+                    }
+                }
+                
             }
         }
     }

@@ -309,7 +309,7 @@ public class OneInTheQuiver extends BasePluginGamemode{
         loops = 0;
         String highestKdNumString;
         DecimalFormat df = new DecimalFormat("#0.00");
-        if(highestKdNum == -1){
+        if(highestKdNum == -1.0){
             highestKdNumString = "infinity";
         }
         else{
@@ -317,9 +317,9 @@ public class OneInTheQuiver extends BasePluginGamemode{
         }
         for(String playerName : highestKd){
             if(highestKd.size() == 1 && loops == 0){
-                kDMessage = ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + " with " + highestKdNum;
+                kDMessage = ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + " with " + highestKdNumString;
             }else if(loops == (highestKd.size() - 1)){
-                kDMessage += ChatColor.GREEN + "and " + ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + " with " + highestKdNum;
+                kDMessage += ChatColor.GREEN + "and " + ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + " with " + highestKdNumString;
             }else{
                 kDMessage += ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + ", ";
                 loops++;
@@ -418,7 +418,7 @@ public class OneInTheQuiver extends BasePluginGamemode{
 
                     if(Points.getScore(ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName()).getScore() == 21){
                         End(map);
-                        e.getEntity().teleport(new Location(e.getEntity().getWorld(), 346, 40, 513)); 
+                        e.getEntity().teleport(PVPCore.getSpawn()); 
                     }
                 }
             }
