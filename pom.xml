@@ -99,11 +99,6 @@
          <artifactId>jetty-server</artifactId>
          <version>9.1.0.v20131115</version>
       </dependency>
-      <dependency>
-         <groupId>org.spigotmc</groupId>
-         <artifactId>spigot</artifactId>
-         <version>1.9.4-R0.1-SNAPSHOT</version>
-      </dependency>
    </dependencies>
    
 </project>
