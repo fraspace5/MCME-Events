@@ -88,8 +88,6 @@ public class OneInTheQuiver extends BasePluginGamemode{
             ChatColor.AQUA,
             ChatColor.BLUE,
             ChatColor.DARK_AQUA,
-            ChatColor.DARK_BLUE,
-            ChatColor.DARK_GRAY,
             ChatColor.DARK_GREEN,
             ChatColor.DARK_PURPLE,
             ChatColor.DARK_RED,

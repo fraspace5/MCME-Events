@@ -87,12 +87,6 @@ public class GearHandler {
                     case DARK_AQUA:
                         lam.setColor(DyeColor.CYAN.getColor());
                         break;
-                    case DARK_BLUE:
-                        lam.setColor(DyeColor.BROWN.getColor());
-                        break;
-                    case DARK_GRAY:
-                        lam.setColor(DyeColor.BLACK.getColor());
-                        break;
                     case DARK_GREEN:
                         lam.setColor(DyeColor.GREEN.getColor());
                         break;

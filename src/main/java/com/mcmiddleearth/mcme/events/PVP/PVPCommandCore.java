@@ -157,6 +157,7 @@ public class PVPCommandCore implements CommandExecutor{
                                     ChatHandler.getPlayerColors().put(pl.getName(), ChatColor.WHITE);
                                     pl.setPlayerListName(ChatColor.WHITE + pl.getName());
                                     pl.setDisplayName(ChatColor.WHITE + pl.getName());
+                                    BukkitTeamHandler.removeFromBukkitTeam(pl);
                                     pl.sendMessage(ChatColor.GRAY + "The queued game was canceled! You'll need to rejoin when another game is queued.");
                                 }
                                 ChatHandler.getPlayerPrefixes().clear();

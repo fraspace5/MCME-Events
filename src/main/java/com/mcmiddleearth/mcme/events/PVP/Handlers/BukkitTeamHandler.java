@@ -31,8 +31,6 @@ public class BukkitTeamHandler {
     private static org.bukkit.scoreboard.Team aqua;
     private static org.bukkit.scoreboard.Team blue;
     private static org.bukkit.scoreboard.Team darkAqua;
-    private static org.bukkit.scoreboard.Team darkBlue;
-    private static org.bukkit.scoreboard.Team darkGray;
     private static org.bukkit.scoreboard.Team darkGreen;
     private static org.bukkit.scoreboard.Team darkPurple;
     private static org.bukkit.scoreboard.Team darkRed;
@@ -48,8 +46,6 @@ public class BukkitTeamHandler {
         aqua = BasePluginGamemode.getScoreboard().getTeam("aqua");
         blue = BasePluginGamemode.getScoreboard().getTeam("blue");
         darkAqua = BasePluginGamemode.getScoreboard().getTeam("darkaqua");
-        darkBlue = BasePluginGamemode.getScoreboard().getTeam("darkblue");
-        darkGray = BasePluginGamemode.getScoreboard().getTeam("darkgray");
         darkGreen = BasePluginGamemode.getScoreboard().getTeam("darkgreen");
         darkPurple = BasePluginGamemode.getScoreboard().getTeam("darkpurple");
         darkRed = BasePluginGamemode.getScoreboard().getTeam("darkred");
@@ -71,14 +67,6 @@ public class BukkitTeamHandler {
         if(darkAqua == null){
             darkAqua = BasePluginGamemode.getScoreboard().registerNewTeam("darkaqua");
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "scoreboard teams option darkaqua color darkaqua");
-        }
-        if(darkBlue == null){
-            darkBlue = BasePluginGamemode.getScoreboard().registerNewTeam("darkblue");
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "scoreboard teams option darkblue color darkblue");
-        }
-        if(darkGray == null){
-            darkGray = BasePluginGamemode.getScoreboard().registerNewTeam("darkgray");
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "scoreboard teams option darkgray color darkgray");
         }
         if(darkGreen == null){
             darkGreen = BasePluginGamemode.getScoreboard().registerNewTeam("darkgreen");
@@ -130,12 +118,6 @@ public class BukkitTeamHandler {
             case DARK_AQUA:
                 darkAqua.addPlayer(p);
                 break;
-            case DARK_BLUE:
-                darkBlue.addPlayer(p);
-                break;
-            case DARK_GRAY:
-                darkGray.addPlayer(p);
-                break;
             case DARK_GREEN:
                 darkGreen.addPlayer(p);
                 break;
@@ -180,16 +162,6 @@ public class BukkitTeamHandler {
         if(darkAqua != null){
             if(darkAqua.hasPlayer(p)){
                 darkAqua.removePlayer(p);
-            }
-        }
-        if(darkBlue != null){
-            if(darkBlue.hasPlayer(p)){
-                darkBlue.removePlayer(p);
-            }
-        }
-        if(darkGray != null){
-            if(darkGray.hasPlayer(p)){
-                darkGray.removePlayer(p);
             }
         }
         if(darkGreen != null){
