@@ -118,7 +118,8 @@ public class GearHandler {
                 }
                 
                 items[i].setItemMeta(lam);
-            }else{
+            }
+            else{
                 items[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 10);
             }
                 items[i].getItemMeta().spigot().setUnbreakable(true);
@@ -137,7 +138,8 @@ public class GearHandler {
         
         if(sg == SpecialGear.INFECTED){
             p.getInventory().setChestplate(items[1]);
-        }else{
+        }
+        else{
             p.getInventory().setChestplate(items[1]);
             p.getInventory().setLeggings(items[2]);
             p.getInventory().setBoots(items[3]);
@@ -145,23 +147,18 @@ public class GearHandler {
         }
         
         if(sg == SpecialGear.ONEINTHEQUIVER){
-            items[5].addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 12);
+            items[5].addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 13);
         }
-        
+        else{
+            items[5].addEnchantment(Enchantment.ARROW_INFINITE, 1);
+        }
         
         p.getInventory().addItem(items[4]);
         p.getInventory().addItem(items[5]);
         p.getInventory().setItemInOffHand(items[6]);
         
-        if(sg == SpecialGear.ONEINTHEQUIVER){
-            ItemStack Arrows = new ItemStack(Material.ARROW, 1);
-            p.getInventory().addItem(Arrows);
-        }
-        else{
-            ItemStack Arrows = new ItemStack(Material.ARROW, 64);
-            p.getInventory().addItem(Arrows);
-            p.getInventory().addItem(Arrows);
-        }
+        ItemStack Arrows = new ItemStack(Material.ARROW, 1);
+        p.getInventory().addItem(Arrows);
         
         if(sg == SpecialGear.RINGBEARER){
             giveCustomItem(p, CustomItem.RING);

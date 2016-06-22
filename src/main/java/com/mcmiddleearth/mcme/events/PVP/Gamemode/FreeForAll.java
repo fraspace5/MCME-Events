@@ -449,7 +449,7 @@ public class FreeForAll extends BasePluginGamemode{
 
                 e.setRespawnLocation(spawns[random.nextInt(spawns.length)].toBukkitLoc().add(0, 2, 0));
             
-                healing.put(e.getPlayer(), new Long(System.currentTimeMillis() + 5000));
+                healing.put(e.getPlayer(), new Long(System.currentTimeMillis() + 7500));
             }
         }
     }
