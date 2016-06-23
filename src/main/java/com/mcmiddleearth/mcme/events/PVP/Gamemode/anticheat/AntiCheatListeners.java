@@ -73,7 +73,8 @@ public class AntiCheatListeners implements Listener{
                 command.equalsIgnoreCase("/op") ||
                 command.equalsIgnoreCase("/restart") ||
                 command.equalsIgnoreCase("/reload") ||
-                command.equalsIgnoreCase("/scoreboard")){
+                command.equalsIgnoreCase("/scoreboard") ||
+                command.equalsIgnoreCase("/kill")){
             cs.sendMessage(ChatColor.RED + "You are not able to perform this command");
             e.setCancelled(true);
             
