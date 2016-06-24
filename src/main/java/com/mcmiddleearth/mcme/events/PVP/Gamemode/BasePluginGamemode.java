@@ -83,6 +83,8 @@ public abstract class BasePluginGamemode implements Gamemode{
             o.unregister();
         }
         
+        ChatHandler.getPlayerColors().clear();
+        
         for(Player p : Bukkit.getServer().getOnlinePlayers()){
             ChatHandler.getPlayerColors().put(p.getName(), ChatColor.WHITE);
             p.teleport(PVPCore.getSpawn());
@@ -125,17 +127,17 @@ public abstract class BasePluginGamemode implements Gamemode{
                 PVPCommandCore.getRunningGame().getGm() instanceof TeamSlayer){
             
              if(Team.getRedPlayers().contains(p)){
-                 message = ChatColor.RED + p.getName() + " has joined the fight on Red Team!";
+                 message = ChatColor.RED + p.getName() + ChatColor.GRAY + " has joined the fight on " + ChatColor.RED + "Red Team!";
              }
              else if(Team.getBluePlayers().contains(p)){
-                 message = ChatColor.BLUE + p.getName() + " has joined the fight on Blue Team!";
+                 message = ChatColor.BLUE + p.getName() + ChatColor.GRAY + " has joined the fight on " + ChatColor.BLUE + "Blue Team!";
              }
             
         }
         
         else if(PVPCommandCore.getRunningGame().getGm() instanceof Infected){
             
-            message = ChatColor.BLUE + p.getName() + " has joined the fight as a Survivor!";
+            message = ChatColor.BLUE + p.getName() + ChatColor.GRAY + " has joined the fight as a " + ChatColor.BLUE + "Survivor!";
             
         }
         for(Player pl : Bukkit.getOnlinePlayers()){

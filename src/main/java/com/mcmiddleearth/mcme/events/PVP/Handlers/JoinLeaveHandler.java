@@ -148,8 +148,10 @@ public class JoinLeaveHandler implements Listener{
             PVPCommandCore.getRunningGame().getGm().getPlayers().remove(e.getPlayer());
         }
         
-        PlayerStat.getPlayerStats().get(e.getPlayer().getName()).saveStat();
-        PlayerStat.getPlayerStats().remove(e.getPlayer().getName());
+        if(PlayerStat.getPlayerStats().get(e.getPlayer().getName()) != null){
+            PlayerStat.getPlayerStats().get(e.getPlayer().getName()).saveStat();
+            PlayerStat.getPlayerStats().remove(e.getPlayer().getName());
+        }
         //Thompson.getInst().farwell(e.getPlayer());
         
         if(PVPCommandCore.getRunningGame() != null){

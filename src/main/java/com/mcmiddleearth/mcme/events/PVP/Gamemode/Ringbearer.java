@@ -359,6 +359,9 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                             pl.sendMessage(ChatColor.RED + "They can't respawn!");
                         }
                     }
+                    else if(p.equals(redBearer) && redBearerHasRespawned){
+                        Team.addToTeam(p, Teams.SPECTATORS);
+                    }
                     
                     else if(!redCanRespawn){
                         Team.addToTeam(p, Teams.SPECTATORS);
@@ -376,6 +379,10 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                             pl.sendMessage(ChatColor.BLUE + "Blue Team's Ringbearer has been killed!");
                             pl.sendMessage(ChatColor.BLUE + "They can't respawn!");
                         }
+                    }
+                    
+                    else if(p.equals(blueBearer) && blueBearerHasRespawned){
+                        Team.addToTeam(p, Teams.SPECTATORS);
                     }
                     
                     else if(!blueCanRespawn){
@@ -409,25 +416,7 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                     PlayerStat.addGameSpectatedAll();
                     End(map);
                 }
-                
-                if(state == GameState.RUNNING){
-                    if(Team.getRedPlayers().contains(p)){
-                        
-                        if(p.equals(redBearer) && redBearerHasRespawned){
-                            Team.addToTeam(p, Teams.SPECTATORS);
-                        }else if(!p.equals(redBearer) && !redCanRespawn){
-                            Team.addToTeam(p, Teams.SPECTATORS);
-                        }
-                        
-                    }else if(Team.getBluePlayers().contains(p)){
-                        if(p.equals(blueBearer) && blueBearerHasRespawned){
-                            Team.addToTeam(p, Teams.SPECTATORS);
-                        }else if(!p.equals(blueBearer) && !blueCanRespawn){
-                            Team.addToTeam(p, Teams.SPECTATORS);
-                        }
-                    }
-                    
-                }
+               
             }
             
         }
@@ -437,24 +426,22 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
             if(state == GameState.RUNNING && players.contains(e.getPlayer())){
                 
                 if(Team.getRedPlayers().contains(e.getPlayer())){
-                    if(redCanRespawn){
-                        e.setRespawnLocation(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
-                    }else if(e.getPlayer().equals(redBearer) && !redBearerHasRespawned){
-                        e.setRespawnLocation(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
+                    e.setRespawnLocation(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
+                    
+                    if(e.getPlayer().equals(redBearer) && !redBearerHasRespawned){
                         redBearerHasRespawned = true;
-                    }else{
-                        e.setRespawnLocation(map.getSpawn().toBukkitLoc().add(0, 2, 0));
                     }
                     
-                }else if(Team.getBluePlayers().contains(e.getPlayer())){
-                    if(blueCanRespawn){
-                        e.setRespawnLocation(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
-                    }else if(e.getPlayer().equals(blueBearer) && !blueBearerHasRespawned){
-                        e.setRespawnLocation(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
+                }
+                else if(Team.getBluePlayers().contains(e.getPlayer())){
+                    e.setRespawnLocation(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
+                    
+                    if(e.getPlayer().equals(blueBearer) && !blueBearerHasRespawned){
                         blueBearerHasRespawned = true;
-                    }else{
-                        e.setRespawnLocation(map.getSpawn().toBukkitLoc().add(0, 2, 0));
                     }
+                }
+                else{
+                    e.setRespawnLocation(map.getSpawn().toBukkitLoc().add(0, 2, 0));
                 }
             }
         }
