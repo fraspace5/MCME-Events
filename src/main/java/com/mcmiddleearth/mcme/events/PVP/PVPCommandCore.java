@@ -194,6 +194,7 @@ public class PVPCommandCore implements CommandExecutor{
                         m = runningGame;
                     }else{
                         p.sendMessage(ChatColor.RED + "There is no queued or running game!");
+                        return true;
                     }
                    
                     if(!m.getGm().getPlayers().contains(p) && m.getGm().getState() != GameState.COUNTDOWN){
