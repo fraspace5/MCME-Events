@@ -43,6 +43,16 @@ public class AntiCheatListeners implements Listener{
     @EventHandler
     public static void onPlayerCommand(PlayerCommandPreprocessEvent e){
         
+        if(truncateAtFirstSpace(e.getMessage()).equals("/kill")){
+            
+            String firstArg = getFirstArg(e.getMessage());
+            System.out.println(firstArg);
+            
+            if(firstArg.equalsIgnoreCase(e.getPlayer().getName()) || firstArg.equals("")){
+                return;
+            }
+        }
+        
         String command = truncateAtFirstSpace(e.getMessage());
         Player cs = e.getPlayer();
         
@@ -74,10 +84,15 @@ public class AntiCheatListeners implements Listener{
                 command.equalsIgnoreCase("/restart") ||
                 command.equalsIgnoreCase("/reload") ||
                 command.equalsIgnoreCase("/scoreboard") ||
-                command.equalsIgnoreCase("/kill")){
+                command.equalsIgnoreCase("/slay")){
             cs.sendMessage(ChatColor.RED + "You are not able to perform this command");
             e.setCancelled(true);
             
+        }
+        
+        if(command.equalsIgnoreCase("/kill")){
+            cs.sendMessage(ChatColor.RED + "You can only use /kill on yourself!");
+            e.setCancelled(true);
         }
         
         if(command.equalsIgnoreCase("/effect") || 
@@ -226,6 +241,31 @@ public class AntiCheatListeners implements Listener{
             
         }
         return newString;
+    }
+    private static String getFirstArg(String s){
+        
+        char[] chars = s.toCharArray();
+        
+        boolean hitFirstSpace = false;
+        
+        String firstArg = "";
+        
+        for(char c : chars){
+            if(c == ' ' && !hitFirstSpace){
+                hitFirstSpace = true;
+            }
+            
+            else if(c == ' ' && hitFirstSpace){
+                return firstArg;
+            }
+            
+            else if (c != ' ' && hitFirstSpace){
+                firstArg += String.valueOf(c);
+            }
+        }
+        
+        return firstArg;
+        
     }
 }
 /* 
