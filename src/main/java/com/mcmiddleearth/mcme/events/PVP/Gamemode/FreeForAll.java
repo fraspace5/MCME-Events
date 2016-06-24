@@ -407,7 +407,9 @@ public class FreeForAll extends BasePluginGamemode{
         p.teleport(spawns[random.nextInt(spawns.length)].toBukkitLoc().add(0, 2, 0));
         p.setGameMode(GameMode.ADVENTURE);
         p.setScoreboard(getScoreboard());
+        
         GearHandler.giveGear(p, color, SpecialGear.NONE);
+        BukkitTeamHandler.addToBukkitTeam(p, color);
         
         super.midgamePlayerJoin(p);
         

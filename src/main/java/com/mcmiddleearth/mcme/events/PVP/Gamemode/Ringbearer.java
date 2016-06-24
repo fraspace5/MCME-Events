@@ -441,6 +441,7 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                         e.setRespawnLocation(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
                     }else if(e.getPlayer().equals(redBearer) && !redBearerHasRespawned){
                         e.setRespawnLocation(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
+                        redBearerHasRespawned = true;
                     }else{
                         e.setRespawnLocation(map.getSpawn().toBukkitLoc().add(0, 2, 0));
                     }
@@ -450,6 +451,7 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                         e.setRespawnLocation(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
                     }else if(e.getPlayer().equals(blueBearer) && !blueBearerHasRespawned){
                         e.setRespawnLocation(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
+                        blueBearerHasRespawned = true;
                     }else{
                         e.setRespawnLocation(map.getSpawn().toBukkitLoc().add(0, 2, 0));
                     }

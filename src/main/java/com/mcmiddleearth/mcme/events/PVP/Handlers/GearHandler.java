@@ -240,6 +240,7 @@ public class GearHandler {
                             p.getInventory().setChestplate(new ItemStack(Material.AIR));
                             p.getInventory().setLeggings(new ItemStack(Material.AIR));
                             p.getInventory().setBoots(new ItemStack(Material.AIR));
+                            p.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
                             
                             BukkitTeamHandler.removeFromBukkitTeam(p);
                             

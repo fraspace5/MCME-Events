@@ -32,6 +32,7 @@ import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
 import com.mcmiddleearth.mcme.events.PVP.Team;
 import com.mcmiddleearth.mcme.events.Util.Thompson;
 import com.mcmiddleearth.mcme.events.Util.DBmanager;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.md_5.bungee.api.ChatColor;
@@ -82,9 +83,20 @@ public class JoinLeaveHandler implements Listener{
                     Logger.getLogger(JoinLeaveHandler.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 
+                ArrayList<String> nullPointerColors = new ArrayList<>();
                 for(String playerName : ChatHandler.getPlayerColors().keySet()){
-                    Bukkit.getPlayer(playerName).setPlayerListName(ChatHandler.getPlayerColors().get(playerName) + playerName);
-                    Bukkit.getPlayer(playerName).setDisplayName(ChatHandler.getPlayerColors().get(playerName) + playerName);
+                    try{
+                        Bukkit.getPlayer(playerName).setPlayerListName(ChatHandler.getPlayerColors().get(playerName) + playerName);
+                        Bukkit.getPlayer(playerName).setDisplayName(ChatHandler.getPlayerColors().get(playerName) + playerName);
+                    }
+                    catch(NullPointerException e){
+                        nullPointerColors.add(playerName);
+                        System.err.println("ChatColor for " + playerName + " was null!");
+                    }
+                }
+                
+                for(String s : nullPointerColors){
+                    ChatHandler.getPlayerColors().remove(s);
                 }
                 
                 if(PVPCommandCore.getRunningGame() == null && PVPCommandCore.getQueuedGame() == null){

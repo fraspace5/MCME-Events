@@ -379,6 +379,7 @@ public class OneInTheQuiver extends BasePluginGamemode{
         super.midgamePlayerJoin(p);
         
         GearHandler.giveGear(p, color, SpecialGear.ONEINTHEQUIVER);
+        BukkitTeamHandler.addToBukkitTeam(p, color);
         
         return true;
     }
