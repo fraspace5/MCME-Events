@@ -183,10 +183,10 @@ public class PVPCommandCore implements CommandExecutor{
                         if(queuedGame != null || runningGame != null){
                             
                             if(queuedGame != null){
-                                p.sendMessage(queuedGame.getName());
+                                p.sendMessage(queuedGame.getName() + " is queued");
                             }
                             if(runningGame != null){
-                                p.sendMessage(runningGame.getName());
+                                p.sendMessage(runningGame.getName() + " is running");
                             }
                             
                         }
@@ -272,6 +272,22 @@ public class PVPCommandCore implements CommandExecutor{
                         
                     }
                      
+                }
+                else if(args[0].equalsIgnoreCase("state")){
+                    
+                    if(runningGame.getGm() == null){
+                        p.sendMessage("IDLE");
+                    }
+                    else if(runningGame.getGm().getState() == GameState.COUNTDOWN){
+                        p.sendMessage(runningGame.getName() + " is COUNTDOWN");
+                    }
+                    else if(runningGame.getGm().getState() == GameState.RUNNING){
+                        p.sendMessage(runningGame.getName() + " is RUNNING");
+                    }
+                    else if(runningGame.getGm().getState() == GameState.IDLE){
+                        p.sendMessage(runningGame.getName() + " is IDLE");
+                    }
+                    
                 }
                 else if(args[0].equalsIgnoreCase("rules")){
                     String gm;

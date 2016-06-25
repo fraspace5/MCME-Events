@@ -398,6 +398,7 @@ public class FreeForAll extends BasePluginGamemode{
     public boolean midgamePlayerJoin(Player p){
         Random random = new Random();
         ChatColor color;
+        Team.removeFromTeam(p);
         if(!hasPlayed.containsKey(p.getName())){
             
             color = chatColors[random.nextInt(chatColors.length)];
