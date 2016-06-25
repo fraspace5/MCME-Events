@@ -395,7 +395,7 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
         
         @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
-            
+            System.out.println("Respawn event in TeamConquest called!");
             if(state == GameState.RUNNING && players.contains(e.getPlayer())){
                 if(Team.getRedPlayers().contains(e.getPlayer())){
                     e.setRespawnLocation(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));

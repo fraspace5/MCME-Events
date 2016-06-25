@@ -147,7 +147,8 @@ public class AllGameHandlers implements Listener{
         if(e.getEntity() instanceof Player){
             if(PVPCommandCore.getRunningGame() == null){
                 e.setCancelled(true);
-            }else if(PVPCommandCore.getRunningGame().getGm().getState() != GameState.RUNNING){
+            }
+            else if(PVPCommandCore.getRunningGame().getGm().getState() != GameState.RUNNING){
                 e.setCancelled(true);
             }
         }

@@ -92,7 +92,6 @@ public class OneInTheQuiver extends BasePluginGamemode{
             ChatColor.DARK_PURPLE,
             ChatColor.DARK_RED,
             ChatColor.GOLD,
-            ChatColor.GRAY,
             ChatColor.GREEN,
             ChatColor.LIGHT_PURPLE,
             ChatColor.RED,
@@ -154,7 +153,6 @@ public class OneInTheQuiver extends BasePluginGamemode{
                 }
             }else{
                 Team.addToTeam(p, Team.Teams.SPECTATORS);
-                BukkitTeamHandler.addToBukkitTeam(p, ChatColor.GRAY);
                 p.teleport(map.getSpawn().toBukkitLoc());
             }
             
@@ -425,6 +423,7 @@ public class OneInTheQuiver extends BasePluginGamemode{
         
         @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
+            System.out.println("Respawn event in OneInTheQuiver called!");
             if(state == GameState.RUNNING){
                 
                 Random random = new Random();

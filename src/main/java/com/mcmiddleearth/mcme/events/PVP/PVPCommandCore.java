@@ -66,16 +66,17 @@ public class PVPCommandCore implements CommandExecutor{
                         if(queuedGame == null){
                             p.sendMessage(ChatColor.RED + "Can't start! No game is queued!");
                         }
-                        
                         if(runningGame == null){
                             queuedGame.getGm().Start(queuedGame, parameter);
                             runningGame = queuedGame;
                             queuedGame = null;
-                        }else{
+                        }
+                        else{
                             p.sendMessage(ChatColor.RED + "Can't start! There's already a game running!");
                         }
                         return true;
-                    }else if(args[1].equalsIgnoreCase("quickstart")){
+                    }
+                    else if(args[1].equalsIgnoreCase("quickstart")){
                         
                         if(p.isOp()){
                             if(args.length >= 3){
@@ -116,12 +117,16 @@ public class PVPCommandCore implements CommandExecutor{
                                                 }
                                             queuedGame = m;
                                             
-                                        }catch(ArrayIndexOutOfBoundsException e){
+                                        }
+                                        catch(ArrayIndexOutOfBoundsException e){
                                             p.sendMessage(ChatColor.RED + m.getGmType() + " needs you to enter " + m.getGm().requiresParameter() + "!");
-                                        }catch(NumberFormatException e){
+                                        }
+                                        catch(NumberFormatException e){
                                             p.sendMessage(ChatColor.RED + "Parameter value must be an integer!");
                                         }
-                                    }else{
+                                    
+                                    }
+                                    else{
                                         parameter = 0;
                                         p.sendMessage("Map: " + m.getTitle() + ", Gamemode: " + m.getGmType());
                                             for(Player pl : Bukkit.getOnlinePlayers()){
@@ -136,12 +141,14 @@ public class PVPCommandCore implements CommandExecutor{
                                         queuedGame = m;
                                     }
                                     
-                                }else{
+                                }
+                                else{
                                     p.sendMessage("No such map!");
                                 }
                             }
                         }
-                    }else if(args[1].equalsIgnoreCase("end")){
+                    }
+                    else if(args[1].equalsIgnoreCase("end")){
                         if(p.isOp()){
                             if(runningGame != null){
                                 
@@ -161,13 +168,16 @@ public class PVPCommandCore implements CommandExecutor{
                                     pl.sendMessage(ChatColor.GRAY + "The queued game was canceled! You'll need to rejoin when another game is queued.");
                                 }
                                 ChatHandler.getPlayerPrefixes().clear();
-                            }else{
+                            }
+                            else{
                                 p.sendMessage(ChatColor.GRAY + "There is no game to end!");
                             }
-                        }else{
+                        }
+                        else{
                             p.sendMessage(ChatColor.RED + "You don't have the permission to end games!");
                         }
-                    }else if(args[1].equalsIgnoreCase("getgames") && p.isOp()){
+                    }
+                    else if(args[1].equalsIgnoreCase("getgames") && p.isOp()){
                         p.sendMessage("Getting maps");
                         if(queuedGame != null || runningGame != null){
                             
@@ -192,7 +202,8 @@ public class PVPCommandCore implements CommandExecutor{
                     }
                     else if(runningGame != null){
                         m = runningGame;
-                    }else{
+                    }
+                    else{
                         p.sendMessage(ChatColor.RED + "There is no queued or running game!");
                         return true;
                     }
@@ -208,20 +219,25 @@ public class PVPCommandCore implements CommandExecutor{
                                 BukkitTeamHandler.addToBukkitTeam(p, ChatColor.GREEN);
                             }
                                
-                        }else{
+                        }
+                        else{
                             p.sendMessage("Failed to Join Map");
                         }
-                    }else if(m.getGm().getState() == GameState.COUNTDOWN){
+                    }
+                    else if(m.getGm().getState() == GameState.COUNTDOWN){
                         p.sendMessage(ChatColor.RED + "Do " + ChatColor.GREEN + "/pvp join" + ChatColor.RED + " again once the countdown is done!");
-                    }else{
+                    }
+                    else{
                         p.sendMessage("You are already part of a game");
                         if(p.getName().equalsIgnoreCase("Despot666")){
                             p.kickPlayer("<3 -Dallen");
                         }
                     }
-                }else if(args[0].equalsIgnoreCase("pipe")){
+                }
+                else if(args[0].equalsIgnoreCase("pipe")){
                     GearHandler.giveCustomItem(p, GearHandler.CustomItem.PIPE);
-                }else if(args[0].equalsIgnoreCase("stat") || args[0].equalsIgnoreCase("stats") || args[0].equalsIgnoreCase("statistics")){
+                }
+                else if(args[0].equalsIgnoreCase("stat") || args[0].equalsIgnoreCase("stats") || args[0].equalsIgnoreCase("statistics")){
                     
                     if(args.length == 1){
                         PlayerStat ps = PlayerStat.getPlayerStats().get(p.getName());
@@ -234,7 +250,8 @@ public class PVPCommandCore implements CommandExecutor{
                         p.sendMessage(ChatColor.GRAY + "    Lost: " + ps.getGamesLost());
                         p.sendMessage(ChatColor.GRAY + "Games Spectated: " + ps.getGamesSpectated());
                         
-                    }else if(args[1].equalsIgnoreCase("clear") && (p.getName().equals("DSESGH") || p.getName().equals("Dallen"))){
+                    }
+                    else if(args[1].equalsIgnoreCase("clear") && (p.getName().equals("DSESGH") || p.getName().equals("Dallen"))){
                         
                         for(File f : new File(PVPCore.getSaveLoc() + Main.getFileSep() + "stats").listFiles()){
                             f.delete();
@@ -254,17 +271,20 @@ public class PVPCommandCore implements CommandExecutor{
                         
                     }
                      
-                }else if(args[0].equalsIgnoreCase("rules")){
+                }
+                else if(args[0].equalsIgnoreCase("rules")){
                     String gm;
                     try{
                         gm = args[1];
-                    }catch(ArrayIndexOutOfBoundsException e){
+                    }
+                    catch(ArrayIndexOutOfBoundsException e){
                         p.sendMessage(ChatColor.RED + "Format: /pvp rules <gamemode>");
                         p.sendMessage(ChatColor.GRAY + "Gamemodes are: FreeForAll, Infected, OneInTheQuiver, Ringbearer, TeamConquest, TeamDeathmatch, and TeamSlayer");
                         return true;
                     }
                     giveRules(p,gm);
-                }else if(args[0].equalsIgnoreCase("removegame") && (p.getName().equals("Dallen") || p.getName().equals("DSESGH"))){
+                }
+                else if(args[0].equalsIgnoreCase("removegame") && (p.getName().equals("Dallen") || p.getName().equals("DSESGH"))){
                     Map.maps.remove(args[1]);
                     File f = new File(PVPCore.getSaveLoc() + Main.getFileSep() + "Maps" + Main.getFileSep() + args[1]);
                     f.delete();
@@ -273,21 +293,23 @@ public class PVPCommandCore implements CommandExecutor{
                  
             return new MapEditor().onCommand(cs, cmnd, label, args);
             
-        }else if(args[0].equalsIgnoreCase("togglevoxel")){
-            toggleVoxel(false);
+            }   
+            else if(args[0].equalsIgnoreCase("togglevoxel")){
+                toggleVoxel(false);
+            }
         }
-    }
         else if(cs instanceof BlockCommandSender){
             return new CommandBlockHandler().onCommand(cs, cmnd, label, args);
-        
+        }
+        return false;
     }
-    return false;
-    }
+    
     public static void toggleVoxel(boolean onlyDisable){
         try{
             if(Bukkit.getPluginManager().getPlugin("VoxelSniper").isEnabled()){
                 Bukkit.getPluginManager().disablePlugin(Bukkit.getPluginManager().getPlugin("VoxelSniper"));
-            }else if(!onlyDisable){
+            }
+            else if(!onlyDisable){
                 Bukkit.getPluginManager().enablePlugin(Bukkit.getPluginManager().getPlugin("VoxelSniper"));
             }
         }

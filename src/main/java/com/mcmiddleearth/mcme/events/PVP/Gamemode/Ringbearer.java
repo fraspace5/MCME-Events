@@ -422,7 +422,7 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
         }
         @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
-            
+            System.out.println("Respawn event in Ringearer called!");
             if(state == GameState.RUNNING && players.contains(e.getPlayer())){
                 
                 if(Team.getRedPlayers().contains(e.getPlayer())){

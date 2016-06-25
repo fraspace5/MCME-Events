@@ -34,13 +34,11 @@ import com.mcmiddleearth.mcme.events.Util.CLog;
 import com.mcmiddleearth.mcme.events.Util.DBmanager;
 import com.mcmiddleearth.mcme.events.summerevent.SummerCore;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.PluginManager;
@@ -68,7 +66,8 @@ public class PVPCore implements Event{
         HashMap<String, Object> maps = new HashMap<>();
         try{
             maps = DBmanager.loadAllObj(Map.class, loc);
-        }catch(Exception ex){
+        }
+        catch(Exception ex){
         }
         if(maps == null){
             maps = new HashMap<>();
@@ -81,7 +80,8 @@ public class PVPCore implements Event{
                     m.bindGamemode();
                 }
                 Map.maps.put(e.getKey(), m);
-            }catch(Exception ex){
+            }
+            catch(Exception ex){
                 System.out.println("Error loading map " + e.getKey());
                 
             }
@@ -102,23 +102,23 @@ public class PVPCore implements Event{
         pm.registerEvents(new GearEvents(), Main.getPlugin());
         pm.registerEvents(new AntiCheatListeners(), Main.getPlugin());
         pm.registerEvents(new WeatherHandler(), Main.getPlugin());
-        
         BukkitTeamHandler.configureBukkitTeams();
         
         try {
             server = new PVPServer(3333);
             server.getServ().start();
-        } catch (Exception ex) {
+        } 
+        catch (Exception ex) {
             Logger.getLogger(SummerCore.class.getName()).log(Level.SEVERE, null, ex);
         }
         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
 
-                    @Override
-                    public void run() {
-                        Spawn = new Location(Bukkit.getWorld("world"), 344.47, 39, 521.58, 0.3F, -24.15F);
+            @Override
+            public void run() {
+                Spawn = new Location(Bukkit.getWorld("world"), 344.47, 39, 521.58, 0.3F, -24.15F);
                         
-                    }
-                }, 20);
+                }
+            }, 20);
         
     }
     
@@ -131,7 +131,8 @@ public class PVPCore implements Event{
         }
         try {
             server.getServ().stop();
-        } catch (Exception ex) {
+        } 
+        catch (Exception ex) {
             Logger.getLogger(SummerCore.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

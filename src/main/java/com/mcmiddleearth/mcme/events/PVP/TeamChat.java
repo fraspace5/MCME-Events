@@ -44,7 +44,7 @@ public class TeamChat implements CommandExecutor{
                       
            p = (Player) cs;
            
-           if(!Team.getRedPlayers().contains(p) && !Team.getBluePlayers().contains(p)){
+           if(!Team.getRedPlayers().contains(p) && !Team.getBluePlayers().contains(p) && !Team.getInfected().contains(p) && !Team.getSurvivors().contains(p)){
                p.sendMessage(ChatColor.RED + "You aren't on a team!");
            }
            
@@ -73,7 +73,23 @@ public class TeamChat implements CommandExecutor{
            else if(Team.getBluePlayers().contains(p)){
                for(Player player : Team.getBluePlayers()){
                    
-                   player.sendMessage(ChatColor.DARK_BLUE + "[TEAM] " + p.getName() + ChatColor.BLUE + ": " + messageString);
+                   player.sendMessage(ChatColor.BLUE + "[TEAM] " + p.getName() + ChatColor.AQUA + ": " + messageString);
+                   
+               }
+           }
+           
+           else if(Team.getInfected().contains(p)){
+               for(Player player : Team.getInfected()){
+                   
+                   player.sendMessage(ChatColor.DARK_RED + "[TEAM] " + p.getName() + ChatColor.RED + ": " + messageString );
+                   
+               }
+           }
+           
+           else if(Team.getSurvivors().contains(p)){
+               for(Player player : Team.getSurvivors()){
+                   
+                   player.sendMessage(ChatColor.BLUE + "[TEAM] " + p.getName() + ChatColor.AQUA + ": " + messageString);
                    
                }
            }

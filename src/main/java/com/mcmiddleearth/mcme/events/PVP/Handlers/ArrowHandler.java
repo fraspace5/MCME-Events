@@ -41,14 +41,16 @@ public class ArrowHandler implements Listener{
     public static Runnable despawnArrows = new Runnable(){
         @Override
         public void run(){
-            Player p = (Player) Bukkit.getOnlinePlayers().toArray()[0];
+            if(Bukkit.getOnlinePlayers().size() > 0){
+                Player p = (Player) Bukkit.getOnlinePlayers().toArray()[0];
             
-            for(Arrow arrow : p.getWorld().getEntitiesByClass(Arrow.class)){
+                for(Arrow arrow : p.getWorld().getEntitiesByClass(Arrow.class)){
                 
-                if(arrow.isOnGround()){
-                    arrow.remove();
+                    if(arrow.isOnGround()){
+                        arrow.remove();
+                    }
+                
                 }
-                
             }
             
         }

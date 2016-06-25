@@ -19,6 +19,7 @@
 package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
 import com.mcmiddleearth.mcme.events.Main;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.BukkitTeamHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.SpecialGear;
 import com.mcmiddleearth.mcme.events.PVP.maps.Map;
@@ -277,35 +278,35 @@ public class Infected extends BasePluginGamemode{
                 Player p = e.getEntity();
                 
                 if(Team.getSurvivors().contains(p)){
-                    e.setDeathMessage(ChatColor.BLUE + p.getName() + ChatColor.YELLOW + " was infected by " + ChatColor.DARK_RED + p.getKiller().getName());
-                    Points.getScore(ChatColor.BLUE + "Survivors:").setScore(Points.getScore(ChatColor.BLUE + "Survivors:").getScore() - 1);
-                    Points.getScore(ChatColor.DARK_RED + "Infected:").setScore(Points.getScore(ChatColor.DARK_RED + "Infected:").getScore() + 1);
-                    
+                    e.setDeathMessage(ChatColor.BLUE + p.getName() + ChatColor.GRAY + " was infected by " + ChatColor.DARK_RED + p.getKiller().getName());
+                    Points.getScore(ChatColor.BLUE + "Survivors:").setScore(Team.getSurvivors().size() - 1);
+                    Points.getScore(ChatColor.DARK_RED + "Infected:").setScore(Team.getInfected().size() + 1);
                     
                     p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
                         new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
                     p.getInventory().clear();
                     GearHandler.giveGear(p, ChatColor.DARK_RED, SpecialGear.INFECTED);
-                }
                 
-                if(Points.getScore(ChatColor.BLUE + "Survivors:").getScore() <= 0){
                 
-                    for(Player player : Bukkit.getOnlinePlayers()){
-                        player.sendMessage(ChatColor.DARK_RED + "Game over!");
-                        player.sendMessage(ChatColor.DARK_RED + "Infected Wins!");
-                    
+                    if(Team.getSurvivors().size() <= 1){
+
+                        for(Player player : Bukkit.getOnlinePlayers()){
+                            player.sendMessage(ChatColor.DARK_RED + "Game over!");
+                            player.sendMessage(ChatColor.DARK_RED + "Infected Wins!");
+
+                        }
+                        PlayerStat.addGameWon(Teams.INFECTED);
+                        PlayerStat.addGameLost(Teams.SURVIVORS);
+                        PlayerStat.addGameSpectatedAll();
+                        End(map);
                     }
-                    PlayerStat.addGameWon(Teams.INFECTED);
-                    PlayerStat.addGameLost(Teams.SURVIVORS);
-                    PlayerStat.addGameSpectatedAll();
-                    End(map);
                 }
             }
         }
         
         @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
-
+            System.out.println("Respawn event in Infected called!");
             final Player p = e.getPlayer();
             
             if(state == GameState.RUNNING){

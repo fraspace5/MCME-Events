@@ -99,9 +99,6 @@ public class GearHandler {
                     case GOLD:
                         lam.setColor(DyeColor.SILVER.getColor());
                         break;
-                    case GRAY:
-                        lam.setColor(DyeColor.GRAY.getColor());
-                        break;
                     case GREEN:
                         lam.setColor(DyeColor.LIME.getColor());
                         break;
@@ -254,11 +251,9 @@ public class GearHandler {
                                     
                                     if(Team.getRedPlayers().contains(p)){
                                         GearHandler.giveGear(p, ChatColor.RED, SpecialGear.RINGBEARER);
-                                        BukkitTeamHandler.addToBukkitTeam(p, ChatColor.RED);
                                     }
                                     else{
                                         GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.RINGBEARER);
-                                        BukkitTeamHandler.addToBukkitTeam(p, ChatColor.BLUE);
                                     }
                                     p.getInventory().setHeldItemSlot(0);
                                 }
@@ -283,14 +278,12 @@ public class GearHandler {
                                     p.getInventory().remove(i);
                                 }
                             }
-                            
                         }
                         
                     }
                 }
             }
         }
-        
         //return accidentally-dropped items
         @EventHandler
         public void returnDroppedItems(PlayerDropItemEvent e){

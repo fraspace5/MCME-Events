@@ -90,7 +90,6 @@ public class FreeForAll extends BasePluginGamemode{
             ChatColor.DARK_PURPLE,
             ChatColor.DARK_RED,
             ChatColor.GOLD,
-            ChatColor.GRAY,
             ChatColor.GREEN,
             ChatColor.LIGHT_PURPLE,
             ChatColor.RED,
@@ -181,12 +180,13 @@ public class FreeForAll extends BasePluginGamemode{
                 p.teleport(spawns[c].toBukkitLoc().add(0, 2, 0));
                 if(spawns.length == (c + 1)){
                     c = 0;
-                }else{
+                }
+                else{
                     c++;
                 }
-            }else{
+            }
+            else{
                 Team.addToTeam(p, Team.Teams.SPECTATORS);
-                BukkitTeamHandler.addToBukkitTeam(p, ChatColor.GRAY);
                 p.teleport(map.getSpawn().toBukkitLoc());
             }
             
@@ -225,7 +225,8 @@ public class FreeForAll extends BasePluginGamemode{
                             
                             if(p.getName().length() < 14){
                                 p.setPlayerListName(chatColors[k] + p.getName());
-                            }else{
+                            }
+                            else{
                                 String newName = p.getName().substring(0,13);
                                 p.setPlayerListName(chatColors[k] + newName);
                             }
@@ -234,7 +235,8 @@ public class FreeForAll extends BasePluginGamemode{
                   
                             if(chatColors.length == (k+1)){
                                 k = 0;
-                            }else{
+                            }
+                            else{
                                 k++;
                             }
                         }
@@ -280,7 +282,8 @@ public class FreeForAll extends BasePluginGamemode{
                     mostDeaths.clear();
                     mostDeathsNum = Integer.parseInt(playerDeaths.get(p.getName()));
                     mostDeaths.add(p.getName());
-                }else if(Integer.parseInt(playerDeaths.get(p.getName())) == mostDeathsNum){
+                }
+                else if(Integer.parseInt(playerDeaths.get(p.getName())) == mostDeathsNum){
                     mostDeaths.add(p.getName());
                 }
             }
@@ -288,7 +291,8 @@ public class FreeForAll extends BasePluginGamemode{
                 mostKills.clear();
                 mostKillsNum = Points.getScore(ChatHandler.getPlayerColors().get(p.getName()) + p.getName()).getScore();
                 mostKills.add(p.getName());
-            }else if(Points.getScore(ChatHandler.getPlayerColors().get(p.getName()) + p.getName()).getScore() == mostKillsNum){
+            }
+            else if(Points.getScore(ChatHandler.getPlayerColors().get(p.getName()) + p.getName()).getScore() == mostKillsNum){
                 mostKills.add(p.getName());
             }
             try{
@@ -296,7 +300,8 @@ public class FreeForAll extends BasePluginGamemode{
                     highestKd.clear();
                     highestKdNum =  Points.getScore(ChatHandler.getPlayerColors().get(p.getName()) + p.getName()).getScore() / Double.parseDouble(playerDeaths.get(p.getName()));
                     highestKd.add(p.getName());
-                }else if(Double.valueOf(Points.getScore(ChatHandler.getPlayerColors().get(p.getName()) + p.getName()).getScore()) / Double.parseDouble(playerDeaths.get(p.getName())) == highestKdNum){
+                }
+                else if(Double.valueOf(Points.getScore(ChatHandler.getPlayerColors().get(p.getName()) + p.getName()).getScore()) / Double.parseDouble(playerDeaths.get(p.getName())) == highestKdNum){
                     highestKd.add(p.getName());
                 }
             }catch(NullPointerException e){
@@ -316,9 +321,11 @@ public class FreeForAll extends BasePluginGamemode{
         for(String playerName : mostDeaths){
             if(mostDeaths.size() == 1 && loops == 0){
                 deathMessage = ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + " with " + mostDeathsNum;
-            }else if(loops == (mostDeaths.size() - 1)){
+            }
+            else if(loops == (mostDeaths.size() - 1)){
                 deathMessage += ChatColor.GREEN + "and " + ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + " with " + mostDeathsNum;
-            }else{
+            }
+            else{
                 deathMessage += ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + ", ";
                 loops++;
             }
@@ -329,9 +336,11 @@ public class FreeForAll extends BasePluginGamemode{
             PlayerStat.getPlayerStats().get(playerName).addGameWon();
             if(mostKills.size() == 1 && loops == 0){
                 killMessage = ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + " with " + mostKillsNum;
-            }else if(loops == (mostKills.size() - 1)){
+            }
+            else if(loops == (mostKills.size() - 1)){
                 killMessage += ChatColor.GREEN + "and " + ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + " with " + mostKillsNum;
-            }else{
+            }
+            else{
                 killMessage += ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + ", ";
                 loops++;
             }
@@ -349,9 +358,11 @@ public class FreeForAll extends BasePluginGamemode{
         for(String playerName : highestKd){
             if(highestKd.size() == 1 && loops == 0){
                 kDMessage = ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + " with " + highestKdNumString;
-            }else if(loops == (highestKd.size() - 1)){
+            }
+            else if(loops == (highestKd.size() - 1)){
                 kDMessage += ChatColor.GREEN + "and " + ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + " with " + highestKdNumString;
-            }else{
+            }
+            else{
                 kDMessage += ChatHandler.getPlayerColors().get(playerName) + playerName + ChatColor.GREEN + ", ";
                 loops++;
             }
@@ -399,7 +410,8 @@ public class FreeForAll extends BasePluginGamemode{
         
         if(p.getName().length() < 14){
             p.setPlayerListName(color + p.getName());
-        }else{
+        }
+        else{
             String newName = p.getName().substring(0,13);
             p.setPlayerListName(color + newName);
         }
@@ -424,35 +436,37 @@ public class FreeForAll extends BasePluginGamemode{
         
         @EventHandler
         public void onPlayerDeath(PlayerDeathEvent e){
-            int tempDeaths;
             
             if(e.getEntity() instanceof Player && e.getEntity().getKiller() != null && state == GameState.RUNNING){
-                
+               
                     if(e.getEntity().getKiller() instanceof Player){
+                        int tempDeaths;
+                        Points.getScore(ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName()).setScore(Points.getScore(ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName()).getScore() + 1);
 
-                    Points.getScore(ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName()).setScore(Points.getScore(ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName()).getScore() + 1);
-
-                    if(playerDeaths.containsKey(e.getEntity().getName())){
-                        tempDeaths = Integer.parseInt(playerDeaths.get(e.getEntity().getName()));
-                        playerDeaths.remove(e.getEntity().getName());
-                        playerDeaths.put(e.getEntity().getName(), String.valueOf(tempDeaths + 1));
-                    }else{
-                        playerDeaths.put(e.getEntity().getName(), "1");
-                    }
+                        if(playerDeaths.containsKey(e.getEntity().getName())){
+                            tempDeaths = Integer.parseInt(playerDeaths.get(e.getEntity().getName()));
+                            playerDeaths.remove(e.getEntity().getName());
+                            playerDeaths.put(e.getEntity().getName(), String.valueOf(tempDeaths + 1));
+                        }
+                        else{
+                            playerDeaths.put(e.getEntity().getName(), "1");
+                        }
                 }
             }
         }
         
         @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
+            System.out.println("Respawn event in FreeForAll called!");
             if(state == GameState.RUNNING){
                 
                 Random random = new Random();
 
                 e.setRespawnLocation(spawns[random.nextInt(spawns.length)].toBukkitLoc().add(0, 2, 0));
             
-                healing.put(e.getPlayer(), new Long(System.currentTimeMillis() + 7500));
+                healing.put(e.getPlayer(), System.currentTimeMillis() + 7500);
             }
+            
         }
     }
 }
