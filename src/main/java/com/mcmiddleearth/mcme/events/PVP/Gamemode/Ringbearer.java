@@ -83,7 +83,7 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
     private int count;
     
     @Getter
-    private GameState state = GameState.IDLE;
+    private GameState state;
     
     boolean hasTeams = false;
     
@@ -104,6 +104,10 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
     private boolean eventsRegistered = false;
     
     private Objective Points;
+    
+    public Ringbearer(){
+        state = GameState.IDLE;
+    }
     
     Runnable exp = new Runnable(){
 

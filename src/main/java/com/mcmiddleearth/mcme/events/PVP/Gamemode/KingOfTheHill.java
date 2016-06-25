@@ -84,7 +84,7 @@ public class KingOfTheHill extends BasePluginGamemode{
     private boolean midgameJoin = false;
     
     @Getter
-    private GameState state = GameState.IDLE;
+    private GameState state;
     
     GameEvents events;
     
@@ -121,6 +121,7 @@ public class KingOfTheHill extends BasePluginGamemode{
         };
     
     public KingOfTheHill(){
+        state = GameState.IDLE;
         Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(), tick, 0, 200);//every ten seconds
     }
     

@@ -101,13 +101,17 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
     private boolean midgameJoin = true;
     
     @Getter
-    private GameState state = GameState.IDLE;
+    private GameState state;
     
     private GameEvents events;
     
     boolean hasTeams = false;
     
     private int goal;
+    
+    public TeamConquest(){
+        state = GameState.IDLE;
+    }
     
     @Override
     public void Start(Map m, int parameter) {

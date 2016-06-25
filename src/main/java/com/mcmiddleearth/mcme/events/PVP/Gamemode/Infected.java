@@ -68,7 +68,7 @@ public class Infected extends BasePluginGamemode{
     }));
     
     @Getter
-    private GameState state = GameState.IDLE;
+    private GameState state;
     
     Map map;
     
@@ -80,6 +80,10 @@ public class Infected extends BasePluginGamemode{
     private GameEvents events;
     
     private int time;
+    
+    public Infected(){
+        state = GameState.IDLE;
+    }
     
     Runnable tick = new Runnable(){
         @Override

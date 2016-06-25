@@ -64,7 +64,7 @@ public class OneInTheQuiver extends BasePluginGamemode{
     }));
     
     @Getter
-    private GameState state = GameState.IDLE;
+    private GameState state;
     
     Map map;
     
@@ -99,6 +99,10 @@ public class OneInTheQuiver extends BasePluginGamemode{
     };
     
     private EventLocation[] spawns;
+    
+    public OneInTheQuiver(){
+        state = GameState.IDLE;
+    }
     
     Runnable healer = new Runnable(){
             

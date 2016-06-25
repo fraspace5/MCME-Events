@@ -60,7 +60,7 @@ public class FreeForAll extends BasePluginGamemode{
     }));
     
     @Getter
-    private GameState state = GameState.IDLE;
+    private GameState state;
     
     Map map;
     
@@ -97,6 +97,10 @@ public class FreeForAll extends BasePluginGamemode{
     };
     
     private EventLocation[] spawns;
+    
+    public FreeForAll(){
+        state = GameState.IDLE;
+    }
     
     Runnable tick = new Runnable(){
             

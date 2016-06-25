@@ -64,7 +64,7 @@ public class TeamSlayer extends BasePluginGamemode{
     }));
     
     @Getter
-    private GameState state = GameState.IDLE;
+    private GameState state;
     
     private final int midgameJoinPointThreshold = 15;
     
@@ -83,6 +83,10 @@ public class TeamSlayer extends BasePluginGamemode{
     
     @Getter
     private boolean midgameJoin = true;
+    
+    public TeamSlayer(){
+        state = GameState.IDLE;
+    }
     
     @Override
     public void Start(Map m, int parameter){

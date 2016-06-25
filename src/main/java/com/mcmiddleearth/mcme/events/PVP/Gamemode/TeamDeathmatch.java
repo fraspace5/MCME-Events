@@ -66,7 +66,7 @@ public class TeamDeathmatch extends BasePluginGamemode{
     }));
     
     @Getter
-    private GameState state = GameState.IDLE;
+    private GameState state;
     
     Map map;
     
@@ -80,6 +80,9 @@ public class TeamDeathmatch extends BasePluginGamemode{
     private int startingRedNum;
     private int startingBlueNum;
     
+    public TeamDeathmatch(){
+        state = GameState.IDLE;
+    }
     
     @Override
     public void Start(Map m, int parameter){
