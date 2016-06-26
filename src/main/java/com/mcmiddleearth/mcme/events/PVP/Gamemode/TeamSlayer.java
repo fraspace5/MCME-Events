@@ -363,6 +363,7 @@ public class TeamSlayer extends BasePluginGamemode{
         public void onPlayerRespawn(PlayerRespawnEvent e){
             System.out.println("Respawn event in TeamSlayer called!");
             if(state == GameState.RUNNING){
+                System.out.println("Inside if in ts");
                 Random random = new Random();
                 int spawn = random.nextInt(3) + 1;
                 if(Team.getRedPlayers().contains(e.getPlayer())){

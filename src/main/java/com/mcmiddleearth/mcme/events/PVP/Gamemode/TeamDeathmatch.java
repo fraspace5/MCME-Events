@@ -243,6 +243,7 @@ public class TeamDeathmatch extends BasePluginGamemode{
         public void onPlayerRespawn(PlayerRespawnEvent e){
             System.out.println("Respawn event in TeamDeathmatch called!");
             if(state == GameState.RUNNING){
+                System.out.println("Inside if in tdm");
                 e.setRespawnLocation(map.getSpawn().toBukkitLoc().add(0, 2, 0));
             
                 e.getPlayer().getInventory().clear();

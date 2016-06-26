@@ -314,6 +314,7 @@ public class Infected extends BasePluginGamemode{
             final Player p = e.getPlayer();
             
             if(state == GameState.RUNNING){
+                System.out.println("Inside if in Infected");
                 e.setRespawnLocation(map.getImportantPoints().get("InfectedSpawn").toBukkitLoc().add(0, 2, 0));
                 
                 Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
