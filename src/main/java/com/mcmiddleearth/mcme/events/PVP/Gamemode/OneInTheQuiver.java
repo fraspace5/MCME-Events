@@ -56,7 +56,7 @@ import org.bukkit.scoreboard.Objective;
  */
 public class OneInTheQuiver extends BasePluginGamemode{
     
-    private static boolean eventsRegistered = false;
+    private boolean eventsRegistered = false;
     
     @Getter
     private final ArrayList<String> NeededPoints = new ArrayList<String>(Arrays.asList(new String[] {

@@ -59,7 +59,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
  */
 public class Infected extends BasePluginGamemode{
     
-    private static boolean eventsRegistered = false;
+    private boolean eventsRegistered = false;
     
     @Getter
     private final ArrayList<String> NeededPoints = new ArrayList<String>(Arrays.asList(new String[] {

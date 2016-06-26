@@ -51,7 +51,7 @@ public class TeamSlayer extends BasePluginGamemode{
     
     private int target;
     
-    private static boolean eventsRegistered = false;
+    private boolean eventsRegistered = false;
     
     @Getter
     private final ArrayList<String> NeededPoints = new ArrayList<String>(Arrays.asList(new String[] {

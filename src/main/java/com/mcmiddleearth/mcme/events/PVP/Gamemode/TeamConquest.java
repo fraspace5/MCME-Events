@@ -82,7 +82,7 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
     
     private boolean givenTnt = false;
     
-    private static boolean eventsRegistered = false;
+    private boolean eventsRegistered = false;
     
     @Getter
     private final ArrayList<String> NeededPoints = new ArrayList<String>(Arrays.asList(new String[] {
