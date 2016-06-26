@@ -275,7 +275,7 @@ public class PVPCommandCore implements CommandExecutor{
                 }
                 else if(args[0].equalsIgnoreCase("state")){
                     
-                    if(runningGame.getGm() == null){
+                    if(runningGame == null){
                         p.sendMessage("IDLE");
                     }
                     else if(runningGame.getGm().getState() == GameState.COUNTDOWN){
