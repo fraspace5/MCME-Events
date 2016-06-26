@@ -146,5 +146,4 @@ public abstract class BasePluginGamemode implements Gamemode{
         
         return true;
     };
-    
 }

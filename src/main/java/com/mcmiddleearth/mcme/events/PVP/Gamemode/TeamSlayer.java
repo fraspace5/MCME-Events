@@ -274,6 +274,19 @@ public class TeamSlayer extends BasePluginGamemode{
     private class GameEvents implements Listener{
         @EventHandler
         public void onPlayerDeath(PlayerDeathEvent e){
+            
+            switch(state){
+                case IDLE:
+                    System.out.println("IDLE");
+                    break;
+                case COUNTDOWN:
+                    System.out.println("COUNTDOWN");
+                    break;
+                case RUNNING:
+                    System.out.println("RUNNING");
+                    break;
+            }
+            
             if(state == GameState.RUNNING){
                 Player p = null;
                 int redScore = Points.getScore(ChatColor.RED + "Red:").getScore();
@@ -331,6 +344,19 @@ public class TeamSlayer extends BasePluginGamemode{
         }
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent e){
+        
+        switch(state){
+                case IDLE:
+                    System.out.println("IDLE");
+                    break;
+                case COUNTDOWN:
+                    System.out.println("COUNTDOWN");
+                    break;
+                case RUNNING:
+                    System.out.println("RUNNING");
+                    break;
+            }
+        
         if(state == GameState.RUNNING || state == GameState.COUNTDOWN){
             Team.removeFromTeam(e.getPlayer());
             
@@ -362,6 +388,19 @@ public class TeamSlayer extends BasePluginGamemode{
         @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
             System.out.println("Respawn event in TeamSlayer called!");
+            
+            switch(state){
+                case IDLE:
+                    System.out.println("IDLE");
+                    break;
+                case COUNTDOWN:
+                    System.out.println("COUNTDOWN");
+                    break;
+                case RUNNING:
+                    System.out.println("RUNNING");
+                    break;
+            }
+            
             if(state == GameState.RUNNING){
                 System.out.println("Inside if in ts");
                 Random random = new Random();
