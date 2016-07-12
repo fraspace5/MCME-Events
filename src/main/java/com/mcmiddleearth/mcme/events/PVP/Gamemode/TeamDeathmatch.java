@@ -195,19 +195,7 @@ public class TeamDeathmatch extends BasePluginGamemode{
         
         @EventHandler
         public void onPlayerDeath(PlayerDeathEvent e){
-            
-            switch(state){
-                case IDLE:
-                    System.out.println("IDLE");
-                    break;
-                case COUNTDOWN:
-                    System.out.println("COUNTDOWN");
-                    break;
-                case RUNNING:
-                    System.out.println("RUNNING");
-                    break;
-            }
-            
+
             if(e.getEntity() instanceof Player && state == GameState.RUNNING){
                 Player p = e.getEntity();
                 
@@ -253,20 +241,7 @@ public class TeamDeathmatch extends BasePluginGamemode{
         
         @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
-            System.out.println("Respawn event in TeamDeathmatch called!");
-            
-            switch(state){
-                case IDLE:
-                    System.out.println("IDLE");
-                    break;
-                case COUNTDOWN:
-                    System.out.println("COUNTDOWN");
-                    break;
-                case RUNNING:
-                    System.out.println("RUNNING");
-                    break;
-            }
-            
+
             if(state == GameState.RUNNING){
                 System.out.println("Inside if in tdm");
                 e.setRespawnLocation(map.getSpawn().toBukkitLoc().add(0, 2, 0));
@@ -279,19 +254,7 @@ public class TeamDeathmatch extends BasePluginGamemode{
         
         @EventHandler
         public void onPlayerLeave(PlayerQuitEvent e){
-            
-            switch(state){
-                case IDLE:
-                    System.out.println("IDLE");
-                    break;
-                case COUNTDOWN:
-                    System.out.println("COUNTDOWN");
-                    break;
-                case RUNNING:
-                    System.out.println("RUNNING");
-                    break;
-            }
-            
+
             if(state == GameState.RUNNING || state == GameState.COUNTDOWN){
                 
                 Points.getScore(ChatColor.BLUE + "Blue:").setScore(Team.getBluePlayers().size());

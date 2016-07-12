@@ -278,18 +278,6 @@ public class Infected extends BasePluginGamemode{
         @EventHandler
         public void onPlayerDeath(PlayerDeathEvent e){
             
-            switch(state){
-                case IDLE:
-                    System.out.println("IDLE");
-                    break;
-                case COUNTDOWN:
-                    System.out.println("COUNTDOWN");
-                    break;
-                case RUNNING:
-                    System.out.println("RUNNING");
-                    break;
-            }
-            
             if(e.getEntity() instanceof Player && state == GameState.RUNNING){
                 Player p = e.getEntity();
                 
@@ -303,7 +291,7 @@ public class Infected extends BasePluginGamemode{
                     p.getInventory().clear();
                     GearHandler.giveGear(p, ChatColor.DARK_RED, SpecialGear.INFECTED);
                 
-                
+                    Team.addToTeam(p, Teams.INFECTED);
                     if(Team.getSurvivors().size() <= 1){
 
                         for(Player player : Bukkit.getOnlinePlayers()){
@@ -322,24 +310,10 @@ public class Infected extends BasePluginGamemode{
         
         @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
-            System.out.println("Respawn event in Infected called!");
-            
-            switch(state){
-                case IDLE:
-                    System.out.println("IDLE");
-                    break;
-                case COUNTDOWN:
-                    System.out.println("COUNTDOWN");
-                    break;
-                case RUNNING:
-                    System.out.println("RUNNING");
-                    break;
-            }
             
             final Player p = e.getPlayer();
             
             if(state == GameState.RUNNING){
-                System.out.println("Inside if in Infected");
                 e.setRespawnLocation(map.getImportantPoints().get("InfectedSpawn").toBukkitLoc().add(0, 2, 0));
                 
                 Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
@@ -355,19 +329,7 @@ public class Infected extends BasePluginGamemode{
         
         @EventHandler
         public void onPlayerLeave(PlayerQuitEvent e){
-            
-            switch(state){
-                case IDLE:
-                    System.out.println("IDLE");
-                    break;
-                case COUNTDOWN:
-                    System.out.println("COUNTDOWN");
-                    break;
-                case RUNNING:
-                    System.out.println("RUNNING");
-                    break;
-            }
-            
+
             if(state == GameState.RUNNING || state == GameState.COUNTDOWN){
                 
                 if(Team.getInfected().contains(e.getPlayer())){

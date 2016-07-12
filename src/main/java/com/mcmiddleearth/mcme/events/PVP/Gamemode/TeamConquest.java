@@ -335,19 +335,7 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
         
         @EventHandler
         public void onPlayerDeath(PlayerDeathEvent e){
-            
-            switch(state){
-                case IDLE:
-                    System.out.println("IDLE");
-                    break;
-                case COUNTDOWN:
-                    System.out.println("COUNTDOWN");
-                    break;
-                case RUNNING:
-                    System.out.println("RUNNING");
-                    break;
-            }
-            
+
             if(state == GameState.RUNNING && e.getEntity() instanceof Player){
                 
                 if(Team.getRedPlayers().contains(e.getEntity())){
@@ -411,20 +399,7 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
         
         @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
-            System.out.println("Respawn event in TeamConquest called!");
-            
-            switch(state){
-                case IDLE:
-                    System.out.println("IDLE");
-                    break;
-                case COUNTDOWN:
-                    System.out.println("COUNTDOWN");
-                    break;
-                case RUNNING:
-                    System.out.println("RUNNING");
-                    break;
-            }
-            
+
             if(state == GameState.RUNNING && players.contains(e.getPlayer())){
                 System.out.println("Inside if in tc");
                 if(Team.getRedPlayers().contains(e.getPlayer())){
@@ -437,18 +412,6 @@ public class TeamConquest extends BasePluginGamemode {//Handled by plugin, shoul
         
         @EventHandler
         public void onPlayerLeave(PlayerQuitEvent e){
-            
-            switch(state){
-                case IDLE:
-                    System.out.println("IDLE");
-                    break;
-                case COUNTDOWN:
-                    System.out.println("COUNTDOWN");
-                    break;
-                case RUNNING:
-                    System.out.println("RUNNING");
-                    break;
-            }
             
             if(state == GameState.RUNNING || state == GameState.COUNTDOWN){
                 

@@ -441,19 +441,7 @@ public class FreeForAll extends BasePluginGamemode{
         
         @EventHandler
         public void onPlayerDeath(PlayerDeathEvent e){
-            
-            switch(state){
-                case IDLE:
-                    System.out.println("IDLE");
-                    break;
-                case COUNTDOWN:
-                    System.out.println("COUNTDOWN");
-                    break;
-                case RUNNING:
-                    System.out.println("RUNNING");
-                    break;
-            }
-            
+
             if(e.getEntity() instanceof Player && e.getEntity().getKiller() != null && state == GameState.RUNNING){
                
                     if(e.getEntity().getKiller() instanceof Player){
@@ -474,19 +462,6 @@ public class FreeForAll extends BasePluginGamemode{
         
         @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
-            System.out.println("Respawn event in FreeForAll called!");
-            
-            switch(state){
-                case IDLE:
-                    System.out.println("IDLE");
-                    break;
-                case COUNTDOWN:
-                    System.out.println("COUNTDOWN");
-                    break;
-                case RUNNING:
-                    System.out.println("RUNNING");
-                    break;
-            }
             
             if(state == GameState.RUNNING){
                 System.out.println("Inside if in FreeForAll");

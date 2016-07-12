@@ -348,18 +348,6 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
         @EventHandler
         public void onPlayerDeath(PlayerDeathEvent e){
             
-            switch(state){
-                case IDLE:
-                    System.out.println("IDLE");
-                    break;
-                case COUNTDOWN:
-                    System.out.println("COUNTDOWN");
-                    break;
-                case RUNNING:
-                    System.out.println("RUNNING");
-                    break;
-            }
-            
             if(state == GameState.RUNNING && e.getEntity() instanceof Player){
                 Player p = (Player) e.getEntity();
                 
@@ -438,19 +426,6 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
         }
         @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
-            System.out.println("Respawn event in Ringearer called!");
-            
-            switch(state){
-                case IDLE:
-                    System.out.println("IDLE");
-                    break;
-                case COUNTDOWN:
-                    System.out.println("COUNTDOWN");
-                    break;
-                case RUNNING:
-                    System.out.println("RUNNING");
-                    break;
-            }
             
             if(state == GameState.RUNNING && players.contains(e.getPlayer())){
                 System.out.println("Inside if in rb");
@@ -477,19 +452,7 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
         
         @EventHandler
         public void onPlayerLeave(PlayerQuitEvent e){
-            
-            switch(state){
-                case IDLE:
-                    System.out.println("IDLE");
-                    break;
-                case COUNTDOWN:
-                    System.out.println("COUNTDOWN");
-                    break;
-                case RUNNING:
-                    System.out.println("RUNNING");
-                    break;
-            }
-            
+
             if(state == GameState.RUNNING || state == GameState.COUNTDOWN){
                 Random rand = new Random();
                 Team.removeFromTeam(e.getPlayer());

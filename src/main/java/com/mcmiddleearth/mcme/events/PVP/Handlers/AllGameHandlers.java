@@ -57,6 +57,7 @@ public class AllGameHandlers implements Listener{
         }
         
         e.setDeathMessage(ChatHandler.getPlayerColors().get(e.getEntity().getName()) + e.getEntity().getName() + ChatColor.GRAY + " was killed by " + ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName());
+        
     }
     
     @EventHandler
