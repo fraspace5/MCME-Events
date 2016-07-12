@@ -430,7 +430,6 @@ public class OneInTheQuiver extends BasePluginGamemode{
         public void onPlayerRespawn(PlayerRespawnEvent e){
 
             if(state == GameState.RUNNING){
-                System.out.println("Inside if in oitq");
                 Random random = new Random();
                 if(!e.getPlayer().getInventory().contains(Material.ARROW, 5)){
                 

@@ -46,7 +46,6 @@ public class AntiCheatListeners implements Listener{
         if(truncateAtFirstSpace(e.getMessage()).equals("/kill")){
             
             String firstArg = getFirstArg(e.getMessage());
-            System.out.println(firstArg);
             
             if(firstArg.equalsIgnoreCase(e.getPlayer().getName()) || firstArg.equals("")){
                 return;

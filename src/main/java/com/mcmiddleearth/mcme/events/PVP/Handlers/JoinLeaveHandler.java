@@ -91,7 +91,6 @@ public class JoinLeaveHandler implements Listener{
                     }
                     catch(NullPointerException e){
                         nullPointerColors.add(playerName);
-                        System.err.println("ChatColor for " + playerName + " was null!");
                     }
                 }
                 

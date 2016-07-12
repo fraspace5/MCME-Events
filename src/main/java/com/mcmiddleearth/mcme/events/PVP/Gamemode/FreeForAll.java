@@ -464,7 +464,6 @@ public class FreeForAll extends BasePluginGamemode{
         public void onPlayerRespawn(PlayerRespawnEvent e){
             
             if(state == GameState.RUNNING){
-                System.out.println("Inside if in FreeForAll");
                 Random random = new Random();
 
                 e.setRespawnLocation(spawns[random.nextInt(spawns.length)].toBukkitLoc().add(0, 2, 0));

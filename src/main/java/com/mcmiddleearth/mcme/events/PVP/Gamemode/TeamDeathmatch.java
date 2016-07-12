@@ -104,7 +104,6 @@ public class TeamDeathmatch extends BasePluginGamemode{
             pm.registerEvents(events, Main.getPlugin());
             eventsRegistered = true;
         }
-        System.out.println("Events registered: " + eventsRegistered);
         for(Player p : players){
             if(Team.getRedPlayers().size() <= Team.getBluePlayers().size()){
                 Team.addToTeam(p, Team.Teams.RED);
@@ -243,7 +242,6 @@ public class TeamDeathmatch extends BasePluginGamemode{
         public void onPlayerRespawn(PlayerRespawnEvent e){
 
             if(state == GameState.RUNNING){
-                System.out.println("Inside if in tdm");
                 e.setRespawnLocation(map.getSpawn().toBukkitLoc().add(0, 2, 0));
             
                 e.getPlayer().getInventory().clear();

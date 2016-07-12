@@ -428,7 +428,6 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
         public void onPlayerRespawn(PlayerRespawnEvent e){
             
             if(state == GameState.RUNNING && players.contains(e.getPlayer())){
-                System.out.println("Inside if in rb");
                 if(Team.getRedPlayers().contains(e.getPlayer())){
                     e.setRespawnLocation(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
                     
