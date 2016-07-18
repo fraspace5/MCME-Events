@@ -120,11 +120,19 @@ public class Ringbearer extends BasePluginGamemode{//Handled by plugin
                             redBearer.setExp(redBearer.getExp() + .006f);
                         }
                         
+                        if(redBearer.getInventory().getHelmet().getType() != Material.GLOWSTONE){
+                            redBearer.getInventory().setHelmet(new ItemStack(Material.GLOWSTONE));
+                        }
+                        
                     }
                     if(blueBearer != null){
                         
                         if(!blueBearer.hasPotionEffect(PotionEffectType.INVISIBILITY) && blueBearer.getExp() < 1f){
                             blueBearer.setExp(blueBearer.getExp() + .006f);
+                        }
+                        
+                        if(blueBearer.getInventory().getHelmet().getType() != Material.GLOWSTONE){
+                            blueBearer.getInventory().setHelmet(new ItemStack(Material.GLOWSTONE));
                         }
                         
                     }

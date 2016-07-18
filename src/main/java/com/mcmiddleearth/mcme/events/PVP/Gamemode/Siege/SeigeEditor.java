@@ -16,7 +16,7 @@
  * 
  * 
  */
-package com.mcmiddleearth.mcme.events.PVP.Gamemode.Seige;
+package com.mcmiddleearth.mcme.events.PVP.Gamemode.Siege;
 
 /**
  *

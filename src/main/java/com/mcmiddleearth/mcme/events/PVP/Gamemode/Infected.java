@@ -249,7 +249,7 @@ public class Infected extends BasePluginGamemode{
     @Override
     public void End(Map m){
         state = GameState.IDLE;
-
+        
         for(Player p : Bukkit.getOnlinePlayers()){
             Team.removeFromTeam(p);
         }
@@ -285,12 +285,8 @@ public class Infected extends BasePluginGamemode{
                     e.setDeathMessage(ChatColor.BLUE + p.getName() + ChatColor.GRAY + " was infected by " + ChatColor.DARK_RED + p.getKiller().getName());
                     Points.getScore(ChatColor.BLUE + "Survivors:").setScore(Team.getSurvivors().size() - 1);
                     Points.getScore(ChatColor.DARK_RED + "Infected:").setScore(Team.getInfected().size() + 1);
-                    
-                    p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
-                        new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
-                    p.getInventory().clear();
+
                     GearHandler.giveGear(p, ChatColor.DARK_RED, SpecialGear.INFECTED);
-                
                     Team.addToTeam(p, Teams.INFECTED);
                     if(Team.getSurvivors().size() <= 1){
 
@@ -320,6 +316,8 @@ public class Infected extends BasePluginGamemode{
                     
                     @Override
                     public void run(){
+                     
+                        GearHandler.giveGear(p, ChatColor.DARK_RED, SpecialGear.INFECTED);
                         Team.addToTeam(p, Teams.INFECTED);
                     }
                     
@@ -332,17 +330,10 @@ public class Infected extends BasePluginGamemode{
 
             if(state == GameState.RUNNING || state == GameState.COUNTDOWN){
                 
-                if(Team.getInfected().contains(e.getPlayer())){
-                    Points.getScore(ChatColor.DARK_RED + "Infected:").setScore(Points.getScore(ChatColor.DARK_RED + "Infected:").getScore() - 1);
-                }
-                else if(Team.getSurvivors().contains(e.getPlayer())){
-                    Points.getScore(ChatColor.BLUE + "Survivors:").setScore(Points.getScore(ChatColor.BLUE + "Survivors:").getScore() - 1);
-                    
-                }
                 Team.removeFromTeam(e.getPlayer());
-                e.getPlayer().getInventory().clear();
-                e.getPlayer().getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
-                   new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
+                
+                Points.getScore(ChatColor.DARK_RED + "Infected:").setScore(Team.getInfected().size());
+                Points.getScore(ChatColor.BLUE + "Survivors:").setScore(Team.getSurvivors().size());
                 
                 if(Team.getSurvivors().size() <= 0){
                 

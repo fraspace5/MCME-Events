@@ -122,6 +122,9 @@ public class GearHandler {
                 items[i].getItemMeta().spigot().setUnbreakable(true);
         }
         p.getInventory().clear();
+        p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
+            new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
+            p.getInventory().clear();
         
         if(sg == SpecialGear.RINGBEARER){
             p.getInventory().setHelmet(new ItemStack(Material.GLOWSTONE, 1));
