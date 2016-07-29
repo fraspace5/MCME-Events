@@ -66,7 +66,7 @@ public class TeamSlayer extends BasePluginGamemode{
     @Getter
     private GameState state;
     
-    private final int midgameJoinPointThreshold = 15;
+    private final int midgameJoinPointThreshold = 10;
     
     private final int giveTntPointThreshold = 1;//30
     
@@ -113,8 +113,8 @@ public class TeamSlayer extends BasePluginGamemode{
             eventsRegistered = true;
         }
         for(Player p : players){
-            if(Team.getRedPlayers().size() <= Team.getBluePlayers().size()){
-                Team.addToTeam(p, Teams.RED);
+            if(Team.getRed().size() <= Team.getBlue().size()){
+                Team.getRed().add(p);
                 switch(lastRedSpawn){
                     case 1:
                         p.teleport(m.getImportantPoints().get("RedSpawn2").toBukkitLoc().add(0, 2, 0));
@@ -134,8 +134,8 @@ public class TeamSlayer extends BasePluginGamemode{
                         break;
                 }
             }
-            else if(Team.getBluePlayers().size() < Team.getRedPlayers().size()){
-                Team.addToTeam(p, Teams.BLUE);
+            else if(Team.getBlue().size() < Team.getRed().size()){
+                Team.getBlue().add(p);
                 switch(lastBlueSpawn){
                     case 1:
                         p.teleport(m.getImportantPoints().get("BlueSpawn2").toBukkitLoc().add(0, 2, 0));
@@ -157,8 +157,8 @@ public class TeamSlayer extends BasePluginGamemode{
             }
         }
         for(Player player : Bukkit.getServer().getOnlinePlayers()){
-            if(!Team.getBluePlayers().contains(player) && !Team.getRedPlayers().contains(player)){
-                Team.addToTeam(player, Teams.SPECTATORS);
+            if(!Team.getBlue().getMembers().contains(player) && !Team.getRed().getMembers().contains(player)){
+                Team.getSpectator().add(player);
                 player.teleport(m.getSpawn().toBukkitLoc().add(0, 2, 0));
             }
         }
@@ -182,10 +182,10 @@ public class TeamSlayer extends BasePluginGamemode{
                             p.setScoreboard(getScoreboard());
                         }
                         
-                        for(Player p : Team.getRedPlayers()){
+                        for(Player p : Team.getRed().getMembers()){
                             GearHandler.giveGear(p, ChatColor.RED, SpecialGear.NONE);
                         }
-                        for(Player p : Team.getBluePlayers()){
+                        for(Player p : Team.getBlue().getMembers()){
                             GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
                         }
                         state = GameState.RUNNING;
@@ -209,10 +209,7 @@ public class TeamSlayer extends BasePluginGamemode{
     
     public void End(Map m){
         state = GameState.IDLE;
-        
-        for(Player p : Bukkit.getOnlinePlayers()){
-            Team.removeFromTeam(p);
-        }
+
         getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
         m.playerLeaveAll();
         
@@ -226,45 +223,43 @@ public class TeamSlayer extends BasePluginGamemode{
     
     public boolean midgamePlayerJoin(Player p){
         
-        if(Points.getScore(ChatColor.RED + "Red:").getScore() - Points.getScore(ChatColor.BLUE + "Blue:").getScore() >= midgameJoinPointThreshold){
-            
-            Team.addToTeam(p, Teams.BLUE);
-            p.teleport(map.getImportantPoints().get("BlueSpawn1").toBukkitLoc().add(0, 2, 0));
-            super.midgamePlayerJoin(p);
-            
-            GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
+        if(Team.getRed().getAllMembers().contains(p)){
+            addToTeam(p, Teams.RED);
+        }
+        else if(Team.getBlue().getAllMembers().contains(p)){
+            addToTeam(p, Teams.BLUE);
+        }
+        
+        else if(Points.getScore(ChatColor.RED + "Red:").getScore() - Points.getScore(ChatColor.BLUE + "Blue:").getScore() >= midgameJoinPointThreshold){
+            addToTeam(p, Teams.BLUE);
             
         }
         else if(Points.getScore(ChatColor.BLUE + "Blue:").getScore() - Points.getScore(ChatColor.RED + "Red:").getScore() >= midgameJoinPointThreshold){
-            
-            Team.addToTeam(p, Teams.RED);
-            p.teleport(map.getImportantPoints().get("RedSpawn1").toBukkitLoc().add(0, 2, 0));
-            super.midgamePlayerJoin(p);
-            
-            GearHandler.giveGear(p, ChatColor.RED, SpecialGear.NONE);
-            
+            addToTeam(p, Teams.RED);
         }
         else{
-            if(Team.getRedPlayers().size() >= Team.getBluePlayers().size()){
-                
-                Team.addToTeam(p, Teams.BLUE);
-                p.teleport(map.getImportantPoints().get("BlueSpawn1").toBukkitLoc().add(0, 2, 0));
-                super.midgamePlayerJoin(p);
-            
-                GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
-                
+            if(Team.getRed().size() >= Team.getBlue().size()){
+               addToTeam(p, Teams.BLUE);
             }
             else{
-                
-                Team.addToTeam(p, Teams.RED);
-                p.teleport(map.getImportantPoints().get("RedSpawn1").toBukkitLoc().add(0, 2, 0));
-                super.midgamePlayerJoin(p);
-            
-                GearHandler.giveGear(p, ChatColor.RED, SpecialGear.NONE);
-            
+                addToTeam(p, Teams.RED);
             }
         }
+        super.midgamePlayerJoin(p);
         return true;
+    }
+    
+    private void addToTeam(Player p, Teams t){
+        if(t == Teams.RED){
+            Team.getRed().add(p);
+            p.teleport(map.getImportantPoints().get("RedSpawn1").toBukkitLoc().add(0, 2, 0));
+            GearHandler.giveGear(p, ChatColor.RED, SpecialGear.NONE);
+        }
+        else{
+            Team.getBlue().add(p);
+            p.teleport(map.getImportantPoints().get("BlueSpawn1").toBukkitLoc().add(0, 2, 0));
+            GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
+        }
     }
     
     public String requiresParameter(){
@@ -284,10 +279,10 @@ public class TeamSlayer extends BasePluginGamemode{
                 }
                 
                 if(p != null){
-                    if(Team.getRedPlayers().contains(p)){
+                    if(Team.getRed().getMembers().contains(p)){
                         Points.getScore(ChatColor.BLUE + "Blue:").setScore(blueScore + 1);
                     }
-                    if(Team.getBluePlayers().contains(p)){
+                    if(Team.getBlue().getMembers().contains(p)){
                         Points.getScore(ChatColor.RED + "Red:").setScore(redScore + 1);
                     }
                 }
@@ -297,7 +292,7 @@ public class TeamSlayer extends BasePluginGamemode{
                         !givenTnt){
                     Random r = new Random();
                     
-                    Player randomPlayer = (Player) Team.getRedPlayers().toArray()[r.nextInt(Team.getRedPlayers().size())];
+                    Player randomPlayer = (Player) Team.getRed().getMembers().toArray()[r.nextInt(Team.getRed().getMembers().size())];
                     
                     GearHandler.giveCustomItem(randomPlayer, GearHandler.CustomItem.TNT);
                     givenTnt = true;
@@ -336,7 +331,7 @@ public class TeamSlayer extends BasePluginGamemode{
         if(state == GameState.RUNNING || state == GameState.COUNTDOWN){
             Team.removeFromTeam(e.getPlayer());
             
-            if(Team.getRedPlayers().size() <= 0){
+            if(Team.getRed().size() <= 0){
                 
                 for(Player p : Bukkit.getOnlinePlayers()){
                     p.sendMessage(ChatColor.BLUE + "Game over!");
@@ -347,7 +342,7 @@ public class TeamSlayer extends BasePluginGamemode{
                 PlayerStat.addGameSpectatedAll();
                 End(map);
             }
-            if(Team.getBluePlayers().size() <= 0){
+            if(Team.getBlue().size() <= 0){
                 
                 for(Player p : Bukkit.getOnlinePlayers()){
                     p.sendMessage(ChatColor.RED + "Game over!");
@@ -367,7 +362,7 @@ public class TeamSlayer extends BasePluginGamemode{
             if(state == GameState.RUNNING){
                 Random random = new Random();
                 int spawn = random.nextInt(3) + 1;
-                if(Team.getRedPlayers().contains(e.getPlayer())){
+                if(Team.getRed().getMembers().contains(e.getPlayer())){
                     switch(spawn){
                         case 1:
                             e.setRespawnLocation(map.getImportantPoints().get("RedSpawn1").toBukkitLoc().add(0, 2, 0));
@@ -380,7 +375,7 @@ public class TeamSlayer extends BasePluginGamemode{
                             break;
                     }
                 }
-                if(Team.getBluePlayers().contains(e.getPlayer())){
+                if(Team.getBlue().getMembers().contains(e.getPlayer())){
                     switch(spawn){
                         case 1:
                             e.setRespawnLocation(map.getImportantPoints().get("BlueSpawn1").toBukkitLoc().add(0, 2, 0));

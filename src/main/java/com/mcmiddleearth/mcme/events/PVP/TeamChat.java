@@ -18,14 +18,11 @@
  */
 package com.mcmiddleearth.mcme.events.PVP;
 
-import java.util.Set;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import com.mcmiddleearth.mcme.events.PVP.Team;
 
 /**
  *
@@ -44,7 +41,10 @@ public class TeamChat implements CommandExecutor{
                       
            p = (Player) cs;
            
-           if(!Team.getRedPlayers().contains(p) && !Team.getBluePlayers().contains(p) && !Team.getInfected().contains(p) && !Team.getSurvivors().contains(p)){
+           if(!Team.getRed().getMembers().contains(p) && 
+                   !Team.getBlue().getMembers().contains(p) && 
+                   !Team.getInfected().getMembers().contains(p) && 
+                   !Team.getSurvivor().getMembers().contains(p)){
                p.sendMessage(ChatColor.RED + "You aren't on a team!");
            }
            
@@ -63,31 +63,31 @@ public class TeamChat implements CommandExecutor{
                }
                
            }
-           if(Team.getRedPlayers().contains(p)){
-               for(Player player : Team.getRedPlayers()){
+           if(Team.getRed().getMembers().contains(p)){
+               for(Player player : Team.getRed().getMembers()){
                    
                    player.sendMessage(ChatColor.DARK_RED + "[TEAM] " + p.getName() + ChatColor.RED + ": " + messageString);
                    
                }    
            }
-           else if(Team.getBluePlayers().contains(p)){
-               for(Player player : Team.getBluePlayers()){
+           else if(Team.getBlue().getMembers().contains(p)){
+               for(Player player : Team.getBlue().getMembers()){
                    
                    player.sendMessage(ChatColor.BLUE + "[TEAM] " + p.getName() + ChatColor.AQUA + ": " + messageString);
                    
                }
            }
            
-           else if(Team.getInfected().contains(p)){
-               for(Player player : Team.getInfected()){
+           else if(Team.getInfected().getMembers().contains(p)){
+               for(Player player : Team.getInfected().getMembers()){
                    
                    player.sendMessage(ChatColor.DARK_RED + "[TEAM] " + p.getName() + ChatColor.RED + ": " + messageString );
                    
                }
            }
            
-           else if(Team.getSurvivors().contains(p)){
-               for(Player player : Team.getSurvivors()){
+           else if(Team.getSurvivor().getMembers().contains(p)){
+               for(Player player : Team.getSurvivor().getMembers()){
                    
                    player.sendMessage(ChatColor.BLUE + "[TEAM] " + p.getName() + ChatColor.AQUA + ": " + messageString);
                    

@@ -190,7 +190,7 @@ public class FreeForAll extends BasePluginGamemode{
                 }
             }
             else{
-                Team.addToTeam(p, Team.Teams.SPECTATORS);
+                Team.getSpectator().add(p);
                 p.teleport(map.getSpawn().toBukkitLoc());
             }
             
@@ -377,8 +377,6 @@ public class FreeForAll extends BasePluginGamemode{
             p.sendMessage(ChatColor.GREEN + "Most Deaths: " + deathMessage);
             p.sendMessage(ChatColor.GREEN + "Highest KD: " + kDMessage);
         }
-        
-        Team.getSpectators().clear();
         
         for(Player p : Bukkit.getOnlinePlayers()){
             BukkitTeamHandler.removeFromBukkitTeam(p);

@@ -122,9 +122,10 @@ public class GearHandler {
                 items[i].getItemMeta().spigot().setUnbreakable(true);
         }
         p.getInventory().clear();
-        p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
-            new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
-            p.getInventory().clear();
+        p.getInventory().setHelmet(new ItemStack(Material.AIR));
+        p.getInventory().setChestplate(new ItemStack(Material.AIR));
+        p.getInventory().setLeggings(new ItemStack(Material.AIR));
+        p.getInventory().setBoots(new ItemStack(Material.AIR));
         
         if(sg == SpecialGear.RINGBEARER){
             p.getInventory().setHelmet(new ItemStack(Material.GLOWSTONE, 1));
@@ -252,7 +253,7 @@ public class GearHandler {
                                    
                                     p.getInventory().clear();
                                     
-                                    if(Team.getRedPlayers().contains(p)){
+                                    if(Team.getRed().getMembers().contains(p)){
                                         GearHandler.giveGear(p, ChatColor.RED, SpecialGear.RINGBEARER);
                                     }
                                     else{
@@ -317,7 +318,7 @@ public class GearHandler {
                         }
                         
                         Random r = new Random();
-                        Player newTntHolder = (Player) Team.getRedPlayers().toArray()[r.nextInt(Team.getRedPlayers().size())];
+                        Player newTntHolder = (Player) Team.getRed().getMembers().toArray()[r.nextInt(Team.getRed().size())];
                         
                         giveCustomItem(newTntHolder, CustomItem.TNT);
                     }

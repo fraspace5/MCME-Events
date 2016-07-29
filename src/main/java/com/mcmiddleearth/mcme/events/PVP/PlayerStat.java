@@ -117,23 +117,23 @@ public class PlayerStat {
         
         switch(t){
             case RED:
-                for(Player p : Team.getRedPlayers()){
+                for(Player p : Team.getRed().getMembers()){
                     PlayerStat.getPlayerStats().get(p.getName()).addGameWon();
                 }
                 break;
                 
             case BLUE:
-                for(Player p : Team.getBluePlayers()){
+                for(Player p : Team.getBlue().getMembers()){
                     PlayerStat.getPlayerStats().get(p.getName()).addGameWon();
                 }
                 break;
             case INFECTED:
-                for(Player p : Team.getInfected()){
+                for(Player p : Team.getInfected().getMembers()){
                     PlayerStat.getPlayerStats().get(p.getName()).addGameWon();
                 }
                 break;
             case SURVIVORS:
-                for(Player p : Team.getSurvivors()){
+                for(Player p : Team.getSurvivor().getMembers()){
                     PlayerStat.getPlayerStats().get(p.getName()).addGameWon();
                 }
                 break;
@@ -144,23 +144,23 @@ public class PlayerStat {
     public static void addGameLost(Teams t){
         switch(t){
             case RED:
-                for(Player p : Team.getRedPlayers()){
+                for(Player p : Team.getRed().getMembers()){
                     PlayerStat.getPlayerStats().get(p.getName()).addGameLost();
                 }
                 break;
                 
             case BLUE:
-                for(Player p : Team.getBluePlayers()){
+                for(Player p : Team.getBlue().getMembers()){
                     PlayerStat.getPlayerStats().get(p.getName()).addGameLost();
                 }
                 break;
             case INFECTED:
-                for(Player p : Team.getInfected()){
+                for(Player p : Team.getInfected().getMembers()){
                     PlayerStat.getPlayerStats().get(p.getName()).addGameLost();
                 }
                 break;
             case SURVIVORS:
-                for(Player p : Team.getSurvivors()){
+                for(Player p : Team.getSurvivor().getMembers()){
                     PlayerStat.getPlayerStats().get(p.getName()).addGameLost();
                 }
                 break;
@@ -168,7 +168,7 @@ public class PlayerStat {
         
     }
     public static void addGameSpectatedAll(){
-        for(Player p : Team.getSpectators()){
+        for(Player p : Team.getSpectator().getMembers()){
             PlayerStat.getPlayerStats().get(p.getName()).addGameSpectated();
         }
     }

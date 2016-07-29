@@ -49,11 +49,12 @@ public class Locker implements CommandExecutor, Listener{
                 if(args[0].equalsIgnoreCase("kickall")){
                     for(Player p : Bukkit.getOnlinePlayers()){
                         if(!p.isOp()){
-                            p.kickPlayer("admin kicked all players");
+                            p.kickPlayer("Admin kicked all players");
                         }
                     }
                     cs.sendMessage("Kicked all!");
-                }else if(args[0].equalsIgnoreCase("lock")){
+                }
+                else if(args[0].equalsIgnoreCase("lock")){
                     if(args.length > 1){
                         Message = "";
                         for(int i = 1; i < args.length; i++){
@@ -62,10 +63,12 @@ public class Locker implements CommandExecutor, Listener{
                     }
                     if(locked){
                         cs.sendMessage("Server Unlocked!");
-                        locked=false;
-                    }else{
+                        locked = false;
+                    }
+                    else{
                         cs.sendMessage("Server Locked!");
-                        locked=true;
+                        locked = true;
+                        Message = "Server Locked!";
                         for(Player p : Bukkit.getOnlinePlayers()){
                             if(!p.isOp()){
                                 p.kickPlayer("Server locked");

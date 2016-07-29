@@ -156,7 +156,7 @@ public class OneInTheQuiver extends BasePluginGamemode{
                     c++;
                 }
             }else{
-                Team.addToTeam(p, Team.Teams.SPECTATORS);
+                Team.getSpectator().add(p);
                 p.teleport(map.getSpawn().toBukkitLoc());
             }
             
@@ -332,7 +332,6 @@ public class OneInTheQuiver extends BasePluginGamemode{
             p.sendMessage(ChatColor.GREEN + "Highest KD: " + kDMessage);
         }
         
-        Team.getSpectators().clear();
         for(Player p : Bukkit.getOnlinePlayers()){
             BukkitTeamHandler.removeFromBukkitTeam(p);
         }

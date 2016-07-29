@@ -70,6 +70,13 @@ public abstract class BasePluginGamemode implements Gamemode{
         for(Player p : players){
             PlayerStat.getPlayerStats().get(p.getName()).addPlayedGame();
         }
+        if(m.getResourcePackURL() != null){
+            for(Player p : Bukkit.getOnlinePlayers()){
+                if(!players.contains(p)){
+                    p.setResourcePack(m.getResourcePackURL());
+                }
+            }
+        }
         
     };
     
@@ -77,6 +84,12 @@ public abstract class BasePluginGamemode implements Gamemode{
     public void End(Map m){
         PVPCommandCore.setRunningGame(null);
         PVPCommandCore.toggleVoxel(false);
+        
+        for(Player p : Bukkit.getOnlinePlayers()){
+            p.setResourcePack(m.getResourcePackURL());
+        }
+        
+        Team.resetAllTeams();
         
         Bukkit.getScheduler().cancelAllTasks();
         for(Objective o : scoreboard.getObjectives()){
@@ -126,10 +139,10 @@ public abstract class BasePluginGamemode implements Gamemode{
                 PVPCommandCore.getRunningGame().getGm() instanceof TeamDeathmatch ||
                 PVPCommandCore.getRunningGame().getGm() instanceof TeamSlayer){
             
-             if(Team.getRedPlayers().contains(p)){
+             if(Team.getRed().getMembers().contains(p)){
                  message = ChatColor.RED + p.getName() + ChatColor.GRAY + " has joined the fight on " + ChatColor.RED + "Red Team!";
              }
-             else if(Team.getBluePlayers().contains(p)){
+             else if(Team.getBlue().getMembers().contains(p)){
                  message = ChatColor.BLUE + p.getName() + ChatColor.GRAY + " has joined the fight on " + ChatColor.BLUE + "Blue Team!";
              }
             

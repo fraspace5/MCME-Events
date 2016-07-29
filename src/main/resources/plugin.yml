@@ -3,6 +3,7 @@ main: com.mcmiddleearth.mcme.events.Main
 version: ${project.version}
 authors: [DonoA, aaldim, lizzehface, meggawatts]
 author: DonoA
+depend: [WorldEdit]
 commands:
     WorldJump:
         description: jump worlds

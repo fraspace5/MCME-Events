@@ -124,7 +124,7 @@ public class JoinLeaveHandler implements Listener{
                             p.sendMessage(ChatColor.YELLOW + "Sorry, you can't join this game midgame");
                             p.sendMessage(ChatColor.YELLOW + "You can join the next game, though!");
                         }
-                        Team.addToTeam(p, Team.Teams.SPECTATORS);
+                        Team.getSpectator().add(p);
                     }
                     else{
                         p.teleport(PVPCore.getSpawn());

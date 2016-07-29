@@ -26,6 +26,7 @@ import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.PVP.Team;
 import com.mcmiddleearth.mcme.events.Util.DBmanager;
+import com.sk89q.worldedit.Vector;
 import java.io.File;
 import java.util.HashMap;
 import lombok.Getter;
@@ -87,16 +88,31 @@ public class AllGameHandlers implements Listener{
         }
     }
     
+    HashMap<String, Long> lastOutOfBounds = new HashMap<>();
+    
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e){
         Location from = e.getFrom();
         Location to = e.getTo();
         
         if(PVPCommandCore.getRunningGame() != null){
-            if(PVPCommandCore.getRunningGame().getGm().getState() == GameState.COUNTDOWN && !Team.getSpectators().contains(e.getPlayer())){
+            if(PVPCommandCore.getRunningGame().getGm().getState() == GameState.COUNTDOWN && !Team.getSpectator().getMembers().contains(e.getPlayer())){
                 if(from.getX() != to.getX() || from.getZ() != to.getZ()){
-                    e.setTo(from);
+                    e.setTo(new Location(to.getWorld(), from.getX(), to.getY(), from.getZ()));
                     return;
+                }
+            }
+            if(!PVPCommandCore.getRunningGame().getRegion().contains(new Vector(to.getX(), to.getY(), to.getZ()))){
+                e.setTo(new Location(to.getWorld(), from.getX(), to.getY(), from.getZ()));
+                
+                if(!lastOutOfBounds.containsKey(e.getPlayer().getName())){
+                    e.getPlayer().sendMessage(ChatColor.RED + "You aren't allowed to leave the map!");
+                    lastOutOfBounds.put(e.getPlayer().getName(), System.currentTimeMillis());
+                }
+                
+                else if(System.currentTimeMillis() - lastOutOfBounds.get(e.getPlayer().getName()) > 3000){
+                    e.getPlayer().sendMessage(ChatColor.RED + "You aren't allowed to leave the map!");
+                    lastOutOfBounds.put(e.getPlayer().getName(), System.currentTimeMillis());
                 }
             }
         }

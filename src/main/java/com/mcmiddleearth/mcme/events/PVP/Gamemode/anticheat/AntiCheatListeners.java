@@ -116,7 +116,7 @@ public class AntiCheatListeners implements Listener{
                 e.setCancelled(true);
             }
             
-            if(command.equalsIgnoreCase("/tp") && !Team.getSpectators().contains(e.getPlayer())){
+            if(command.equalsIgnoreCase("/tp") && !Team.getSpectator().getMembers().contains(e.getPlayer())){
                 cs.sendMessage(ChatColor.RED + "You can't do that during a game!");
                 e.setCancelled(true);
             }
@@ -126,7 +126,7 @@ public class AntiCheatListeners implements Listener{
                 e.setCancelled(true);
             }
             
-            if(Team.getSpectators().contains(cs)){
+            if(Team.getSpectator().getMembers().contains(cs)){
                 if(command.equalsIgnoreCase("/me") ||
                         command.equalsIgnoreCase("/tell") ||
                         command.equalsIgnoreCase("/msg") ||
@@ -145,7 +145,7 @@ public class AntiCheatListeners implements Listener{
     //Prevent spectators from giving info to players
     @EventHandler
     public static void onPlayerChat(AsyncPlayerChatEvent e){
-        if(PVPCommandCore.getRunningGame() != null && Team.getSpectators().contains(e.getPlayer())){
+        if(PVPCommandCore.getRunningGame() != null && Team.getSpectator().getMembers().contains(e.getPlayer())){
             
             if(e.getPlayer().getName().equals("DSESGH") || 
                     e.getPlayer().getName().equals("Dallen") || 
@@ -155,7 +155,7 @@ public class AntiCheatListeners implements Listener{
                 return;
             }
             
-            for(Player p : Team.getSpectators()){
+            for(Player p : Team.getSpectator().getMembers()){
                 
                 p.sendMessage(ChatColor.GRAY + "Spectator " + e.getPlayer().getName() + ": " + ChatColor.WHITE + e.getMessage());
                 

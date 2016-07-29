@@ -105,23 +105,23 @@ public class TeamDeathmatch extends BasePluginGamemode{
             eventsRegistered = true;
         }
         for(Player p : players){
-            if(Team.getRedPlayers().size() <= Team.getBluePlayers().size()){
-                Team.addToTeam(p, Team.Teams.RED);
+            if(Team.getRed().size() <= Team.getBlue().size()){
+                Team.getRed().add(p);
                 p.teleport(m.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
             }
-            else if(Team.getBluePlayers().size() < Team.getRedPlayers().size()){
-                Team.addToTeam(p, Team.Teams.BLUE);
+            else if(Team.getBlue().size() < Team.getRed().size()){
+                Team.getBlue().add(p);
                 p.teleport(m.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
             }
         }
         for(Player player : Bukkit.getServer().getOnlinePlayers()){
-            if(!Team.getBluePlayers().contains(player) && !Team.getRedPlayers().contains(player)){
-                Team.addToTeam(player, Team.Teams.SPECTATORS);
+            if(!Team.getBlue().getMembers().contains(player) && !Team.getRed().getMembers().contains(player)){
+                Team.getSpectator().add(player);
                 player.teleport(m.getSpawn().toBukkitLoc().add(0, 2, 0));
             }
         }
-        startingRedNum = Team.getRedPlayers().size();
-        startingBlueNum = Team.getBluePlayers().size();
+        startingRedNum = Team.getRed().size();
+        startingBlueNum = Team.getBlue().size();
             Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(), new Runnable(){
                 @Override
                 public void run() {
@@ -132,8 +132,8 @@ public class TeamDeathmatch extends BasePluginGamemode{
 
                         Points = getScoreboard().registerNewObjective("Remaining", "dummy");
                         Points.setDisplayName("Remaining");
-                        Points.getScore(ChatColor.BLUE + "Blue:").setScore(Team.getBluePlayers().size());
-                        Points.getScore(ChatColor.RED + "Red:").setScore(Team.getRedPlayers().size());
+                        Points.getScore(ChatColor.BLUE + "Blue:").setScore(Team.getBlue().size());
+                        Points.getScore(ChatColor.RED + "Red:").setScore(Team.getRed().size());
                         Points.setDisplaySlot(DisplaySlot.SIDEBAR);
                         
                         for(Player p : Bukkit.getServer().getOnlinePlayers()){
@@ -141,10 +141,10 @@ public class TeamDeathmatch extends BasePluginGamemode{
                             p.setScoreboard(getScoreboard());
                         }
                         
-                        for(Player p : Team.getBluePlayers()){
+                        for(Player p : Team.getBlue().getMembers()){
                             GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
                         }
-                        for(Player p : Team.getRedPlayers()){
+                        for(Player p : Team.getRed().getMembers()){
                             GearHandler.giveGear(p, ChatColor.RED, SpecialGear.NONE);
                         }
                         state = GameState.RUNNING;
@@ -183,7 +183,7 @@ public class TeamDeathmatch extends BasePluginGamemode{
     }
     
     public boolean isMidgameJoin(){
-        if(Team.getRedPlayers().size() >= (0.75 * startingRedNum) || Team.getBluePlayers().size() >= (0.75 * startingBlueNum)){
+        if(Team.getRed().size() >= (0.75 * startingRedNum) || Team.getBlue().size() >= (0.75 * startingBlueNum)){
             return true;
         }else{
             return false;
@@ -198,10 +198,10 @@ public class TeamDeathmatch extends BasePluginGamemode{
             if(e.getEntity() instanceof Player && state == GameState.RUNNING){
                 Player p = e.getEntity();
                 
-                if(Team.getRedPlayers().contains(p)){
+                if(Team.getRed().getMembers().contains(p)){
                     Points.getScore(ChatColor.RED + "Red:").setScore(Points.getScore(ChatColor.RED + "Red:").getScore() - 1);
                 }
-                else if(Team.getBluePlayers().contains(p)){
+                else if(Team.getBlue().getMembers().contains(p)){
                     Points.getScore(ChatColor.BLUE + "Blue:").setScore(Points.getScore(ChatColor.BLUE + "Blue:").getScore() - 1);   
                 }
                 
@@ -233,7 +233,7 @@ public class TeamDeathmatch extends BasePluginGamemode{
                 }
                 
                 if(state == GameState.RUNNING){
-                    Team.addToTeam(p, Teams.SPECTATORS);
+                    Team.getSpectator().add(p);
                 }
             }
         }
@@ -255,14 +255,11 @@ public class TeamDeathmatch extends BasePluginGamemode{
 
             if(state == GameState.RUNNING || state == GameState.COUNTDOWN){
                 
-                Points.getScore(ChatColor.BLUE + "Blue:").setScore(Team.getBluePlayers().size());
-                Points.getScore(ChatColor.RED + "Red:").setScore(Team.getRedPlayers().size());
+                Points.getScore(ChatColor.BLUE + "Blue:").setScore(Team.getBlue().size());
+                Points.getScore(ChatColor.RED + "Red:").setScore(Team.getRed().size());
                 Team.removeFromTeam(e.getPlayer());
-                e.getPlayer().getInventory().clear();
-                e.getPlayer().getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
-                   new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
                 
-                if(Team.getRedPlayers().size() <= 0){
+                if(Team.getRed().size() <= 0){
                 
                     for(Player player : Bukkit.getServer().getOnlinePlayers()){
                         player.sendMessage(ChatColor.BLUE + "Game over!");
@@ -274,38 +271,11 @@ public class TeamDeathmatch extends BasePluginGamemode{
                     PlayerStat.addGameSpectatedAll();
                     End(map);
                 }
-                else if(Team.getBluePlayers().size() <= 0){
+                else if(Team.getBlue().size() <= 0){
                     for(Player player : Bukkit.getServer().getOnlinePlayers()){
                         player.sendMessage(ChatColor.RED + "Game over!");
                         player.sendMessage(ChatColor.RED + "Red Team Wins!");
                     
-                    }
-                    PlayerStat.addGameWon(Teams.RED);
-                    PlayerStat.addGameLost(Teams.BLUE);
-                    PlayerStat.addGameSpectatedAll();
-                    End(map);
-                }
-            }
-            else if(state == GameState.COUNTDOWN){
-                Team.removeFromTeam(e.getPlayer());
-                e.getPlayer().getInventory().clear();
-                e.getPlayer().getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
-                   new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
-                
-                if(Team.getRedPlayers().size() == 0){
-                    for(Player player : Bukkit.getServer().getOnlinePlayers()){
-                        player.sendMessage(ChatColor.BLUE + "Game over!");
-                        player.sendMessage(ChatColor.BLUE + "Blue Team Wins!");
-                    }
-                    PlayerStat.addGameWon(Teams.BLUE);
-                    PlayerStat.addGameLost(Teams.RED);
-                    PlayerStat.addGameSpectatedAll();
-                    End(map);
-                }
-                else if(Team.getBluePlayers().size() == 0){
-                    for(Player player : Bukkit.getServer().getOnlinePlayers()){
-                        player.sendMessage(ChatColor.RED + "Game over!");
-                        player.sendMessage(ChatColor.RED + "Red Team Wins!");
                     }
                     PlayerStat.addGameWon(Teams.RED);
                     PlayerStat.addGameLost(Teams.BLUE);
@@ -318,60 +288,43 @@ public class TeamDeathmatch extends BasePluginGamemode{
     
     @Override
     public boolean midgamePlayerJoin(Player p){
-        if(Team.getRedPlayers().size() >= (0.75 * startingRedNum) || Team.getBluePlayers().size() >= (0.75 * startingBlueNum)){
+        if(Team.getRed().size() >= (.5 * startingRedNum) || Team.getBlue().size() >= (.5 * startingBlueNum)){
+            if(Team.getRed().getAllMembers().contains(p)){
+                addToTeam(p, Teams.RED);
+            }
+            else if(Team.getBlue().getAllMembers().contains(p)){
+                addToTeam(p, Teams.BLUE);
+            }
+        }
+        
+        if(Team.getRed().size() >= (0.75 * startingRedNum) || Team.getBlue().size() >= (0.75 * startingBlueNum)){
             
-            if(Team.getRedPlayers().size() >= Team.getBluePlayers().size()){
-                Team.addToTeam(p, Team.Teams.BLUE);
-                p.teleport(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
-                Points.getScore(ChatColor.BLUE + "Blue:").setScore(Points.getScore(ChatColor.BLUE + "Blue:").getScore() + 1);
-                super.midgamePlayerJoin(p);
-                p.setScoreboard(getScoreboard());
-                
-                for(Player pl : Bukkit.getServer().getOnlinePlayers()){
-                    
-                    if(Team.getBluePlayers().contains(pl)){
-                        if(pl.getName().length() < 14){
-                            pl.setPlayerListName(ChatColor.BLUE + pl.getName());
-                        }else{
-                            String newName = pl.getName().substring(0,13);
-                            pl.setPlayerListName(ChatColor.BLUE + newName);
-                        }
-                        pl.setDisplayName(ChatColor.BLUE + pl.getName());
-                    }
-                    if(Team.getRedPlayers().contains(pl)){
-                        if(pl.getName().length() < 14){
-                            pl.setPlayerListName(ChatColor.RED + pl.getName());
-                        }else{
-                            String newName = pl.getName().substring(0,13);
-                            pl.setPlayerListName(ChatColor.RED + newName);
-                        }
-                        pl.setDisplayName(ChatColor.RED + pl.getName());
-                    }
-                    if(Team.getSpectators().contains(pl)){
-                        if(pl.getName().length() < 14){
-                            pl.setPlayerListName(ChatColor.GRAY + pl.getName());
-                        }else{
-                            String newName = pl.getName().substring(0,13);
-                            pl.setPlayerListName(ChatColor.GRAY + newName);
-                        }
-                        pl.setDisplayName(ChatColor.GRAY + pl.getName());
-                    }
-                    
-                }
-                GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
+            if(Team.getRed().size() >= Team.getBlue().size()){
+                addToTeam(p, Teams.BLUE);
             }
-            else if(Team.getBluePlayers().size() > Team.getRedPlayers().size()){
-                Team.addToTeam(p, Team.Teams.RED);
-                p.teleport(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
-                Points.getScore(ChatColor.RED + "Red:").setScore(Points.getScore(ChatColor.RED + "Red:").getScore() + 1);
-                super.midgamePlayerJoin(p);
-                
-                GearHandler.giveGear(p, ChatColor.RED, SpecialGear.NONE);
+            else if(Team.getBlue().size() > Team.getRed().size()){
+                addToTeam(p, Teams.RED);
             }
+            super.midgamePlayerJoin(p);
             return true;
         }
         else{
             return false;
+        }
+    }
+    
+    private void addToTeam(Player p, Teams t){
+        if(t == Teams.RED){
+            Team.getRed().add(p);
+            p.teleport(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
+            Points.getScore(ChatColor.RED + "Red:").setScore(Points.getScore(ChatColor.RED + "Red:").getScore() + 1);
+            GearHandler.giveGear(p, ChatColor.RED, SpecialGear.NONE);
+        }
+        else{
+            Team.getBlue().add(p);
+            p.teleport(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
+            Points.getScore(ChatColor.BLUE + "Blue:").setScore(Points.getScore(ChatColor.BLUE + "Blue:").getScore() + 1);
+            GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
         }
     }
 }

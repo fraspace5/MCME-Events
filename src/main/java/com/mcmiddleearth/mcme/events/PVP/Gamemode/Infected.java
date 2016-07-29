@@ -121,12 +121,12 @@ public class Infected extends BasePluginGamemode{
             if(time == 0){
                 String remainingPlayers = "";
                 int loopnum = 0;
-                for(Player p : Team.getSurvivors()){
-                    if(Team.getSurvivors().size() > 1 && loopnum == (Team.getSurvivors().size() - 1)){
+                for(Player p : Team.getSurvivor().getMembers()){
+                    if(Team.getSurvivor().size() > 1 && loopnum == (Team.getSurvivor().size() - 1)){
                 
                         remainingPlayers += (", and " + p.getName());
                     }
-                    else if(Team.getSurvivors().size() == 1 || loopnum == 0){
+                    else if(Team.getSurvivor().size() == 1 || loopnum == 0){
                         remainingPlayers += (" " + p.getName());
                     }
                     else{
@@ -179,12 +179,12 @@ public class Infected extends BasePluginGamemode{
         for(Player p : players){
             
             if(c == infected){
-                Team.addToTeam(p, Team.Teams.INFECTED);
+                Team.getInfected().add(p);
                 p.teleport(m.getImportantPoints().get("InfectedSpawn").toBukkitLoc());
             }
             
             else{
-                Team.addToTeam(p, Team.Teams.SURVIVORS);
+                Team.getSurvivor().add(p);
                 p.teleport(m.getImportantPoints().get("SurvivorSpawn").toBukkitLoc());
             }
             
@@ -192,8 +192,8 @@ public class Infected extends BasePluginGamemode{
         }
         
         for(Player player : Bukkit.getServer().getOnlinePlayers()){
-            if(!Team.getInfected().contains(player) && !Team.getSurvivors().contains(player)){
-                Team.addToTeam(player, Team.Teams.SPECTATORS);
+            if(!Team.getInfected().getMembers().contains(player) && !Team.getSurvivor().getMembers().contains(player)){
+                Team.getSpectator().add(player);
                 player.teleport(m.getSpawn().toBukkitLoc().add(0, 2, 0));
             }
         }
@@ -210,7 +210,7 @@ public class Infected extends BasePluginGamemode{
                         Points = getScoreboard().registerNewObjective("Remaining", "dummy");
                         Points.setDisplayName("Time: " + time + "m");
                         time *= 60;
-                        Points.getScore(ChatColor.BLUE + "Survivors:").setScore(Team.getSurvivors().size());
+                        Points.getScore(ChatColor.BLUE + "Survivors:").setScore(Team.getSurvivor().size());
                         Points.getScore(ChatColor.DARK_RED + "Infected:").setScore(Team.getInfected().size());
                         Points.setDisplaySlot(DisplaySlot.SIDEBAR);
                         
@@ -218,11 +218,11 @@ public class Infected extends BasePluginGamemode{
                             p.sendMessage(ChatColor.GREEN + "Game Start!");
                         }
                         
-                        for(Player p : Team.getSurvivors()){
+                        for(Player p : Team.getSurvivor().getMembers()){
                             p.setScoreboard(getScoreboard());
                             GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);
                             }
-                        for(Player p : Team.getInfected()){
+                        for(Player p : Team.getInfected().getMembers()){
 
                             p.setScoreboard(getScoreboard());
                             GearHandler.giveGear(p, ChatColor.DARK_RED, SpecialGear.INFECTED);
@@ -249,13 +249,9 @@ public class Infected extends BasePluginGamemode{
     @Override
     public void End(Map m){
         state = GameState.IDLE;
-        
-        for(Player p : Bukkit.getOnlinePlayers()){
-            Team.removeFromTeam(p);
-        }
+
         getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
         m.playerLeaveAll();
-        
         
         super.End(m);
     }
@@ -281,14 +277,14 @@ public class Infected extends BasePluginGamemode{
             if(e.getEntity() instanceof Player && state == GameState.RUNNING){
                 Player p = e.getEntity();
                 
-                if(Team.getSurvivors().contains(p)){
+                if(Team.getSurvivor().getMembers().contains(p)){
                     e.setDeathMessage(ChatColor.BLUE + p.getName() + ChatColor.GRAY + " was infected by " + ChatColor.DARK_RED + p.getKiller().getName());
-                    Points.getScore(ChatColor.BLUE + "Survivors:").setScore(Team.getSurvivors().size() - 1);
+                    Points.getScore(ChatColor.BLUE + "Survivors:").setScore(Team.getSurvivor().size() - 1);
                     Points.getScore(ChatColor.DARK_RED + "Infected:").setScore(Team.getInfected().size() + 1);
 
                     GearHandler.giveGear(p, ChatColor.DARK_RED, SpecialGear.INFECTED);
-                    Team.addToTeam(p, Teams.INFECTED);
-                    if(Team.getSurvivors().size() <= 1){
+                    Team.getInfected().add(p);
+                    if(Team.getSurvivor().size() <= 1){
 
                         for(Player player : Bukkit.getOnlinePlayers()){
                             player.sendMessage(ChatColor.DARK_RED + "Game over!");
@@ -318,7 +314,7 @@ public class Infected extends BasePluginGamemode{
                     public void run(){
                      
                         GearHandler.giveGear(p, ChatColor.DARK_RED, SpecialGear.INFECTED);
-                        Team.addToTeam(p, Teams.INFECTED);
+                        Team.getInfected().add(p);
                     }
                     
                 }, 40);
@@ -333,9 +329,9 @@ public class Infected extends BasePluginGamemode{
                 Team.removeFromTeam(e.getPlayer());
                 
                 Points.getScore(ChatColor.DARK_RED + "Infected:").setScore(Team.getInfected().size());
-                Points.getScore(ChatColor.BLUE + "Survivors:").setScore(Team.getSurvivors().size());
+                Points.getScore(ChatColor.BLUE + "Survivors:").setScore(Team.getSurvivor().size());
                 
-                if(Team.getSurvivors().size() <= 0){
+                if(Team.getSurvivor().size() <= 0){
                 
                     for(Player player : Bukkit.getOnlinePlayers()){
                         player.sendMessage(ChatColor.DARK_RED + "Game over!");
@@ -351,12 +347,12 @@ public class Infected extends BasePluginGamemode{
                     
                     String remainingPlayers = "";
                     int loopnum = 0;
-                    for(Player p : Team.getSurvivors()){
-                        if(Team.getSurvivors().size() > 1 && loopnum == (Team.getSurvivors().size() - 1)){
+                    for(Player p : Team.getSurvivor().getMembers()){
+                        if(Team.getSurvivor().size() > 1 && loopnum == (Team.getSurvivor().size() - 1)){
                 
                             remainingPlayers += (", and " + p.getName());
                         }
-                        else if(Team.getSurvivors().size() == 1 || loopnum == 0){
+                        else if(Team.getSurvivor().size() == 1 || loopnum == 0){
                             remainingPlayers += (" " + p.getName());
                         }
                         else{
@@ -382,10 +378,21 @@ public class Infected extends BasePluginGamemode{
     
     @Override
     public boolean midgamePlayerJoin(Player p){
-        if(time >= 120){
-            Team.addToTeam(p, Team.Teams.SURVIVORS);
+        if(time >= 120 && (!Team.getInfected().getAllMembers().contains(p) || !Team.getSurvivor().getAllMembers().contains(p))){
+            if(Team.getInfected().getAllMembers().contains(p)){
+                Team.getInfected().add(p);
+                p.teleport(map.getImportantPoints().get("InfectedSpawn").toBukkitLoc().add(0, 2, 0));
+                Points.getScore(ChatColor.DARK_RED + "Survivors:").setScore(Team.getInfected().size());
+                super.midgamePlayerJoin(p);
+                
+                GearHandler.giveGear(p, ChatColor.DARK_RED, SpecialGear.INFECTED);
+                
+                return true;
+            }
+            
+            Team.getSurvivor().add(p);
             p.teleport(map.getImportantPoints().get("SurvivorSpawn").toBukkitLoc().add(0, 2, 0));
-            Points.getScore(ChatColor.BLUE + "Survivors:").setScore(Points.getScore(ChatColor.BLUE + "Survivors:").getScore() + 1);
+            Points.getScore(ChatColor.BLUE + "Survivors:").setScore(Team.getSurvivor().size());
             super.midgamePlayerJoin(p);
             
             GearHandler.giveGear(p, ChatColor.BLUE, SpecialGear.NONE);

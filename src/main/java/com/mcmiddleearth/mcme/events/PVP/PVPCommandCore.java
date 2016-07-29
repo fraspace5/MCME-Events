@@ -218,6 +218,7 @@ public class PVPCommandCore implements CommandExecutor{
                                 ChatHandler.getPlayerColors().put(p.getName(), ChatColor.GREEN);
                                 ChatHandler.getPlayerPrefixes().put(p.getName(), ChatColor.GREEN + "Participant");
                                 BukkitTeamHandler.addToBukkitTeam(p, ChatColor.GREEN);
+                                p.setResourcePack(m.getResourcePackURL());
                             }
                                
                         }
