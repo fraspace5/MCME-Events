@@ -218,7 +218,12 @@ public class PVPCommandCore implements CommandExecutor{
                                 ChatHandler.getPlayerColors().put(p.getName(), ChatColor.GREEN);
                                 ChatHandler.getPlayerPrefixes().put(p.getName(), ChatColor.GREEN + "Participant");
                                 BukkitTeamHandler.addToBukkitTeam(p, ChatColor.GREEN);
-                                p.setResourcePack(m.getResourcePackURL());
+                                try{
+                                    p.setResourcePack(m.getResourcePackURL());
+                                }
+                                catch(NullPointerException e){
+                                    p.sendMessage(ChatColor.RED + "No resource pack was set for this map!");
+                                }
                             }
                                
                         }
@@ -274,22 +279,7 @@ public class PVPCommandCore implements CommandExecutor{
                     }
                      
                 }
-                else if(args[0].equalsIgnoreCase("state")){
-                    
-                    if(runningGame == null){
-                        p.sendMessage("IDLE");
-                    }
-                    else if(runningGame.getGm().getState() == GameState.COUNTDOWN){
-                        p.sendMessage(runningGame.getName() + " is COUNTDOWN");
-                    }
-                    else if(runningGame.getGm().getState() == GameState.RUNNING){
-                        p.sendMessage(runningGame.getName() + " is RUNNING");
-                    }
-                    else if(runningGame.getGm().getState() == GameState.IDLE){
-                        p.sendMessage(runningGame.getName() + " is IDLE");
-                    }
-                    
-                }
+                
                 else if(args[0].equalsIgnoreCase("rules")){
                     String gm;
                     try{

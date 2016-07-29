@@ -100,6 +100,7 @@ public class JoinLeaveHandler implements Listener{
                 
                 if(PVPCommandCore.getRunningGame() == null && PVPCommandCore.getQueuedGame() == null){
                     p.teleport(PVPCore.getSpawn());
+                    p.setResourcePack("http://www.mcmiddleearth.com/content/Eriador.zip");
                     ChatHandler.getPlayerColors().put(p.getName(), org.bukkit.ChatColor.WHITE);
                 }else{
                     Map m = null;
@@ -115,6 +116,14 @@ public class JoinLeaveHandler implements Listener{
                           
                     if(m.getGm().getState() != GameState.IDLE){
                         p.teleport(m.getSpawn().toBukkitLoc().add(0, 2, 0));
+                        
+                        try{
+                            p.setResourcePack(m.getResourcePackURL());
+                        }
+                        catch(NullPointerException e){
+                            p.sendMessage(org.bukkit.ChatColor.RED + "No resource pack was set for this map!");
+                        }
+                        
                         p.setScoreboard(BasePluginGamemode.getScoreboard());
                         p.sendMessage(ChatColor.GREEN + "Current Game: " + ChatColor.BLUE + m.getGmType() + ChatColor.GREEN + " on " + ChatColor.RED + m.getTitle());
                           
@@ -128,6 +137,7 @@ public class JoinLeaveHandler implements Listener{
                     }
                     else{
                         p.teleport(PVPCore.getSpawn());
+                        p.setResourcePack("http://www.mcmiddleearth.com/content/Eriador.zip");
                         p.sendMessage(ChatColor.GREEN + "Upcoming Game: " + ChatColor.BLUE + m.getGmType() + ChatColor.GREEN + " on " + ChatColor.RED + m.getTitle());
                         p.sendMessage(ChatColor.YELLOW + "Use " + ChatColor.GREEN + "/pvp join" + ChatColor.YELLOW + " to join!");
                         p.sendMessage(ChatColor.GREEN + "Do /pvp rules " + PVPCommandCore.removeSpaces(PVPCommandCore.getQueuedGame().getGmType()) + " if you don't know how this gamemode works!");

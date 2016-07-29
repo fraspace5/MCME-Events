@@ -73,7 +73,12 @@ public abstract class BasePluginGamemode implements Gamemode{
         if(m.getResourcePackURL() != null){
             for(Player p : Bukkit.getOnlinePlayers()){
                 if(!players.contains(p)){
-                    p.setResourcePack(m.getResourcePackURL());
+                    try{
+                        p.setResourcePack(m.getResourcePackURL());
+                    }
+                    catch(NullPointerException e){
+                        p.sendMessage(ChatColor.RED + "No resource pack was set for this map!");
+                    }
                 }
             }
         }
@@ -86,7 +91,7 @@ public abstract class BasePluginGamemode implements Gamemode{
         PVPCommandCore.toggleVoxel(false);
         
         for(Player p : Bukkit.getOnlinePlayers()){
-            p.setResourcePack(m.getResourcePackURL());
+            p.setResourcePack("http://www.mcmiddleearth.com/content/Eriador.zip");
         }
         
         Team.resetAllTeams();
