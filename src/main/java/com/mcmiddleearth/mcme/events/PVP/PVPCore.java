@@ -116,18 +116,6 @@ public class PVPCore implements Event{
         pm.registerEvents(new WeatherHandler(), Main.getPlugin());
         BukkitTeamHandler.configureBukkitTeams();
         
-        try{
-            pm.disablePlugin(pm.getPlugin("ResourceRegions"));
-        }
-        catch(NullPointerException e){
-            System.err.println("ResourceRegions not loaded! Ignoring!");
-        }
-        try{
-            pm.disablePlugin(pm.getPlugin("WorldGuard"));
-        }
-        catch(NullPointerException e){
-            System.err.println("WorldGuard not loaded! Ignoring!");
-        }
         try {
             server = new PVPServer(3333);
             server.getServ().start();

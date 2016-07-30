@@ -145,6 +145,8 @@ public class Team {
             }
             else if(infected.getMembers().contains(p)){
                 infected.getMembers().remove(p);
+                p.sendMessage("Removed from infected!");
+                p.removePotionEffect(PotionEffectType.SPEED);
             }
             
             if(!p.isDead()){
@@ -182,6 +184,10 @@ public class Team {
     }
 
     public static void resetAllTeams(){
+        for(Player p : infected.getMembers()){
+            p.removePotionEffect(PotionEffectType.SPEED);
+        }
+        
         red.getMembers().clear();
         blue.getMembers().clear();
         spectator.getMembers().clear();
