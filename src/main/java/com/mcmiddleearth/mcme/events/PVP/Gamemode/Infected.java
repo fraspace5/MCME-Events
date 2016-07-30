@@ -284,7 +284,7 @@ public class Infected extends BasePluginGamemode{
 
                     GearHandler.giveGear(p, ChatColor.DARK_RED, SpecialGear.INFECTED);
                     Team.getInfected().add(p);
-                    if(Team.getSurvivor().size() <= 1){
+                    if(Team.getSurvivor().size() < 1){
 
                         for(Player player : Bukkit.getOnlinePlayers()){
                             player.sendMessage(ChatColor.DARK_RED + "Game over!");
