@@ -22,6 +22,7 @@ import com.mcmiddleearth.mcme.events.PVP.Handlers.BukkitTeamHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
 import java.util.ArrayList;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -202,6 +203,7 @@ public class Team {
         spectator.getAllMembers().clear();
         survivor.getAllMembers().clear();
         infected.getAllMembers().clear();
+        
     }
     
 }

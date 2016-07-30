@@ -21,6 +21,7 @@ package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ArrowHandler;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.BukkitTeamHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
 import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
@@ -104,6 +105,7 @@ public abstract class BasePluginGamemode implements Gamemode{
         ChatHandler.getPlayerColors().clear();
         
         for(Player p : Bukkit.getServer().getOnlinePlayers()){
+            BukkitTeamHandler.removeFromBukkitTeam(p);
             ChatHandler.getPlayerColors().put(p.getName(), ChatColor.WHITE);
             p.teleport(PVPCore.getSpawn());
             p.setDisplayName(ChatColor.WHITE + p.getName());
