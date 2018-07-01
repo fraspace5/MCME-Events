@@ -18,6 +18,7 @@
  */
 package com.mcmiddleearth.mcme.events.PVP;
 
+import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -61,7 +62,7 @@ public class Lobby {
                     if(m == null){
                         return;
                     }
-                    if(!m.getGm().getPlayers().contains(e.getPlayer()) && !PVPCore.getPlaying().containsKey(e.getPlayer().getName())){
+                    if(!m.getGm().getPlayers().contains(e.getPlayer())){
                         if(m.playerJoin(e.getPlayer())){
                             e.getPlayer().sendMessage(ChatColor.YELLOW + "Joining Map...");
                             Bukkit.broadcastMessage(ChatColor.YELLOW + e.getPlayer().getName() + " Joined " + m.getTitle() + " playing " + m.getGmType());
@@ -77,8 +78,8 @@ public class Lobby {
         
         @EventHandler
         public void onSignChange(SignChangeEvent e){
-            if(e.getPlayer().getItemInHand().hasItemMeta()){
-                ItemMeta im = e.getPlayer().getItemInHand().getItemMeta();
+            if(e.getPlayer().getInventory().getItemInMainHand().hasItemMeta()){
+                ItemMeta im = e.getPlayer().getInventory().getItemInMainHand().getItemMeta();
                 if(im.hasLore()){
                     if(Map.findMap(im.getLore().get(0), im.getLore().get(1)) != null){
                         final Map m = Map.findMap(im.getLore().get(0), im.getLore().get(1));

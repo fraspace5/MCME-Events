@@ -21,6 +21,8 @@ package com.mcmiddleearth.mcme.events.PVP.Handlers;
 import java.util.HashMap;
 import lombok.Getter;
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,10 +32,13 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
  *
  * @author Donovan <dallen@dallen.xyz>
  */
-public class ChatHandler implements Listener{
+public class ChatHandler implements Listener {
     
     @Getter
     private static HashMap<String, String> playerPrefixes = new HashMap<String, String>();
+    
+    @Getter
+    private static HashMap<String, ChatColor> playerColors = new HashMap<String, ChatColor>();
     
     public static String formatChat(Player p){
         if(playerPrefixes.containsKey(p.getName())){

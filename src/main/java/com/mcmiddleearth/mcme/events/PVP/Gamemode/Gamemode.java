@@ -18,9 +18,11 @@
  */
 package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
-import com.mcmiddleearth.mcme.events.PVP.Map;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.GameState;
+import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import java.util.ArrayList;
 import org.bukkit.entity.Player;
+import org.bukkit.Achievement;
 
 /**
  *
@@ -28,14 +30,20 @@ import org.bukkit.entity.Player;
  */
 public interface Gamemode {
     
-    void Start(Map m);
+    void Start(Map m, int parameter);
     
     ArrayList<Player> getPlayers();
+    
+    GameState getState();
     
     ArrayList<String> getNeededPoints();
     
     void End(Map m);
     
-    boolean isRunning();
+    boolean midgamePlayerJoin(Player p);
+    
+    String requiresParameter();
+    
+    boolean isMidgameJoin();
     
 }

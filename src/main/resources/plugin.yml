@@ -3,6 +3,7 @@ main: com.mcmiddleearth.mcme.events.Main
 version: ${project.version}
 authors: [DonoA, aaldim, lizzehface, meggawatts]
 author: DonoA
+depend: [WorldEdit]
 commands:
     WorldJump:
         description: jump worlds
@@ -28,3 +29,6 @@ commands:
     pvp:
         description: PVP commands go to the read-me for more info
         usage: /pvp <some shit>
+    t:
+        description: Send a message to players on your team
+        usage: /t <message>

@@ -19,13 +19,28 @@
 package com.mcmiddleearth.mcme.events.PVP.Handlers;
 
 import com.mcmiddleearth.mcme.events.Main;
-import com.mcmiddleearth.mcme.events.PVP.Map;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.GameState;
+import com.mcmiddleearth.mcme.events.PVP.maps.Map;
+import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
+import com.mcmiddleearth.mcme.events.PVP.Team;
 import com.mcmiddleearth.mcme.events.Util.DBmanager;
+import com.sk89q.worldedit.Vector;
 import java.io.File;
+import java.util.HashMap;
+import lombok.Getter;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.inventory.ItemStack;
@@ -37,17 +52,31 @@ import org.bukkit.inventory.ItemStack;
 public class AllGameHandlers implements Listener{
     
     @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent e){
+        if(e.getEntity().getKiller() == null){
+            return;
+        }
+        
+        e.setDeathMessage(ChatHandler.getPlayerColors().get(e.getEntity().getName()) + e.getEntity().getName() + ChatColor.GRAY + " was killed by " + ChatHandler.getPlayerColors().get(e.getEntity().getKiller().getName()) + e.getEntity().getKiller().getName());
+        
+    }
+    
+    @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent e){
-        if(PVPCore.getPlaying().keySet().contains(e.getPlayer().getName())){
-            Map m = Map.maps.get(PVPCore.getPlaying().get(e.getPlayer().getName()));
-            if(m != null){
-                if(m.getName().contains("HD")){
-                    if(e.getPlayer().getInventory().contains(new ItemStack(Material.TNT))){
-                        e.getPlayer().getInventory().remove(Material.TNT);
-                        e.getPlayer().getLocation().getWorld().dropItem(e.getPlayer().getLocation(), new ItemStack(Material.TNT));
+        if(PVPCommandCore.getRunningGame() != null){
+            if(PVPCommandCore.getRunningGame().getGm().getPlayers().contains(e.getPlayer())){
+                Map m = PVPCommandCore.getRunningGame();
+                if(m != null){
+                    if(m.getName().contains("HD")){
+                        if(e.getPlayer().getInventory().contains(new ItemStack(Material.TNT))){
+                            e.getPlayer().getInventory().remove(Material.TNT);
+                            e.getPlayer().getLocation().getWorld().dropItem(e.getPlayer().getLocation(), new ItemStack(Material.TNT));
+                        }
                     }
                 }
             }
+        }else{   
+            e.setRespawnLocation(PVPCore.getSpawn());
         }
     }
     
@@ -59,4 +88,86 @@ public class AllGameHandlers implements Listener{
         }
     }
     
+    HashMap<String, Long> lastOutOfBounds = new HashMap<>();
+    
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent e){
+        Location from = e.getFrom();
+        Location to = e.getTo();
+        
+        if(PVPCommandCore.getRunningGame() != null){
+            if(PVPCommandCore.getRunningGame().getGm().getState() == GameState.COUNTDOWN && !Team.getSpectator().getMembers().contains(e.getPlayer())){
+                if(from.getX() != to.getX() || from.getZ() != to.getZ()){
+                    e.setTo(new Location(to.getWorld(), from.getX(), to.getY(), from.getZ()));
+                    return;
+                }
+            }
+            if(!PVPCommandCore.getRunningGame().getRegion().contains(new Vector(to.getX(), to.getY(), to.getZ()))){
+                e.setTo(new Location(to.getWorld(), from.getX(), to.getY(), from.getZ()));
+                
+                if(!lastOutOfBounds.containsKey(e.getPlayer().getName())){
+                    e.getPlayer().sendMessage(ChatColor.RED + "You aren't allowed to leave the map!");
+                    lastOutOfBounds.put(e.getPlayer().getName(), System.currentTimeMillis());
+                }
+                
+                else if(System.currentTimeMillis() - lastOutOfBounds.get(e.getPlayer().getName()) > 3000){
+                    e.getPlayer().sendMessage(ChatColor.RED + "You aren't allowed to leave the map!");
+                    lastOutOfBounds.put(e.getPlayer().getName(), System.currentTimeMillis());
+                }
+            }
+        }
+    }
+    
+    @EventHandler
+    public void onPlayerDamageByEntity(EntityDamageByEntityEvent e){
+        Player damagee = null;
+        Player damager = null;
+        
+        if(PVPCommandCore.getRunningGame() == null){
+            e.setCancelled(true);
+            return;
+        }
+        else{
+            if(PVPCommandCore.getRunningGame().getGm().getState() != GameState.RUNNING){
+                e.setCancelled(true);
+                return;
+            }
+        }
+        
+        if(e.getEntity() instanceof Player){
+            damagee = (Player) e.getEntity();
+        }
+        else{
+            return;
+        }
+        
+        if(e.getDamager() instanceof Player){
+            damager = (Player) e.getDamager();
+        }
+        else if(e.getDamager() instanceof Arrow){
+            if(((Arrow) e.getDamager()).getShooter() instanceof Player){
+                damager =  (Player) ((Arrow) e.getDamager()).getShooter();
+            }
+        }
+        else{
+            return;
+        }
+        
+        if(Team.areTeamMates(damagee, damager)){
+            e.setCancelled(true);
+        }
+        
+    }
+    
+    @EventHandler
+    public void onPlayerDamage(EntityDamageEvent e){
+        if(e.getEntity() instanceof Player){
+            if(PVPCommandCore.getRunningGame() == null){
+                e.setCancelled(true);
+            }
+            else if(PVPCommandCore.getRunningGame().getGm().getState() != GameState.RUNNING){
+                e.setCancelled(true);
+            }
+        }
+    }
 }

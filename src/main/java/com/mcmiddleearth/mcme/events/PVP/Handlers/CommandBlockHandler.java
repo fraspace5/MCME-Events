@@ -18,7 +18,9 @@
  */
 package com.mcmiddleearth.mcme.events.PVP.Handlers;
 
-import com.mcmiddleearth.mcme.events.PVP.Map;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.BasePluginGamemode.GameState;
+import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import java.util.Arrays;
 import java.util.Random;
 import org.bukkit.ChatColor;
@@ -40,7 +42,8 @@ public class CommandBlockHandler implements CommandExecutor{
                 if(args[1].equalsIgnoreCase("prefix") && args.length >= 4){//pvp cmdblock prefix <player> <prefix word> <prefix color>
                     if(args[3].equalsIgnoreCase("clear")){
                         ChatHandler.getPlayerPrefixes().remove(args[2]);
-                    } else {
+                    } 
+                    else{
                         if(args.length == 5){
                             if(ChatColor.valueOf(args[4]) != null){
                                 ChatHandler.getPlayerPrefixes().put(args[2], ChatColor.valueOf(args[4]) + args[3]);
@@ -51,14 +54,16 @@ public class CommandBlockHandler implements CommandExecutor{
                             ChatHandler.getPlayerPrefixes().put(args[2], args[3]);
                         }
                     }
-                }else if(args[1].equalsIgnoreCase("endGame") && args.length >= 3){
+                }
+                else if(args[1].equalsIgnoreCase("endGame") && args.length >= 3){
                     if(args[2].equalsIgnoreCase("all")){
                         for(Map m : Map.maps.values()){
-                            if(m.getGm().isRunning()){
+                            if(m.getGm().getState() == GameState.RUNNING){
                                 m.getGm().End(m);
                             }
                         }
-                    }else if(Map.maps.containsKey(args[2]) && Map.maps.get(args[2]).getGm().isRunning()){
+                    }
+                    else if(Map.maps.containsKey(args[2]) && Map.maps.get(args[2]).getGm().getState() == GameState.RUNNING){
                         Map.maps.get(args[2]).getGm().End(Map.maps.get(args[2]));
                         if(args.length == 4){
                             if(args[3].equalsIgnoreCase("next")){//wip
@@ -67,7 +72,8 @@ public class CommandBlockHandler implements CommandExecutor{
                                 Map.maps.get((String) Map.maps.keySet().toArray()[new Random().nextInt(Map.maps.keySet().size()-1)]).rebindSign(sign);
                             }
                         }
-                    }else{
+                    }
+                    else{
                         cs.sendMessage("game cannot be ended");
                     }
                 }

@@ -18,25 +18,34 @@
  */
 package com.mcmiddleearth.mcme.events.PVP;
 
+import com.mcmiddleearth.mcme.events.PVP.maps.MapEditor;
+import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import com.mcmiddleearth.mcme.events.Event;
 import com.mcmiddleearth.mcme.events.Main;
+import com.mcmiddleearth.mcme.events.PVP.Gamemode.anticheat.AntiCheatListeners;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.AllGameHandlers;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.BukkitTeamHandler;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.GearHandler.GearEvents;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.JoinLeaveHandler;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.WeatherHandler;
 import com.mcmiddleearth.mcme.events.PVP.Servlet.PVPServer;
+import com.mcmiddleearth.mcme.events.PVP.Team.Teams;
 import com.mcmiddleearth.mcme.events.Util.CLog;
 import com.mcmiddleearth.mcme.events.Util.DBmanager;
 import com.mcmiddleearth.mcme.events.summerevent.SummerCore;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
-import lombok.Setter;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 /**
@@ -50,15 +59,12 @@ public class PVPCore implements Event{
     @Getter
     private static File saveLoc = new File(Main.getPluginDirectory() + Main.getFileSep() + "PVP");
     
-    @Getter @Setter
-    private static HashMap<String, String> playing = new HashMap<>();
-    
-    
-    @Getter
-    private static ArrayList<String> Playing = new ArrayList<>();
-    
     @Getter
     private static Location Spawn;
+    
+    @Getter
+    private static int countdownTime = 5;
+    
     
     @Override
     public void onEnable(){
@@ -66,7 +72,8 @@ public class PVPCore implements Event{
         HashMap<String, Object> maps = new HashMap<>();
         try{
             maps = DBmanager.loadAllObj(Map.class, loc);
-        }catch(Exception ex){
+        }
+        catch(Exception ex){
         }
         if(maps == null){
             maps = new HashMap<>();
@@ -78,8 +85,15 @@ public class PVPCore implements Event{
                 if(m.getGmType() != null){
                     m.bindGamemode();
                 }
+                if(m.getRegionPoints().size() > 0){
+                    m.initializeRegion();
+                }
+                
                 Map.maps.put(e.getKey(), m);
-            }catch(Exception ex){
+                
+                
+            }
+            catch(Exception ex){
                 System.out.println("Error loading map " + e.getKey());
                 
             }
@@ -87,6 +101,7 @@ public class PVPCore implements Event{
         CLog.println(maps);
         Main.getPlugin().getCommand("pvp").setExecutor(new PVPCommandCore());
         Main.getPlugin().getCommand("locker").setExecutor(new Locker());
+        Main.getPlugin().getCommand("t").setExecutor(new TeamChat());
         PluginManager pm = Main.getServerInstance().getPluginManager();
         pm.registerEvents(new MapEditor(), Main.getPlugin());
 //        pm.registerEvents(new PlayerStat.StatLitener(), Main.getPlugin());
@@ -96,20 +111,26 @@ public class PVPCore implements Event{
         pm.registerEvents(new JoinLeaveHandler(), Main.getPlugin());
         pm.registerEvents(new AllGameHandlers(), Main.getPlugin());
         pm.registerEvents(new PlayerStat.StatListener(), Main.getPlugin());
+        pm.registerEvents(new GearEvents(), Main.getPlugin());
+        pm.registerEvents(new AntiCheatListeners(), Main.getPlugin());
+        pm.registerEvents(new WeatherHandler(), Main.getPlugin());
+        BukkitTeamHandler.configureBukkitTeams();
+        
         try {
             server = new PVPServer(3333);
             server.getServ().start();
-        } catch (Exception ex) {
+        } 
+        catch (Exception ex) {
             Logger.getLogger(SummerCore.class.getName()).log(Level.SEVERE, null, ex);
         }
         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
 
-                    @Override
-                    public void run() {
-                        Spawn = new Location(Bukkit.getWorld("world"), 346, 40, 513);
+            @Override
+            public void run() {
+                Spawn = new Location(Bukkit.getWorld("world"), 344.47, 39, 521.58, 0.3F, -24.15F);
                         
-                    }
-                }, 20);
+                }
+            }, 20);
         
     }
     
@@ -122,8 +143,17 @@ public class PVPCore implements Event{
         }
         try {
             server.getServ().stop();
-        } catch (Exception ex) {
+        } 
+        catch (Exception ex) {
             Logger.getLogger(SummerCore.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    public static WorldEditPlugin getWorldEditPlugin(){
+        Plugin p = Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
+        
+        if(p == null){
+            return null;
+        }
+        return (WorldEditPlugin) p;
     }
 }

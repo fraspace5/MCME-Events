@@ -29,6 +29,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 
 /**
@@ -48,11 +49,12 @@ public class Locker implements CommandExecutor, Listener{
                 if(args[0].equalsIgnoreCase("kickall")){
                     for(Player p : Bukkit.getOnlinePlayers()){
                         if(!p.isOp()){
-                            p.kickPlayer("admin kicked all players");
+                            p.kickPlayer("Admin kicked all players");
                         }
                     }
                     cs.sendMessage("Kicked all!");
-                }else if(args[0].equalsIgnoreCase("lock")){
+                }
+                else if(args[0].equalsIgnoreCase("lock")){
                     if(args.length > 1){
                         Message = "";
                         for(int i = 1; i < args.length; i++){
@@ -61,10 +63,12 @@ public class Locker implements CommandExecutor, Listener{
                     }
                     if(locked){
                         cs.sendMessage("Server Unlocked!");
-                        locked=false;
-                    }else{
+                        locked = false;
+                    }
+                    else{
                         cs.sendMessage("Server Locked!");
-                        locked=true;
+                        locked = true;
+                        Message = "Server Locked!";
                         for(Player p : Bukkit.getOnlinePlayers()){
                             if(!p.isOp()){
                                 p.kickPlayer("Server locked");
@@ -86,15 +90,9 @@ public class Locker implements CommandExecutor, Listener{
     }
     
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e){
+    public void onPlayerLogin(PlayerLoginEvent e){
         if(locked && !e.getPlayer().isOp()){
-            final Player p = e.getPlayer();
-            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable(){
-                @Override
-                public void run() {
-                    p.kickPlayer("Server is locked");
-                }
-            }, 20);
+            e.disallow(PlayerLoginEvent.Result.KICK_OTHER, ChatColor.BLUE + Message);
         }
     }
 }

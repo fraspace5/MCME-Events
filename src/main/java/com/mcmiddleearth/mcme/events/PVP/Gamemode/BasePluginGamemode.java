@@ -19,11 +19,29 @@
 package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mcmiddleearth.mcme.events.PVP.Map;
+import com.mcmiddleearth.mcme.events.Main;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.ArrowHandler;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.BukkitTeamHandler;
+import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
+import com.mcmiddleearth.mcme.events.PVP.maps.Map;
+import com.mcmiddleearth.mcme.events.PVP.PVPCommandCore;
+import com.mcmiddleearth.mcme.events.PVP.PVPCore;
 import com.mcmiddleearth.mcme.events.PVP.PlayerStat;
+import com.mcmiddleearth.mcme.events.PVP.Team;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import lombok.Getter;
+import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 
 /**
  *
@@ -33,17 +51,119 @@ public abstract class BasePluginGamemode implements Gamemode{
     @Getter @JsonIgnore
     ArrayList<Player> players = new ArrayList<>();
     
+    public enum GameState {
+        IDLE, COUNTDOWN, RUNNING
+    }
+    
+    @Getter
+    private static Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+    
     public void playerLeave(Player p){
         players.remove(p);
     }
     
     @Override
-    public void Start(Map m){
+    public void Start(Map m, int parameter){
+        PVPCommandCore.toggleVoxel(true);
+        
+        ArrowHandler.initializeArrowHandling();
+        
         for(Player p : players){
-            PlayerStat.getPlayerStats().get(p.getName()).addPlayedGame(m.getGmType());
+            PlayerStat.getPlayerStats().get(p.getName()).addPlayedGame();
         }
+        if(m.getResourcePackURL() != null){
+            for(Player p : Bukkit.getOnlinePlayers()){
+                if(!players.contains(p)){
+                    try{
+                        p.setResourcePack(m.getResourcePackURL());
+                    }
+                    catch(NullPointerException e){
+                        p.sendMessage(ChatColor.RED + "No resource pack was set for this map!");
+                    }
+                }
+            }
+        }
+        
     };
     
     @Override
-    public void End(Map m){};
+    public void End(Map m){
+        PVPCommandCore.setRunningGame(null);
+        PVPCommandCore.toggleVoxel(false);
+        
+        for(Player p : Bukkit.getOnlinePlayers()){
+            p.setResourcePack("http://www.mcmiddleearth.com/content/Eriador.zip");
+        }
+        
+        Team.resetAllTeams();
+        
+        Bukkit.getScheduler().cancelAllTasks();
+        for(Objective o : scoreboard.getObjectives()){
+            o.unregister();
+        }
+        
+        ChatHandler.getPlayerColors().clear();
+        
+        for(Player p : Bukkit.getServer().getOnlinePlayers()){
+            BukkitTeamHandler.removeFromBukkitTeam(p);
+            ChatHandler.getPlayerColors().put(p.getName(), ChatColor.WHITE);
+            p.teleport(PVPCore.getSpawn());
+            p.setDisplayName(ChatColor.WHITE + p.getName());
+            p.setPlayerListName(ChatColor.WHITE + p.getName());
+            p.getInventory().clear();
+            p.setTotalExperience(0);
+            p.setExp(0);
+            p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR),
+            new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
+            p.setGameMode(GameMode.ADVENTURE);
+            p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+            ChatHandler.getPlayerPrefixes().remove(p.getName());
+            
+            if(!p.isDead()){
+                p.setHealth(20);
+            }
+        }
+    };
+    
+    
+    public boolean midgamePlayerJoin(Player p){
+        PlayerStat.getPlayerStats().get(p.getName()).addPlayedGame();
+        String message = "";
+        
+        if(PVPCommandCore.getRunningGame() == null){
+            return false;
+        }
+        
+        if(PVPCommandCore.getRunningGame().getGm() instanceof FreeForAll || 
+                PVPCommandCore.getRunningGame().getGm() instanceof OneInTheQuiver){
+            
+            message = ChatHandler.getPlayerColors().get(p.getName()) + p.getName() + ChatColor.GRAY + " has joined the fight!";
+            
+        }
+        
+        else if(PVPCommandCore.getRunningGame().getGm() instanceof Ringbearer || 
+                PVPCommandCore.getRunningGame().getGm() instanceof TeamConquest ||
+                PVPCommandCore.getRunningGame().getGm() instanceof TeamDeathmatch ||
+                PVPCommandCore.getRunningGame().getGm() instanceof TeamSlayer){
+            
+             if(Team.getRed().getMembers().contains(p)){
+                 message = ChatColor.RED + p.getName() + ChatColor.GRAY + " has joined the fight on " + ChatColor.RED + "Red Team!";
+             }
+             else if(Team.getBlue().getMembers().contains(p)){
+                 message = ChatColor.BLUE + p.getName() + ChatColor.GRAY + " has joined the fight on " + ChatColor.BLUE + "Blue Team!";
+             }
+            
+        }
+        
+        else if(PVPCommandCore.getRunningGame().getGm() instanceof Infected){
+            
+            message = ChatColor.BLUE + p.getName() + ChatColor.GRAY + " has joined the fight as a " + ChatColor.BLUE + "Survivor!";
+            
+        }
+        for(Player pl : Bukkit.getOnlinePlayers()){
+            pl.sendMessage(message);
+        }
+        
+        return true;
+    };
 }

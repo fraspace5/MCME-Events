@@ -21,8 +21,10 @@ package com.mcmiddleearth.mcme.events.PVP.Gamemode;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcmiddleearth.mcme.events.Main;
 import com.mcmiddleearth.mcme.events.PVP.Handlers.ChatHandler;
-import com.mcmiddleearth.mcme.events.PVP.Map;
+import com.mcmiddleearth.mcme.events.PVP.maps.Map;
 import com.mcmiddleearth.mcme.events.PVP.PVPCore;
+import com.mcmiddleearth.mcme.events.PVP.Team;
+import com.mcmiddleearth.mcme.events.PVP.Team.Teams;
 import com.mcmiddleearth.mcme.events.Util.EventLocation;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,19 +55,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
 public class KingOfTheHill extends BasePluginGamemode{
     
     @Getter
-    private Team BlueTeam = new KingOfTheHill.Team("Blue", GameMode.ADVENTURE); 
-    
-    @Getter
-    private Team RedTeam = new KingOfTheHill.Team("Red", GameMode.ADVENTURE); 
-    
-    @Getter
-    private Team SpectatingTeam = new KingOfTheHill.Team("Spectator", GameMode.SPECTATOR); 
-    
-    @Getter
     private Objective Points;
-    
-    @Getter
-    private Scoreboard Score;
     
     @Getter
     private int target = 50;
@@ -79,53 +69,21 @@ public class KingOfTheHill extends BasePluginGamemode{
     
     Map map;
     
-    int count;
+    int count = 10;
     
     @Getter
-    private boolean Running = false;
+    private boolean midgameJoin = false;
+    
+    @Getter
+    private GameState state;
     
     GameEvents events;
     
-    Runnable tick = new Runnable(){
-            @Override
-            public void run() {
-                if(Running){
-                    RedTeam.score += RedTeam.getPoints().size();
-                    BlueTeam.score += BlueTeam.getPoints().size();
-                    if(RedTeam.score > target){
-                        RedTeam.score = target;
-                    }
-                    if(BlueTeam.score > target){
-                        BlueTeam.score = target;
-                    }
-                    Points.getScore(ChatColor.BLUE + "Blue:").setScore(BlueTeam.score);
-                    Points.getScore(ChatColor.RED + "Red:").setScore(RedTeam.score);
-                    System.out.println(RedTeam.score + ", " + BlueTeam.score);
-                    if(RedTeam.getScore() >= target){
-                        for(Player p : players){
-                            p.sendMessage(ChatColor.RED + "Game over!");
-                            p.sendMessage(ChatColor.RED + "Red Team Wins!");
-                        }
-                        End(map);
-                    }else if(BlueTeam.getScore() >= target){
-                        for(Player p : players){
-                            p.sendMessage(ChatColor.BLUE + "Game over!");
-                            p.sendMessage(ChatColor.BLUE + "Blue Team Wins!");
-                        }
-                        End(map);
-                    }
-                }
-            }
-        };
-    
-    public KingOfTheHill(){
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(), tick, 0, 200);//every ten seconds
-    }
-    
     @Override
-    public void Start(Map m) {
-        super.Start(m);
+    public void Start(Map m, int parameter) {
+        super.Start(m,parameter);
         count = 10;
+        state = GameState.COUNTDOWN;
         this.map = m;
         if(!m.getImportantPoints().keySet().containsAll(NeededPoints)){
             for(Player p : players){
@@ -141,37 +99,17 @@ public class KingOfTheHill extends BasePluginGamemode{
         PluginManager pm = Main.getServerInstance().getPluginManager();
         pm.registerEvents(events, Main.getPlugin());
         for(Player p : players){
-            p.sendMessage("selecting teams");
-            if(BlueTeam.getPlayers().size() < 16 && RedTeam.getPlayers().size() < 16){
-                if(BlueTeam.getPlayers().size() >= RedTeam.getPlayers().size()){
-                    RedTeam.addToTeam(p);
-                    p.sendMessage(ChatColor.RED + "You are on the Red Team!");
-                    ChatHandler.getPlayerPrefixes().put(p.getName(), ChatColor.RED + "Red");
-                    if(p.getName().length() < 14){
-                        p.setPlayerListName(ChatColor.RED + p.getName());
-                    }else{
-                        String newName = p.getName().substring(0, 13);
-                        p.setPlayerListName(ChatColor.RED + newName);
-                    }
+            if(Team.getBlue().size() < 16 && Team.getRed().size() < 16){
+                if(Team.getBlue().size() >= Team.getRed().size()){
+                    Team.getRed().add(p);
                     p.teleport(m.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
-                }else if(BlueTeam.getPlayers().size() < RedTeam.getPlayers().size()){
-                    BlueTeam.addToTeam(p);
-                    p.sendMessage(ChatColor.BLUE + "You are on the Blue Team!");
-                    ChatHandler.getPlayerPrefixes().put(p.getName(), ChatColor.BLUE + "Blue");
-                    if(p.getName().length() < 14){
-                        p.setPlayerListName(ChatColor.BLUE + p.getName());
-                    }else{
-                        String newName = p.getName().substring(0, 13);
-                        p.setPlayerListName(ChatColor.BLUE + newName);
-                    }
-                    p.setDisplayName(ChatColor.BLUE + p.getName());
+                }else if(Team.getBlue().size() < Team.getRed().size()){
+                    Team.getBlue().add(p);
                     p.teleport(m.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
                 }
             }else{
-                SpectatingTeam.addToTeam(p);
-                p.sendMessage(ChatColor.GRAY + "You are Spectating!");
+                Team.getSpectator().add(p);
                 p.teleport(m.getImportantPoints().get("SpectatorSpawn").toBukkitLoc().add(0, 2, 0));
-                p.setGameMode(SpectatingTeam.getGamemode());
             }
         }
         
@@ -179,24 +117,24 @@ public class KingOfTheHill extends BasePluginGamemode{
                 @Override
                 public void run() {
                     if(count == 0){
-                        if(Running){
+                        if(state == GameState.RUNNING){
                             return;
                         }
-                        ScoreboardManager sbm = Bukkit.getScoreboardManager();
-                        Score = sbm.getNewScoreboard();
-                        if(sbm.getMainScoreboard() == null){
-                            Score = sbm.getNewScoreboard();
-                        }
-                        Points = Score.registerNewObjective("Points", "dummy");
+
+                        Points = getScoreboard().registerNewObjective("Points", "dummy");
                         Points.setDisplayName("Points");
                         Points.getScore(ChatColor.BLUE + "Blue:").setScore(0);
                         Points.getScore(ChatColor.RED + "Red:").setScore(0);
                         Points.setDisplaySlot(DisplaySlot.SIDEBAR);
-                        for(Player p : RedTeam.getPlayers()){
+                        
+                        for(Player p : Bukkit.getServer().getOnlinePlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game Start!");
+                        }
+                        
+                        for(Player p : Team.getRed().getMembers()){
+                            
                             p.teleport(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
-                            p.setGameMode(RedTeam.getGamemode());
-                            p.setScoreboard(Score);
+                            p.setScoreboard(getScoreboard());
                             ItemStack[] armor = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
                                 new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS)};
                             for(int i = 0; i <= 3; i++){
@@ -218,11 +156,10 @@ public class KingOfTheHill extends BasePluginGamemode{
                             p.getInventory().addItem(Arrows);
                             p.getInventory().addItem(Arrows);
                         }
-                        for(Player p : BlueTeam.getPlayers()){
-                            p.sendMessage(ChatColor.GREEN + "Game Start!");
+                        for(Player p : Team.getBlue().getMembers()){
+
                             p.teleport(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
-                            p.setGameMode(BlueTeam.getGamemode());
-                            p.setScoreboard(Score);
+                            p.setScoreboard(getScoreboard());
                             ItemStack[] armor = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
                                 new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS)};
                             for(int i = 0; i <= 3; i++){
@@ -244,10 +181,10 @@ public class KingOfTheHill extends BasePluginGamemode{
                             p.getInventory().addItem(Arrows);
                             p.getInventory().addItem(Arrows);
                         }
-                        Running = true;
+                        state = GameState.RUNNING;
                         count = -1;
                     }else if(count != -1){
-                        for(Player p : players){
+                        for(Player p : Bukkit.getServer().getOnlinePlayers()){
                             p.sendMessage(ChatColor.GREEN + "Game begins in " + count);
                         }
                         count--;
@@ -259,47 +196,26 @@ public class KingOfTheHill extends BasePluginGamemode{
     
     @Override
     public void End(Map m){
-        Running = false;
+        state = GameState.IDLE;
+        
         for(Location l : events.points){
             l.getBlock().setType(Material.AIR);
             l.getBlock().getRelative(0, 1, 0).setType(Material.AIR);
         }
         for(Player p : players){
-            p.teleport(PVPCore.getSpawn());
+            Team.removeFromTeam(p);
         }
         m.playerLeaveAll();
+        super.End(m);
+
     }
     
-    private class Team{
-        
-        @Getter
-        private String name;
-        
-        @Getter
-        private int score;
-        
-        @Getter
-        private ArrayList<Location> points = new ArrayList<>();
-        
-//        @Getters
-//        private HashMap<String, Integer> Classes = new HashMap<>();
-        
-        @Getter
-        private ArrayList<Player> players = new ArrayList<>();
-        
-        @Getter
-        private GameMode gamemode;
-        
-        public Team(String name, GameMode gamemode){
-            this.name = name;
-            this.gamemode = gamemode;
-            score = 0;
-        }
-        
-        public void addToTeam(Player p){
-            players.add(p);
-        }
-        
+    public boolean midgamePlayerJoin(Player p){
+        return false;
+    }
+    
+    public String requiresParameter(){
+        return null;
     }
     
     private class GameEvents implements Listener{
@@ -319,15 +235,15 @@ public class KingOfTheHill extends BasePluginGamemode{
         
         @EventHandler
         public void onPlayerMove(PlayerMoveEvent e){
-            if(Running && players.contains(e.getPlayer())){
+            if(state == GameState.RUNNING && players.contains(e.getPlayer())){
                 Player p = e.getPlayer();
                 Location cent = map.getImportantPoints().get("Hill").toBukkitLoc();
                 if(p.getLocation().distance(cent) < 4){
-                    if(RedTeam.getPlayers().contains(p)){
+                    if(Team.getRed().getMembers().contains(p)){
                         if(HillCapAmount > 0){
                             HillCapAmount++;
                         }
-                    }else if(BlueTeam.getPlayers().contains(p)){
+                    }else if(Team.getBlue().getMembers().contains(p)){
                         
                     }
                     
@@ -340,12 +256,15 @@ public class KingOfTheHill extends BasePluginGamemode{
         
         @EventHandler
         public void onPlayerRespawn(PlayerRespawnEvent e){
-            if(Running && players.contains(e.getPlayer())){
-                if(RedTeam.getPlayers().contains(e.getPlayer())){
+            System.out.println("koth");
+            if(state == GameState.RUNNING && players.contains(e.getPlayer())){
+                if(Team.getRed().getMembers().contains(e.getPlayer())){
                     e.setRespawnLocation(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
-                }else if(BlueTeam.getPlayers().contains(e.getPlayer())){
+                }else if(Team.getBlue().getMembers().contains(e.getPlayer())){
                     e.setRespawnLocation(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
                 }
+            }else{
+                System.out.println("This is in koth");
             }
         }
         
@@ -355,12 +274,12 @@ public class KingOfTheHill extends BasePluginGamemode{
                 cap++;
                 p.sendMessage(ChatColor.RED + "Cap at " + (cap/2) + "%");
                 if(cap >= 200){
-                    if(!RedTeam.points.contains(cent)){
-                        RedTeam.points.add(cent);
+                    if(!Team.getRed().getCapturedPoints().contains(cent)){
+                        Team.getRed().getCapturedPoints().add(cent);
                         p.sendMessage(ChatColor.RED + "Point Captured!");
                     }
-                    if(BlueTeam.points.contains(cent)){
-                        BlueTeam.points.remove(cent);
+                    if(Team.getBlue().getCapturedPoints().contains(cent)){
+                        Team.getBlue().getCapturedPoints().remove(cent);
                     }
                 }else{
                     capAmount.put(cent, cap);
@@ -370,12 +289,12 @@ public class KingOfTheHill extends BasePluginGamemode{
                 cap--;
                 p.sendMessage(ChatColor.BLUE + "Cap at " + (cap/-2) + "%");
                 if(cap <= -200){
-                    if(!BlueTeam.points.contains(cent)){
-                        BlueTeam.points.add(cent);
+                    if(!Team.getBlue().getCapturedPoints().contains(cent)){
+                        Team.getBlue().getCapturedPoints().add(cent);
                         p.sendMessage(ChatColor.BLUE + "Point Captured!");
                     }
-                    if(RedTeam.points.contains(cent)){
-                        RedTeam.points.remove(cent);
+                    if(Team.getRed().getCapturedPoints().contains(cent)){
+                        Team.getRed().getCapturedPoints().remove(cent);
                     }
                 }else{
                     capAmount.put(cent, cap);

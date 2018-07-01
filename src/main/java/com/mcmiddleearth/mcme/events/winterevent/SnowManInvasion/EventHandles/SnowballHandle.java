@@ -50,7 +50,7 @@ public class SnowballHandle implements Listener{
                         ((Snowman) target).damage(2);
                         if(pt.getShooter() instanceof Player){
                             Player p = ((Player) pt.getShooter());
-                            p.playSound(target.getLocation(), Sound.ORB_PICKUP, 100, 0);
+                            p.playSound(target.getLocation(), Sound.BLOCK_ANVIL_PLACE, 100, 0);
                             ((Snowman) target).setTarget(p);
                         }
                     }
