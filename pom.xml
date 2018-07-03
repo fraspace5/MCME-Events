@@ -90,7 +90,6 @@
       <dependency>
          <groupId>org.projectlombok</groupId>
          <artifactId>lombok</artifactId>
-         <version>1.12.2</version>
          <type>jar</type>
       </dependency>
       <dependency>
@@ -113,4 +112,13 @@
       </dependency>
    </dependencies>
    
+   <dependencyManagement>
+   	<dependencies>
+   		<dependency>
+   			<groupId>org.projectlombok</groupId>
+   			<artifactId>lombok</artifactId>
+   			<version>1.18.0</version>
+   		</dependency>
+   	</dependencies>
+   </dependencyManagement>
 </project>
