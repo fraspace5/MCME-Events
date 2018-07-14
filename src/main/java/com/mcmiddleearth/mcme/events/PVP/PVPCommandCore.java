@@ -48,12 +48,12 @@ import org.bukkit.Achievement;
 public class PVPCommandCore implements CommandExecutor{
     
     @Getter @Setter
-    private static Map queuedGame = null;
+    protected static Map queuedGame = null;
     
     @Getter @Setter
-    private static Map runningGame = null;
+    protected static Map runningGame = null;
     
-    private int parameter;
+    protected int parameter;
     
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String label, String[] args) {
@@ -63,240 +63,50 @@ public class PVPCommandCore implements CommandExecutor{
                 
                 if(args[0].equalsIgnoreCase("game") && args.length >= 2){
                     if(args[1].equalsIgnoreCase("start")){
-                        
-                        if(queuedGame == null){
-                            p.sendMessage(ChatColor.RED + "Can't start! No game is queued!");
-                        }
-                        if(runningGame == null){
-                            queuedGame.getGm().Start(queuedGame, parameter);
-                            runningGame = queuedGame;
-                            queuedGame = null;
-                        }
-                        else{
-                            p.sendMessage(ChatColor.RED + "Can't start! There's already a game running!");
-                        }
-                        return true;
+                        return pvpGameStart(cs);
                     }
                     else if(args[1].equalsIgnoreCase("quickstart")){
-                        
-                        if(p.isOp()){
-                            if(args.length >= 3){
-                                if(Map.maps.containsKey(args[2])){
-                                    Map m = Map.maps.get(args[2]);
-                                    
-                                    if(runningGame != null){
-                                        p.sendMessage(ChatColor.RED + "Can't start!");
-                                        p.sendMessage(ChatColor.GRAY + runningGame.getGmType() + " on " + runningGame.getTitle() + " is running!");
-                                        p.sendMessage(ChatColor.GRAY + "You need to end the current game first, with " + ChatColor.GREEN + "/pvp game end" + ChatColor.GRAY + ".");
-                                        return true;
-                                    }
-                                    else if(queuedGame != null && queuedGame != m){
-                                        p.sendMessage(ChatColor.RED + "Can't queue!");
-                                        p.sendMessage(ChatColor.GRAY + queuedGame.getGmType() + " on " + queuedGame.getTitle() + " is in the queue!");
-                                        p.sendMessage(ChatColor.GRAY + "You need to cancel the queued game first, with " + ChatColor.GREEN + "/pvp game end" + ChatColor.GRAY + ".");
-                                        return true;
-                                    }
-                                    if(queuedGame == m){
-                                        if(Integer.parseInt(args[3]) != parameter){
-                                            p.sendMessage("Parameter changed from " + ChatColor.GREEN + parameter + ChatColor.WHITE + " to " + ChatColor.GREEN + Integer.parseInt(args[3]));
-                                            parameter = Integer.parseInt(args[3]);
-                                        }
-                                    }
-                                    
-                                    else if(!m.getGm().requiresParameter().equals("none")){
-                                        try{
-                                            parameter = Integer.parseInt(args[3]);
-                                            p.sendMessage("Map: " + m.getTitle() + ", Gamemode: " + m.getGmType());
-                                                for(Player pl : Bukkit.getOnlinePlayers()){
-                                                    
-                                                    pl.sendMessage(ChatColor.GRAY + p.getName() + " has started a game");
-                                                    pl.sendMessage(ChatColor.GRAY + "Map: " + ChatColor.GREEN + m.getTitle() + ChatColor.GRAY + ", Gamemode: " + ChatColor.GREEN + m.getGmType());
-                                                    pl.sendMessage(ChatColor.GRAY + "Use " + ChatColor.GREEN + "/pvp join" + ChatColor.GRAY + " to join the game");
-                                                    pl.sendMessage(ChatColor.GRAY + "There are only " + m.getMax() + " slots left");
-                                                    pl.sendMessage(ChatColor.GREEN + "Do /pvp rules " + removeSpaces(m.getGmType()) + " if you don't know how this gamemode works!");
-                                                    
-                                                }
-                                            queuedGame = m;
-                                            
-                                        }
-                                        catch(ArrayIndexOutOfBoundsException e){
-                                            p.sendMessage(ChatColor.RED + m.getGmType() + " needs you to enter " + m.getGm().requiresParameter() + "!");
-                                        }
-                                        catch(NumberFormatException e){
-                                            p.sendMessage(ChatColor.RED + "Parameter value must be an integer!");
-                                        }
-                                    
-                                    }
-                                    else{
-                                        parameter = 0;
-                                        p.sendMessage("Map: " + m.getTitle() + ", Gamemode: " + m.getGmType());
-                                            for(Player pl : Bukkit.getOnlinePlayers()){
-                                                
-                                                pl.sendMessage(ChatColor.GRAY + p.getName() + " has started a game");
-                                                pl.sendMessage(ChatColor.GRAY + "Map: " + ChatColor.GREEN + m.getTitle() + ChatColor.GRAY + ", Gamemode: " + ChatColor.GREEN + m.getGmType());
-                                                pl.sendMessage(ChatColor.GRAY + "Use " + ChatColor.GREEN + "/pvp join" + ChatColor.GRAY + " to join the game");
-                                                pl.sendMessage(ChatColor.GRAY + "There are only " + m.getMax() + " slots left");
-                                                pl.sendMessage(ChatColor.GREEN + "Do /pvp rules " + removeSpaces(m.getGmType()) + " if you don't know how this gamemode works!");
-                                                
-                                            }
-                                        queuedGame = m;
-                                    }
-                                    
-                                }
-                                else{
-                                    p.sendMessage("No such map!");
-                                }
-                            }
-                        }
-                    }
+        				return args.length >= 3 ? pvpGameQuickstart(cs, args[2], args) : false;
+                    }    
                     else if(args[1].equalsIgnoreCase("end")){
-                        if(p.isOp()){
-                            if(runningGame != null){
-                                
-                                for(Player pl : Bukkit.getOnlinePlayers()){
-                                    pl.sendMessage(ChatColor.GRAY + "The game was ended by a staff!");
-                                }
-                                runningGame.getGm().End(runningGame);
-                            }
-                            else if(queuedGame != null){
-                                queuedGame.getGm().getPlayers().clear();
-                                queuedGame = null;
-                                for(Player pl : Bukkit.getOnlinePlayers()){
-                                    ChatHandler.getPlayerColors().put(pl.getName(), ChatColor.WHITE);
-                                    pl.setPlayerListName(ChatColor.WHITE + pl.getName());
-                                    pl.setDisplayName(ChatColor.WHITE + pl.getName());
-                                    BukkitTeamHandler.removeFromBukkitTeam(pl);
-                                    pl.sendMessage(ChatColor.GRAY + "The queued game was canceled! You'll need to rejoin when another game is queued.");
-                                }
-                                ChatHandler.getPlayerPrefixes().clear();
-                            }
-                            else{
-                                p.sendMessage(ChatColor.GRAY + "There is no game to end!");
-                            }
-                        }
-                        else{
-                            p.sendMessage(ChatColor.RED + "You don't have the permission to end games!");
-                        }
+                        return pvpGameEnd(cs);
                     }
                     else if(args[1].equalsIgnoreCase("getgames") && p.isOp()){
-                        p.sendMessage("Getting maps");
-                        if(queuedGame != null || runningGame != null){
-                            
-                            if(queuedGame != null){
-                                p.sendMessage(queuedGame.getName() + " is queued");
-                            }
-                            if(runningGame != null){
-                                p.sendMessage(runningGame.getName() + " is running");
-                            }
-                            
-                        }
-                        else{
-                            p.sendMessage("No games are currently queued or running!");
-                        }
+                        return pvpGameGetGames(cs);
                     }    
-                }else if(args[0].equalsIgnoreCase("join")){
-                   
-                    Map m = null;
-                    
-                    if(queuedGame != null){
-                        m = queuedGame;
-                    }
-                    else if(runningGame != null){
-                        m = runningGame;
-                    }
-                    else{
-                        p.sendMessage(ChatColor.RED + "There is no queued or running game!");
-                        return true;
-                    }
-                   
-                    if(!m.getGm().getPlayers().contains(p) && m.getGm().getState() != GameState.COUNTDOWN){
-                        if(m.playerJoin(p)){
-                                
-                            if(m.getGm().getState() == GameState.IDLE){
-                                p.setPlayerListName(ChatColor.GREEN + p.getName());
-                                p.setDisplayName(ChatColor.GREEN + p.getName());
-                                ChatHandler.getPlayerColors().put(p.getName(), ChatColor.GREEN);
-                                ChatHandler.getPlayerPrefixes().put(p.getName(), ChatColor.GREEN + "Participant");
-                                BukkitTeamHandler.addToBukkitTeam(p, ChatColor.GREEN);
-                                try{
-                                    p.setResourcePack(m.getResourcePackURL());
-                                }
-                                catch(NullPointerException e){
-                                    p.sendMessage(ChatColor.RED + "No resource pack was set for this map!");
-                                }
-                            }
-                               
-                        }
-                        else{
-                            p.sendMessage("Failed to Join Map");
-                        }
-                    }
-                    else if(m.getGm().getState() == GameState.COUNTDOWN){
-                        p.sendMessage(ChatColor.RED + "Do " + ChatColor.GREEN + "/pvp join" + ChatColor.RED + " again once the countdown is done!");
-                    }
-                    else{
-                        p.sendMessage("You are already part of a game");
-                        if(p.getName().equalsIgnoreCase("Despot666")){
-                            p.kickPlayer("<3 -Dallen");
-                        }
-                    }
+                } 
+                else if(args[0].equalsIgnoreCase("join")){
+                	return pvpJoin(p);
                 }
                 else if(args[0].equalsIgnoreCase("pipe")){
                     GearHandler.giveCustomItem(p, GearHandler.CustomItem.PIPE);
                 }
                 else if(args[0].equalsIgnoreCase("stat") || args[0].equalsIgnoreCase("stats") || args[0].equalsIgnoreCase("statistics")){
-                    
-                    if(args.length == 1){
-                        PlayerStat ps = PlayerStat.getPlayerStats().get(p.getName());
-                    
-                        p.sendMessage(ChatColor.GREEN + "Showing stats for " + p.getName());
-                        p.sendMessage(ChatColor.GRAY + "Kills: " + ps.getKills());
-                        p.sendMessage(ChatColor.GRAY + "Deaths: " + ps.getDeaths());
-                        p.sendMessage(ChatColor.GRAY + "Games Played: " + ps.getGamesPlayed());
-                        p.sendMessage(ChatColor.GRAY + "    Won: " + ps.getGamesWon());
-                        p.sendMessage(ChatColor.GRAY + "    Lost: " + ps.getGamesLost());
-                        p.sendMessage(ChatColor.GRAY + "Games Spectated: " + ps.getGamesSpectated());
-                        
+                    if(args.length == 1) {
+                    	return pvpStat(p, args.length);
                     }
                     else if(args[1].equalsIgnoreCase("clear") && (p.getName().equals("DSESGH") || p.getName().equals("Dallen"))){
-                        
-                        for(File f : new File(PVPCore.getSaveLoc() + Main.getFileSep() + "stats").listFiles()){
-                            f.delete();
-                        }
-                        
-                        for(PlayerStat ps : PlayerStat.getPlayerStats().values()){
-                            
-                            ps.setKills(0);
-                            ps.setDeaths(0);
-                            ps.setGamesLost(0);
-                            ps.setGamesWon(0);
-                            ps.setGamesSpectated(0);
-                            ps.setGamesPlayed(0);
-                            ps.getPlayersKilled().clear();
-                            
-                        }
-                        
-                    }
-                     
+                        return pvpStatClear();
+                    }   
                 }
-                
                 else if(args[0].equalsIgnoreCase("rules")){
-                    String gm;
-                    try{
-                        gm = args[1];
-                    }
-                    catch(ArrayIndexOutOfBoundsException e){
-                        p.sendMessage(ChatColor.RED + "Format: /pvp rules <gamemode>");
+                    if(args.length < 2) {
+                    	p.sendMessage(ChatColor.RED + "Format: /pvp rules <gamemode>");
                         p.sendMessage(ChatColor.GRAY + "Gamemodes are: FreeForAll, Infected, OneInTheQuiver, Ringbearer, TeamConquest, TeamDeathmatch, and TeamSlayer");
-                        return true;
                     }
-                    giveRules(p,gm);
+                    else {
+                    	return pvpRules(p, args[1]);
+                    }
+                    return true;
                 }
                 else if(args[0].equalsIgnoreCase("removegame") && (p.getName().equals("Dallen") || p.getName().equals("DSESGH"))){
-                    Map.maps.remove(args[1]);
-                    File f = new File(PVPCore.getSaveLoc() + Main.getFileSep() + "Maps" + Main.getFileSep() + args[1]);
-                    f.delete();
-                    p.sendMessage(ChatColor.RED + "Deleted " + args[1]);
+                    if(args.length < 2) {
+                    	p.sendMessage(ChatColor.RED + "Format: /pvp removegame <map>");
+                    	return true;
+                    }
+                    else {
+                    	return pvpRemoveGame(p, args[1]);
+                    }
                 }
                  
             return new MapEditor().onCommand(cs, cmnd, label, args);
@@ -384,6 +194,232 @@ public class PVPCommandCore implements CommandExecutor{
         }
         return newString;
     }
+	
+	private boolean pvpGameStart(CommandSender sender) {
+		if(queuedGame == null){
+            sender.sendMessage(ChatColor.RED + "Can't start! No game is queued!");
+        }
+        else if(runningGame == null){
+            queuedGame.getGm().Start(queuedGame, parameter);
+            runningGame = queuedGame;
+            queuedGame = null;
+        }
+        else{
+            sender.sendMessage(ChatColor.RED + "Can't start! There's already a game running!");
+        }
+        return true;
+	}
+	
+	private boolean pvpGameQuickstart(CommandSender sender, String map, String[] args) {
+		if(sender.isOp()){
+            if(Map.maps.containsKey(map)){
+                Map m = Map.maps.get(map);
+                
+                if(runningGame != null){
+                    sender.sendMessage(ChatColor.RED + "Can't start!");
+                    sender.sendMessage(ChatColor.GRAY + runningGame.getGmType() + " on " + runningGame.getTitle() + " is running!");
+                    sender.sendMessage(ChatColor.GRAY + "You need to end the current game first, with " + ChatColor.GREEN + "/pvp game end" + ChatColor.GRAY + ".");
+                }
+                else if(queuedGame != null && queuedGame != m){
+                    sender.sendMessage(ChatColor.RED + "Can't queue!");
+                    sender.sendMessage(ChatColor.GRAY + queuedGame.getGmType() + " on " + queuedGame.getTitle() + " is in the queue!");
+                    sender.sendMessage(ChatColor.GRAY + "You need to cancel the queued game first, with " + ChatColor.GREEN + "/pvp game end" + ChatColor.GRAY + ".");
+                }
+                else if(!m.getGm().requiresParameter().equals("none")){
+                   try{
+                        int newParam = Integer.parseInt(args[3]);
+                        
+                        if(queuedGame == null) {
+                        	parameter = newParam;
+                        	sender.sendMessage("Map: " + m.getTitle() + ", Gamemode: " + m.getGmType());
+                            for(Player p : Bukkit.getOnlinePlayers()){
+                                
+                                p.sendMessage(ChatColor.GRAY + p.getName() + " has started a game");
+                                p.sendMessage(ChatColor.GRAY + "Map: " + ChatColor.GREEN + m.getTitle() + ChatColor.GRAY + ", Gamemode: " + ChatColor.GREEN + m.getGmType());
+                                p.sendMessage(ChatColor.GRAY + "Use " + ChatColor.GREEN + "/pvp join" + ChatColor.GRAY + " to join the game");
+                                p.sendMessage(ChatColor.GRAY + "There are only " + m.getMax() + " slots left");
+                                p.sendMessage(ChatColor.GREEN + "Do /pvp rules " + removeSpaces(m.getGmType()) + " if you don't know how this gamemode works!");
+                                
+                            }
+                            queuedGame = m;
+                        }
+                        else if(queuedGame == m && newParam != parameter) {
+                        	sender.sendMessage(ChatColor.GRAY + "Parameter changed from " + ChatColor.GREEN + parameter + ChatColor.GRAY + " to " + ChatColor.GREEN + newParam);
+                        	parameter = newParam;
+                        }
+                    }
+                    catch(ArrayIndexOutOfBoundsException ex) {
+                        sender.sendMessage(ChatColor.RED + m.getGmType() + " needs you to enter " + m.getGm().requiresParameter() + "!");
+                    }
+                   catch(NumberFormatException ex) {
+                	   sender.sendMessage(ChatColor.RED + "The parameter value must be an integer");
+                   }
+                }
+                else{
+                    parameter = 0;
+                    sender.sendMessage("Map: " + m.getTitle() + ", Gamemode: " + m.getGmType());
+                        for(Player pl : Bukkit.getOnlinePlayers()){
+                            
+                            pl.sendMessage(ChatColor.GRAY + sender.getName() + " has started a game");
+                            pl.sendMessage(ChatColor.GRAY + "Map: " + ChatColor.GREEN + m.getTitle() + ChatColor.GRAY + ", Gamemode: " + ChatColor.GREEN + m.getGmType());
+                            pl.sendMessage(ChatColor.GRAY + "Use " + ChatColor.GREEN + "/pvp join" + ChatColor.GRAY + " to join the game");
+                            pl.sendMessage(ChatColor.GRAY + "There are only " + m.getMax() + " slots left");
+                            pl.sendMessage(ChatColor.GREEN + "Do /pvp rules " + removeSpaces(m.getGmType()) + " if you don't know how this gamemode works!");
+                            
+                        }
+                    queuedGame = m;
+                }
+                
+            }
+            else{
+                sender.sendMessage("No such map!");
+            }
+        }
+		return true;
+	}
+	
+	private boolean pvpGameEnd(CommandSender sender) {
+		if(sender.isOp()){
+            if(runningGame != null){
+                
+                for(Player pl : Bukkit.getOnlinePlayers()){
+                    pl.sendMessage(ChatColor.GRAY + "The game was ended by a staff!");
+                }
+                runningGame.getGm().End(runningGame);
+            }
+            else if(queuedGame != null){
+                queuedGame.getGm().getPlayers().clear();
+                queuedGame = null;
+                for(Player pl : Bukkit.getOnlinePlayers()){
+                    ChatHandler.getPlayerColors().put(pl.getName(), ChatColor.WHITE);
+                    pl.setPlayerListName(ChatColor.WHITE + pl.getName());
+                    pl.setDisplayName(ChatColor.WHITE + pl.getName());
+                    BukkitTeamHandler.removeFromBukkitTeam(pl);
+                    pl.sendMessage(ChatColor.GRAY + "The queued game was canceled! You'll need to rejoin when another game is queued.");
+                }
+                ChatHandler.getPlayerPrefixes().clear();
+            }
+            else{
+                sender.sendMessage(ChatColor.GRAY + "There is no game to end!");
+            }
+        }
+        else{
+            sender.sendMessage(ChatColor.RED + "You don't have the permission to end games!");
+        }
+		return true;
+	}
+	
+	private boolean pvpGameGetGames(CommandSender cs) {
+		cs.sendMessage("Getting maps");
+        if(queuedGame != null || runningGame != null){
+            
+            if(queuedGame != null){
+                cs.sendMessage(queuedGame.getName() + " is queued");
+            }
+            if(runningGame != null){
+                cs.sendMessage(runningGame.getName() + " is running");
+            }
+            
+        }
+        else{
+            cs.sendMessage("No games are currently queued or running!");
+        }
+        return true;
+	}
+	
+	private boolean pvpJoin(Player p) {
+		Map m = null;
+        
+        if(queuedGame != null){
+            m = queuedGame;
+        }
+        else if(runningGame != null){
+            m = runningGame;
+        }
+        else{
+            p.sendMessage(ChatColor.RED + "There is no queued or running game!");
+            return true;
+        }
+       
+        if(!m.getGm().getPlayers().contains(p) && m.getGm().getState() != GameState.COUNTDOWN){
+            if(m.playerJoin(p)){
+                    
+                if(m.getGm().getState() == GameState.IDLE){
+                    p.setPlayerListName(ChatColor.GREEN + p.getName());
+                    p.setDisplayName(ChatColor.GREEN + p.getName());
+                    ChatHandler.getPlayerColors().put(p.getName(), ChatColor.GREEN);
+                    ChatHandler.getPlayerPrefixes().put(p.getName(), ChatColor.GREEN + "Participant");
+                    BukkitTeamHandler.addToBukkitTeam(p, ChatColor.GREEN);
+                    try{
+                        p.setResourcePack(m.getResourcePackURL());
+                    }
+                    catch(NullPointerException e){
+                        p.sendMessage(ChatColor.RED + "No resource pack was set for this map!");
+                    }
+                }
+                   
+            }
+            else{
+                p.sendMessage("Failed to Join Map");
+            }
+        }
+        else if(m.getGm().getState() == GameState.COUNTDOWN){
+            p.sendMessage(ChatColor.RED + "Do " + ChatColor.GREEN + "/pvp join" + ChatColor.RED + " again once the countdown is done!");
+        }
+        else{
+            p.sendMessage("You are already part of a game");
+            if(p.getName().equalsIgnoreCase("Despot666")){
+                p.kickPlayer("<3 -Dallen");
+            }
+        }
+        
+        return true;
+	}
+	
+	private boolean pvpStat(Player p, int argLength) {
+        PlayerStat ps = PlayerStat.getPlayerStats().get(p.getName());
+    
+        p.sendMessage(ChatColor.GREEN + "Showing stats for " + p.getName());
+        p.sendMessage(ChatColor.GRAY + "Kills: " + ps.getKills());
+        p.sendMessage(ChatColor.GRAY + "Deaths: " + ps.getDeaths());
+        p.sendMessage(ChatColor.GRAY + "Games Played: " + ps.getGamesPlayed());
+        p.sendMessage(ChatColor.GRAY + "    Won: " + ps.getGamesWon());
+        p.sendMessage(ChatColor.GRAY + "    Lost: " + ps.getGamesLost());
+        p.sendMessage(ChatColor.GRAY + "Games Spectated: " + ps.getGamesSpectated());
+        return true;
+	}
+	
+	private boolean pvpStatClear() {
+		for(File f : new File(PVPCore.getSaveLoc() + Main.getFileSep() + "stats").listFiles()){
+            f.delete();
+        }
+        
+        for(PlayerStat ps : PlayerStat.getPlayerStats().values()){
+            
+            ps.setKills(0);
+            ps.setDeaths(0);
+            ps.setGamesLost(0);
+            ps.setGamesWon(0);
+            ps.setGamesSpectated(0);
+            ps.setGamesPlayed(0);
+            ps.getPlayersKilled().clear();
+            
+        }
+        return true;
+	}
+	
+	private boolean pvpRules(Player p, String gamemode) {
+        giveRules(p, gamemode);
+        return true;
+	}
+	
+	private boolean pvpRemoveGame(Player p, String map) {
+		Map.maps.remove(map);
+        File f = new File(PVPCore.getSaveLoc() + Main.getFileSep() + "Maps" + Main.getFileSep() + map);
+        f.delete();
+        p.sendMessage(ChatColor.RED + "Deleted " + map);
+        return true;
+	}
 }
 
                 
