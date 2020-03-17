@@ -55,39 +55,39 @@ import org.bukkit.scoreboard.Objective;
  *
  * @author Eric
  */
-public class Siege extends BasePluginGamemode{
-    
+public class Siege extends BasePluginGamemode {
+
     private boolean eventsRegistered = false;
-    
+
     @Getter
-    private final ArrayList<String> NeededPoints = new ArrayList<String>(Arrays.asList(new String[] {
+    private final ArrayList<String> NeededPoints = new ArrayList<String>(Arrays.asList(new String[]{
         "RedSpawn",
         "BlueSpawn",
         "CapturePoint1",
         "CapturePoint2",
         "CapturePoint3"
     }));
-    
+
     Map map;
-    
+
     private int count;
-    
+
     @Getter
     private boolean midgameJoin = true;
-    
+
     @Getter
     private GameState state;
-    
+
     private GameEvents events;
-    
+
     boolean hasTeams = false;
-    
+
     private int goal;
-    
-    public Siege(){
+
+    public Siege() {
         state = GameState.IDLE;
     }
-    
+
     @Override
     public void Start(Map m, int parameter) {
         super.Start(m, parameter);
@@ -95,24 +95,24 @@ public class Siege extends BasePluginGamemode{
         count = PVPCore.getCountdownTime();
         state = GameState.COUNTDOWN;
         this.map = m;
-        if(!m.getImportantPoints().keySet().containsAll(NeededPoints)){
-            for(Player p : getPlayers()){
+        if (!m.getImportantPoints().keySet().containsAll(NeededPoints)) {
+            for (Player p : getPlayers()) {
                 p.sendMessage(ChatColor.RED + "Game Cannot Start! Not all needed points have been added!");
             }
             End(m);
             return;
         }
-        
-        if(!eventsRegistered){
+
+        if (!eventsRegistered) {
             events = new GameEvents();
             PluginManager pm = Main.getServerInstance().getPluginManager();
             pm.registerEvents(events, Main.getPlugin());
             eventsRegistered = true;
         }
-        
-        for(Location l : events.points){
+
+        for (Location l : events.points) {
             l.getBlock().setType(Material.BEACON);
-            
+
             l.getBlock().getRelative(0, -1, -1).setType(Material.IRON_BLOCK);
             l.getBlock().getRelative(0, -1, 0).setType(Material.IRON_BLOCK);
             l.getBlock().getRelative(0, -1, 1).setType(Material.IRON_BLOCK);
@@ -123,168 +123,165 @@ public class Siege extends BasePluginGamemode{
             l.getBlock().getRelative(-1, -1, 0).setType(Material.IRON_BLOCK);
             l.getBlock().getRelative(-1, -1, 1).setType(Material.IRON_BLOCK);
         }
-        
-        for(Player p : Bukkit.getOnlinePlayers()){
-            if(getPlayers().contains(p)){
-                if(Team.getBlue().size() >= Team.getRed().size()){
+
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (getPlayers().contains(p)) {
+                if (Team.getBlue().size() >= Team.getRed().size()) {
                     Team.getRed().add(p);
                     p.teleport(m.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
-                }else if(Team.getBlue().size() < Team.getRed().size()){
+                } else if (Team.getBlue().size() < Team.getRed().size()) {
                     Team.getBlue().add(p);
                     p.teleport(m.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
                 }
-            }else{
+            } else {
                 Team.getSpectator().add(p);
                 p.teleport(m.getSpawn().toBukkitLoc().add(0, 2, 0));
             }
         }
-        
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(), new Runnable(){
-                @Override
-                public void run() {
-                    if(count == 0){
-                        if(state == GameState.RUNNING){
-                            return;
-                        }
-                        
-                        for(Player p : Bukkit.getServer().getOnlinePlayers()){
-                            p.sendMessage(ChatColor.GREEN + "Game Start!");
-                            p.setScoreboard(getScoreboard());
-                        }
-                        
-                        for(Player p : Team.getRed().getMembers()){
-                            GearHandler.giveGear(p, ChatColor.RED, GearHandler.SpecialGear.NONE);
-                        }
-                        for(Player p : Team.getBlue().getMembers()){
-                            GearHandler.giveGear(p, ChatColor.BLUE, GearHandler.SpecialGear.NONE);
-                        }
-                        state = GameState.RUNNING;
-                        count = -1;
-                        
-                        for(Player p : getPlayers()){
-                            p.sendMessage(ChatColor.GRAY + "Use " + ChatColor.GREEN + "/unstuck" + ChatColor.GRAY + " if you're stuck in a block!");
-                        }
-                    }
-                    else if(count != -1){
-                        for(Player p : Bukkit.getServer().getOnlinePlayers()){
-                            p.sendMessage(ChatColor.GREEN + "Game begins in " + count);
-                        }
-                        count--;
-                    }
-                }
 
-            }, 40, 20);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                if (count == 0) {
+                    if (state == GameState.RUNNING) {
+                        return;
+                    }
+
+                    for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+                        p.sendMessage(ChatColor.GREEN + "Game Start!");
+                        p.setScoreboard(getScoreboard());
+                    }
+
+                    for (Player p : Team.getRed().getMembers()) {
+                        GearHandler.giveGear(p, ChatColor.RED, GearHandler.SpecialGear.NONE);
+                    }
+                    for (Player p : Team.getBlue().getMembers()) {
+                        GearHandler.giveGear(p, ChatColor.BLUE, GearHandler.SpecialGear.NONE);
+                    }
+                    state = GameState.RUNNING;
+                    count = -1;
+
+                    for (Player p : getPlayers()) {
+                        p.sendMessage(ChatColor.GRAY + "Use " + ChatColor.GREEN + "/unstuck" + ChatColor.GRAY + " if you're stuck in a block!");
+                    }
+                } else if (count != -1) {
+                    for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+                        p.sendMessage(ChatColor.GREEN + "Game begins in " + count);
+                    }
+                    count--;
+                }
+            }
+
+        }, 40, 20);
     }
-    
-    
-    
+
     @Override
-    public void End(Map m){
+    public void End(Map m) {
         state = GameState.IDLE;
-        
-        for(Location l : events.points){
+
+        for (Location l : events.points) {
             l.getBlock().setType(Material.AIR);
             l.getBlock().getRelative(0, 1, 0).setType(Material.AIR);
         }
-        
+
         getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
-        
+
         m.playerLeaveAll();
         super.End(m);
 
     }
-    
-    public String requiresParameter(){
+
+    public String requiresParameter() {
         return "point goal";
     }
-    
-    private class GameEvents implements Listener{
-        
+
+    private class GameEvents implements Listener {
+
         private ArrayList<Location> points = new ArrayList<>();
-        
+
         HashMap<Location, Integer> capAmount = new HashMap<>();//red = +; blue = -
-        
-        public GameEvents(){
-            for(java.util.Map.Entry<String, EventLocation> e : map.getImportantPoints().entrySet()){
-                if(e.getKey().contains("Point")){
+
+        public GameEvents() {
+            for (java.util.Map.Entry<String, EventLocation> e : map.getImportantPoints().entrySet()) {
+                if (e.getKey().contains("Point")) {
                     points.add(e.getValue().toBukkitLoc());
                     capAmount.put(e.getValue().toBukkitLoc(), 0);
                 }
             }
         }
-        
+
         @EventHandler
-        public void onPlayerInteract(PlayerInteractEvent e){
-            if(state == GameState.RUNNING && getPlayers().contains(e.getPlayer()) && 
-                    e.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
-                if(e.getClickedBlock().getType().equals(Material.BEACON)){
+        public void onPlayerInteract(PlayerInteractEvent e) {
+            if (state == GameState.RUNNING && getPlayers().contains(e.getPlayer())
+                    && e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+                if (e.getClickedBlock().getType().equals(Material.BEACON)) {
                     e.setUseInteractedBlock(Event.Result.DENY);
                     int cap = capAmount.get(e.getClickedBlock().getLocation());
                     Player p = e.getPlayer();
-                    if(Team.getRed().getMembers().contains(p)){
-                        if(cap == 0){
+                    if (Team.getRed().getMembers().contains(p)) {
+                        if (cap == 0) {
                             p.sendMessage(ChatColor.GRAY + "Point is neutral!");
-                                
+
                             Block b = e.getClickedBlock().getLocation().add(0, 1, 0).getBlock();
                             b.setType(Material.AIR);
-                             
-                            if(Team.getBlue().getCapturedPoints().contains(e.getClickedBlock().getLocation())){
+
+                            if (Team.getBlue().getCapturedPoints().contains(e.getClickedBlock().getLocation())) {
                                 Team.getBlue().getCapturedPoints().remove(e.getClickedBlock().getLocation());
                             }
                         }
-                        
-                        if(cap < 50){
+
+                        if (cap < 50) {
                             cap++;
                             p.sendMessage(ChatColor.RED + "Cap at " + (cap * 2) + "%");
-                            
-                            if(cap >= 50){
+
+                            if (cap >= 50) {
                                 p.sendMessage(ChatColor.RED + "Point Captured!");
-                                if(!Team.getRed().getCapturedPoints().contains(e.getClickedBlock().getLocation())){
+                                if (!Team.getRed().getCapturedPoints().contains(e.getClickedBlock().getLocation())) {
                                     Team.getRed().getCapturedPoints().add(e.getClickedBlock().getLocation());
                                     Block b = e.getClickedBlock().getLocation().add(0, 1, 0).getBlock();
-                                    b.setType(Material.STAINED_GLASS);
-                                    b.setData((byte) 14);
-                                    for(Player pl : getPlayers()){
+                                    b.setType(Material.ORANGE_STAINED_GLASS); //change
+
+                                    for (Player pl : getPlayers()) {
                                         pl.sendMessage(ChatColor.RED + "Red Team captured a point!");
                                     }
                                 }
-                                if(Team.getBlue().getCapturedPoints().contains(e.getClickedBlock().getLocation())){
+                                if (Team.getBlue().getCapturedPoints().contains(e.getClickedBlock().getLocation())) {
                                     Team.getBlue().getCapturedPoints().remove(e.getClickedBlock().getLocation());
                                 }
-                            }else{
+                            } else {
                                 capAmount.put(e.getClickedBlock().getLocation(), cap);
                             }
                         }
-                    }else if(Team.getBlue().getMembers().contains(p)){
-                        if(cap == 0){
+                    } else if (Team.getBlue().getMembers().contains(p)) {
+                        if (cap == 0) {
                             p.sendMessage(ChatColor.GRAY + "Point is neutral!");
-                                
+
                             Block b = e.getClickedBlock().getLocation().add(0, 1, 0).getBlock();
                             b.setType(Material.AIR);
-                              
-                            if(Team.getRed().getCapturedPoints().contains(e.getClickedBlock().getLocation())){
+
+                            if (Team.getRed().getCapturedPoints().contains(e.getClickedBlock().getLocation())) {
                                 Team.getRed().getCapturedPoints().remove(e.getClickedBlock().getLocation());
                             }
                         }
-                        
-                        if(cap > -50){
+
+                        if (cap > -50) {
                             cap--;
                             p.sendMessage(ChatColor.BLUE + "Cap at " + (cap * -2) + "%");
-                            if(cap <= -50){
+                            if (cap <= -50) {
                                 p.sendMessage(ChatColor.BLUE + "Point Captured!");
-                                if(!Team.getBlue().getCapturedPoints().contains(e.getClickedBlock().getLocation())){
+                                if (!Team.getBlue().getCapturedPoints().contains(e.getClickedBlock().getLocation())) {
                                     Team.getBlue().getCapturedPoints().add(e.getClickedBlock().getLocation());
                                     Block b = e.getClickedBlock().getLocation().add(0, 1, 0).getBlock();
-                                    b.setType(Material.STAINED_GLASS);
-                                    b.setData((byte) 11);
-                                    for(Player pl : getPlayers()){
+                                    b.setType(Material.YELLOW_STAINED_GLASS);
+                                    
+                                    for (Player pl : getPlayers()) {
                                         pl.sendMessage(ChatColor.BLUE + "Blue Team captured a point!");
                                     }
                                 }
-                                if(Team.getRed().getCapturedPoints().contains(e.getClickedBlock().getLocation())){
+                                if (Team.getRed().getCapturedPoints().contains(e.getClickedBlock().getLocation())) {
                                     Team.getRed().getCapturedPoints().remove(e.getClickedBlock().getLocation());
                                 }
-                            }else{
+                            } else {
                                 capAmount.put(e.getClickedBlock().getLocation(), cap);
                             }
                         }
@@ -292,36 +289,34 @@ public class Siege extends BasePluginGamemode{
                 }
             }
         }
-        
-        @EventHandler
-        public void onPlayerDeath(PlayerDeathEvent e){
 
-           
-            
+        @EventHandler
+        public void onPlayerDeath(PlayerDeathEvent e) {
+
         }
-        
-        @EventHandler
-        public void onPlayerRespawn(PlayerRespawnEvent e){
 
-            if(state == GameState.RUNNING && getPlayers().contains(e.getPlayer())){
-                if(Team.getRed().getMembers().contains(e.getPlayer())){
+        @EventHandler
+        public void onPlayerRespawn(PlayerRespawnEvent e) {
+
+            if (state == GameState.RUNNING && getPlayers().contains(e.getPlayer())) {
+                if (Team.getRed().getMembers().contains(e.getPlayer())) {
                     e.setRespawnLocation(map.getImportantPoints().get("RedSpawn").toBukkitLoc().add(0, 2, 0));
-                }else if(Team.getBlue().getMembers().contains(e.getPlayer())){
+                } else if (Team.getBlue().getMembers().contains(e.getPlayer())) {
                     e.setRespawnLocation(map.getImportantPoints().get("BlueSpawn").toBukkitLoc().add(0, 2, 0));
                 }
             }
         }
-        
+
         @EventHandler
-        public void onPlayerLeave(PlayerQuitEvent e){
-            
-            if(state == GameState.RUNNING || state == GameState.COUNTDOWN){
-                
+        public void onPlayerLeave(PlayerQuitEvent e) {
+
+            if (state == GameState.RUNNING || state == GameState.COUNTDOWN) {
+
                 Team.removeFromTeam(e.getPlayer());
-                
-                if(Team.getRed().size() <= 0){
-                    
-                    for(Player p : Bukkit.getOnlinePlayers()){
+
+                if (Team.getRed().size() <= 0) {
+
+                    for (Player p : Bukkit.getOnlinePlayers()) {
                         p.sendMessage(ChatColor.BLUE + "Game over!");
                         p.sendMessage(ChatColor.BLUE + "Blue Team Wins!");
                     }
@@ -329,10 +324,9 @@ public class Siege extends BasePluginGamemode{
                     PlayerStat.addGameLost(Team.Teams.RED);
                     PlayerStat.addGameSpectatedAll();
                     End(map);
-                }
-                else if(Team.getBlue().size() <= 0){
-                    
-                    for(Player p : Bukkit.getOnlinePlayers()){
+                } else if (Team.getBlue().size() <= 0) {
+
+                    for (Player p : Bukkit.getOnlinePlayers()) {
                         p.sendMessage(ChatColor.RED + "Game over!");
                         p.sendMessage(ChatColor.RED + "Red Team Wins!");
                     }
@@ -340,15 +334,16 @@ public class Siege extends BasePluginGamemode{
                     PlayerStat.addGameLost(Team.Teams.BLUE);
                     PlayerStat.addGameSpectatedAll();
                     End(map);
-                    
+
                 }
             }
-            
+
         }
     }
+
     @Override
-    public boolean midgamePlayerJoin (Player p){
-            
-       return false;
-    }    
+    public boolean midgamePlayerJoin(Player p) {
+
+        return false;
+    }
 }

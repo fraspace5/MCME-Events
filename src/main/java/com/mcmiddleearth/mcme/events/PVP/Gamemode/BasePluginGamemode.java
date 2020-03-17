@@ -97,7 +97,7 @@ public abstract class BasePluginGamemode implements Gamemode{
         
         Team.resetAllTeams();
         
-        Bukkit.getScheduler().cancelAllTasks();
+        Bukkit.getScheduler().cancelTasks(Main.getPlugin());
         for(Objective o : scoreboard.getObjectives()){
             o.unregister();
         }

@@ -138,7 +138,7 @@ public class KingOfTheHill extends BasePluginGamemode{
                             ItemStack[] armor = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
                                 new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS)};
                             for(int i = 0; i <= 3; i++){
-                                armor[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
+                                armor[i].addUnsafeEnchantment(new EnchantmentWrapper("34"), 100);
                             }
                             p.getInventory().clear();
                             p.getInventory().setHelmet(armor[0]);
@@ -146,10 +146,10 @@ public class KingOfTheHill extends BasePluginGamemode{
                             p.getInventory().setLeggings(armor[2]);
                             p.getInventory().setBoots(armor[3]);
                             ItemStack sword = new ItemStack(Material.IRON_SWORD);
-                            sword.addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
+                            sword.addUnsafeEnchantment(new EnchantmentWrapper("34"), 100);
                             p.getInventory().addItem(sword);
                             ItemStack bow = new ItemStack(Material.BOW);
-                            bow.addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
+                            bow.addUnsafeEnchantment(new EnchantmentWrapper("34"), 100);
                             p.getInventory().addItem(bow);
                             ItemStack Arrows = new ItemStack(Material.ARROW);
                             Arrows.setAmount(64);
@@ -163,7 +163,7 @@ public class KingOfTheHill extends BasePluginGamemode{
                             ItemStack[] armor = new ItemStack[] {new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.LEATHER_CHESTPLATE), 
                                 new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS)};
                             for(int i = 0; i <= 3; i++){
-                                armor[i].addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
+                                armor[i].addUnsafeEnchantment(new EnchantmentWrapper("34"), 100);
                             }
                             p.getInventory().clear();
                             p.getInventory().setHelmet(armor[0]);
@@ -171,10 +171,10 @@ public class KingOfTheHill extends BasePluginGamemode{
                             p.getInventory().setLeggings(armor[2]);
                             p.getInventory().setBoots(armor[3]);
                             ItemStack sword = new ItemStack(Material.IRON_SWORD);
-                            sword.addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
+                            sword.addUnsafeEnchantment(new EnchantmentWrapper("34"), 100);
                             p.getInventory().addItem(sword);
                             ItemStack bow = new ItemStack(Material.BOW);
-                            bow.addUnsafeEnchantment(new EnchantmentWrapper(34), 100);
+                            bow.addUnsafeEnchantment(new EnchantmentWrapper("34"), 100);
                             p.getInventory().addItem(bow);
                             ItemStack Arrows = new ItemStack(Material.ARROW);
                             Arrows.setAmount(64);
